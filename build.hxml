@@ -1,0 +1,4 @@
+-cp tests
+-lib ecs
+-main RunTests
+-js bin/js/tests.js
