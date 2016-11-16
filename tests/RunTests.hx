@@ -13,11 +13,12 @@ class RunTests {
 		
 		var entity = new Entity();
 		entity.add(new Position(0, 0));
+		entity.add(new Velocity(1, 0));
 		
 		engine.addEntity(entity);
 		
 		var timer = new Timer(16);
-		timer.run = function() engine.update(16);
+		timer.run = function() engine.update(16/1000);
 	}
 	
 	

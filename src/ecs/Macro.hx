@@ -6,8 +6,6 @@ using tink.MacroApi;
 
 class Macro {
 	
-	static var nodes:Map<String, Array<ComplexType>> = new Map();
-	
 	public static function buildNode() {
 		var pos = Context.currentPos();
 		switch Context.getLocalType() {
@@ -25,9 +23,18 @@ class Macro {
 				fullnames.sort(Reflect.compare);
 				var name = 'Node_' + Context.signature(fullnames.join('_'));
 				try return Context.getType('ecs.node.$name') catch(e:Dynamic) {}
-				nodes.set(name, complexTypes);
 				
-				var def = macro class $name implements ecs.Node.NodeBase {}
+				var tp = 'ecs.node.$name'.asTypePath();
+				var arr = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
+				var ctorArgs = complexTypes.map(function(ct) return macro entity.get($p{ct.toString().split('.')}));
+					
+				var def = macro class $name implements ecs.Node.NodeBase {
+					
+					public static var componentTypes:Array<ecs.Component.ComponentType> = $a{arr};
+					public static function createFor(entity:ecs.Entity)
+						return entity.hasAll(componentTypes) ? haxe.ds.Option.Some(new $tp($a{ctorArgs})) : haxe.ds.Option.None;
+					
+				}
 				
 				// Create instance field for each component, named in the component's class name camel-cased
 				var ctorArgs = []; 
@@ -49,16 +56,6 @@ class Macro {
 						meta: null,
 					});
 				}
-				
-				// A static field to hold all the component types required
-				var arr = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
-				def.fields.push({
-					name: 'componentTypes',
-					kind: FVar(macro:Array<ecs.Component.ComponentType>, macro $a{arr}),
-					pos: pos,
-					access: [APublic, AStatic],
-					meta: null
-				});
 				
 				// constructor
 				var args = complexTypes.map(function(ct) return Context.parse(ct.toString(), pos));
@@ -95,16 +92,9 @@ class Macro {
 		}
 		var nodect = type.toComplex();
 		var nodename = nodect.toString().split('.');
-		var nodetp = switch nodect {
-			case TPath(tp): tp;
-			default: throw 'assert';
-		}
 		
 		var sysname = 'NodeListSystem_' + Context.signature(cls);
 		try return Context.getType('ecs.system.$sysname') catch(e:Dynamic) {}
-		
-		var ctorArgs = nodes.get(nodename[nodename.length - 1])
-			.map(function(ct) return macro entity.get($p{ct.toString().split('.')}));
 			
 		var def = macro class $sysname extends ecs.System.NodeListSystemBase<$nodect> {
 			override function onAdded(engine:ecs.Engine) {
@@ -118,9 +108,9 @@ class Macro {
 			}
 			
 			function addEntityIfMatch(entity:ecs.Entity) {
-				if(entity.hasAll($p{nodename}.componentTypes)) {
-					var node = new $nodetp($a{ctorArgs});
-					nodes.set(entity, node);
+				switch $p{nodename}.createFor(entity) {
+					case Some(node): nodes.set(entity, node);
+					case None:
 				}
 			}
 		}
