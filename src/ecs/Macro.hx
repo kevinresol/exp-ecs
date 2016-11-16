@@ -35,16 +35,17 @@ class Macro {
 			
 			public static var componentTypes:Array<ecs.Component.ComponentType> = $a{arr};
 			public static function createNodeList(engine:ecs.Engine) {
-				var result = new Map();
+				var result = new ecs.Node.NodeList();
 				
 				inline function addEntityIfMatch(entity:ecs.Entity) 
 					if(entity.hasAll(componentTypes))
-						result.set(entity, new $tp($a{ctorArgs}));
+						result.add(entity, new $tp($a{ctorArgs}));
 				
 				for(entity in engine.entities) addEntityIfMatch(entity);
 					
+				// TODO: if we destroy a node list, we need to dissolve the handlers
 				engine.entityAdded.handle(function(e) addEntityIfMatch(e));
-				engine.entityRemoved.handle(function(e) result.remove(e));
+				engine.entityRemoved.handle(function(e) result.removeEntity(e));
 				
 				return result;
 			}

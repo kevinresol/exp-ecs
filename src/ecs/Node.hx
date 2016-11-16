@@ -3,7 +3,14 @@ package ecs;
 #if !macro @:genericBuild(ecs.Macro.buildNode()) #end
 class Node<Rest> {}
 
-typedef NodeList<T> = Map<Entity, T>;
+// TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
+abstract NodeList<T>(Map<Entity, T>) from Map<Entity, T> to Map<Entity, T> {
+	public inline function new() this = new Map();
+	
+	public inline function add(entity:Entity, node:T) this.set(entity, node);
+	public inline function removeEntity(entity:Entity) this.remove(entity);
+	public inline function iterator() return this.iterator();
+}
 
 interface NodeBase {}
 

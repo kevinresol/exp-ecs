@@ -15,7 +15,6 @@ class NodeListSystem<T> {}
 class NodeListSystemBase<T> implements System {
 	
 	var nodes:NodeList<T>;
-	var listeners:Array<CallbackLink>;
 	
 	public function new() {
 		
@@ -27,7 +26,6 @@ class NodeListSystemBase<T> implements System {
 	
 	public function onRemoved(engine:Engine) {
 		nodes = null;
-		while(listeners.length > 0) listeners.pop().dissolve();
 	}
 	
 	public function update(dt:Float) {
