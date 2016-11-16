@@ -2,6 +2,7 @@ package ;
 
 import ecs.*;
 import component.*;
+import node.*;
 import system.*;
 import haxe.*;
 
@@ -17,7 +18,7 @@ class RunTests {
 		
 		engine.addEntity(entity);
 		
-		engine.getNodeList(system.MovementSystem.MovementNode);
+		engine.getNodeList(MovementNode);
 		
 		var timer = new Timer(16);
 		timer.run = function() engine.update(16/1000);

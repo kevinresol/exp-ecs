@@ -52,11 +52,12 @@ class Macro {
 			
 		}
 		
-		// Create instance field for each component, named in the component's class name camel-cased
 		var ctorArgs = []; 
 		for(i in 0...names.length) {
 			var name = names[i];
 			var ct = complexTypes[i];
+			
+			// Prepare the constructor args for the node class
 			ctorArgs.push({
 				name: name,
 				type: ct,
@@ -64,6 +65,8 @@ class Macro {
 				meta: null,
 				value: null,
 			});
+			
+			// Create instance field for each component, named in the component's class name camel-cased
 			def.fields.push({
 				name: name,
 				kind: FVar(ct),

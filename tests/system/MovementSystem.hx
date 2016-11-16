@@ -3,11 +3,9 @@ package system;
 import ecs.Engine;
 import ecs.Node;
 import ecs.System;
-import component.*;
+import node.*;
 
 using tink.CoreApi;
-
-typedef MovementNode = Node<Position, Velocity>;
 
 class MovementSystem extends NodeListSystem<MovementNode> {
 	
