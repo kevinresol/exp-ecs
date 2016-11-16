@@ -9,7 +9,7 @@ interface System {
 	function onRemoved(engine:Engine):Void;
 }
 
-@:genericBuild(ecs.Macro.buildNodeListSystem())
+#if !macro @:genericBuild(ecs.Macro.buildNodeListSystem()) #end
 class NodeListSystem<T> {}
 
 class NodeListSystemBase<T> implements System {

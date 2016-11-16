@@ -1,6 +1,6 @@
 package ecs;
 
-@:genericBuild(ecs.Macro.buildNode())
+#if !macro @:genericBuild(ecs.Macro.buildNode()) #end
 class Node<Rest> {}
 
 typedef NodeList<T> = Map<Entity, T>;

@@ -51,4 +51,12 @@ class Engine {
 			system.onRemoved(this);
 	}
 	
+	public macro function getNodeList(ethis, e) {
+		return Macro.getNodeList(ethis, e);
+	}
+	
+	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
+		if(!nodeLists.exists(type)) nodeLists.set(type, factory(this));
+		return cast nodeLists.get(type);
+	}
 }
