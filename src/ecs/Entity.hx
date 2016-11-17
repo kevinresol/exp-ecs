@@ -1,27 +1,35 @@
 package ecs;
 
 import ecs.Component;
+using tink.CoreApi;
 
 class Entity {
 	
+	public var componentAdded:Signal<ComponentType>;
+	public var componentRemoved:Signal<ComponentType>;
+	
 	var components:Map<ComponentType, Component>;
+	var componentAddedTrigger:SignalTrigger<ComponentType>;
+	var componentRemovedTrigger:SignalTrigger<ComponentType>;
 	
 	public function new() {
 		components = new Map();
+		componentAdded = componentAddedTrigger = Signal.trigger();
+		componentRemoved = componentRemovedTrigger = Signal.trigger();
 	}
 	
 	public function add(component:Component, ?type:ComponentType) {
 		if(type == null) type = component;
 		if(components.exists(type)) remove(type);
 		components.set(type, component);
-		// TODO: dispatch signal
+		componentAddedTrigger.trigger(type);
 	}
 	
 	public function remove(type:ComponentType) {
 		var component = components.get(type);
 		if(component != null) {
 			components.remove(type);
-			// TODO: dispatch signal
+			componentRemovedTrigger.trigger(type);
 		}
 		return component;
 	}

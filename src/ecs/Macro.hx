@@ -35,19 +35,44 @@ class Macro {
 			
 			public static var componentTypes:Array<ecs.Component.ComponentType> = $a{arr};
 			public static function createNodeList(engine:ecs.Engine) {
-				var result = new ecs.Node.NodeList();
+				var nodes = new ecs.Node.NodeList();
+				var listeners = new Map();
 				
 				inline function addEntityIfMatch(entity:ecs.Entity) 
 					if(entity.hasAll(componentTypes))
-						result.add(entity, new $tp($a{ctorArgs}));
+						nodes.add(entity, new $tp($a{ctorArgs}));
 				
-				for(entity in engine.entities) addEntityIfMatch(entity);
+				inline function track(entity:ecs.Entity) {
+					if(listeners.exists(entity)) return; // already tracking
+					listeners.set(entity, [
+						entity.componentAdded.handle(function() addEntityIfMatch(entity)),
+						entity.componentRemoved.handle(function() addEntityIfMatch(entity)),
+					]);
+				}
+				
+				inline function untrack(entity:ecs.Entity) {
+					if(!listeners.exists(entity)) return; // not tracking
+					var l = listeners.get(entity);
+					while(l.length > 0) l.pop().dissolve();
+					listeners.remove(entity);
+				}
+				
+				for(entity in engine.entities) {
+					addEntityIfMatch(entity);
+					track(entity);
+				}
 					
 				// TODO: if we destroy a node list, we need to dissolve the handlers
-				engine.entityAdded.handle(function(e) addEntityIfMatch(e));
-				engine.entityRemoved.handle(function(e) result.removeEntity(e));
+				engine.entityAdded.handle(function(e) {
+					addEntityIfMatch(e);
+					track(e);
+				});
+				engine.entityRemoved.handle(function(e) {
+					nodes.removeEntity(e);
+					untrack(e);
+				});
 				
-				return result;
+				return nodes;
 			}
 			
 		}

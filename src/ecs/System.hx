@@ -7,6 +7,7 @@ interface System {
 	function update(dt:Float):Void;
 	function onAdded(engine:Engine):Void;
 	function onRemoved(engine:Engine):Void;
+	function toString():String;
 }
 
 #if !macro @:genericBuild(ecs.Macro.buildNodeListSystem()) #end
@@ -35,4 +36,7 @@ class NodeListSystemBase<T> implements System {
 	function updateNode(node:T, dt:Float) {
 		
 	}
+	
+	public function toString()
+		return Type.getClassName(Type.getClass(this));
 }

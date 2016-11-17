@@ -11,7 +11,7 @@ class Engine {
 	public var entityAdded(default, null):Signal<Entity>;
 	public var entityRemoved(default, null):Signal<Entity>;
 	
-	var systems:Queue<System>;
+	var systems:Array<System>;
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	
 	var entityAddedTrigger:SignalTrigger<Entity>;
@@ -42,7 +42,8 @@ class Engine {
 	}
 	
 	public function addSystem(system:System) {
-		systems.whenever(system);
+		trace(system.toString());
+		systems.push(system);
 		system.onAdded(this);
 	}
 	
@@ -58,5 +59,13 @@ class Engine {
 	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
 		if(!nodeLists.exists(type)) nodeLists.set(type, factory(this));
 		return cast nodeLists.get(type);
+	}
+	
+	public function toString() {
+		var buf = new StringBuf();
+		// buf.add(entities);
+		buf.add([for(s in systems) s.toString()]);
+		// buf.add(nodeLists);
+		return buf.toString();
 	}
 }
