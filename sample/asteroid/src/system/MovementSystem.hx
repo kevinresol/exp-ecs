@@ -1,13 +1,13 @@
 package system;
 
-import ecs.Engine;
+import component.*;
 import ecs.Node;
 import ecs.System;
-import node.Nodes;
 import util.*;
 
 using tink.CoreApi;
 
+private typedef MovementNode = Node<Position, Motion>;
 class MovementSystem extends NodeListSystem<MovementNode> {
 	var config:Config;
 	

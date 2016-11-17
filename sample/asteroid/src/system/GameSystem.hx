@@ -1,9 +1,12 @@
 package system;
 
+import component.*;
 import ecs.*;
 import ecs.Node;
-import node.Nodes;
 import util.*;
+
+private typedef GameNode = Node<Game>;
+private typedef SpaceshipNode = Node<Spaceship>;
 
 class GameSystem extends System {
 	

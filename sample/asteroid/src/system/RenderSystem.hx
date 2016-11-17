@@ -1,13 +1,13 @@
 package system;
 
+import component.*;
 import ecs.Engine;
 import ecs.Node;
 import ecs.System;
-import node.Nodes;
-import util.*;
 
 using tink.CoreApi;
 
+private typedef RenderNode = Node<Position, Display>;
 class RenderSystem extends NodeListSystem<RenderNode> {
 	var container:openfl.display.DisplayObjectContainer;
 	var listeners:Array<CallbackLink>;
@@ -27,6 +27,7 @@ class RenderSystem extends NodeListSystem<RenderNode> {
 	}
 	
 	override function onRemoved(engine:Engine) {
+		super.onRemoved(engine);
 		while(listeners.length > 0) listeners.pop().dissolve();
 		nodes = null;
 	}

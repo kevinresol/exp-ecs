@@ -1,13 +1,12 @@
 package system;
 
-import ecs.Engine;
+import component.*;
 import ecs.Node;
 import ecs.System;
-import node.Nodes;
-import util.*;
 
 using tink.CoreApi;
 
+private typedef LifetimeNode = Node<Lifetime>;
 class LifetimeSystem extends NodeListSystem<LifetimeNode> {
 	override function updateNode(node:LifetimeNode, dt:Float) {
 		node.lifetime.lifetime -= dt;

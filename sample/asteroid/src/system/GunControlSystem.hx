@@ -1,13 +1,13 @@
 package system;
 
-import ecs.Engine;
+import component.*;
 import ecs.Node;
 import ecs.System;
-import node.Nodes;
 import util.*;
 
 using tink.CoreApi;
 
+private typedef GunControlNode = Node<GunControls, Position, Gun>;
 class GunControlSystem extends NodeListSystem<GunControlNode> {
 	var input:Input;
 	
