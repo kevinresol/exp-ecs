@@ -39,13 +39,10 @@ class RenderSystem extends NodeListSystem<RenderNode> {
 	}
 	
 	override function updateNode(node:RenderNode, dt:Float) {
-		for(node in nodes) {
-			var display = node.display.object;
-			var position = node.position;
-			display.x = position.position.x;
-			display.y = position.position.y;
-			display.rotation = position.rotation * 180 / Math.PI;
-			trace(display.x +','+display.y +','+display.rotation);
-		}
+		var display = node.display.object;
+		var position = node.position;
+		display.x = position.position.x;
+		display.y = position.position.y;
+		display.rotation = position.rotation * 180 / Math.PI;
 	}
 }

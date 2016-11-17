@@ -3,14 +3,17 @@ package;
 import ecs.Engine;
 import system.*;
 import entity.*;
+import util.*;
 
 class Main extends openfl.display.Sprite {
 	public function new() {
 		super();
 		var engine = new Engine();
 		var config = {width: 500, height: 500};
+		var input = new Input(stage);
 		
 		engine.addSystem(new GameSystem(engine, config));
+		engine.addSystem(new MotionControlSystem(input));
 		engine.addSystem(new MovementSystem(config));
 		engine.addSystem(new RenderSystem(this));
 		
