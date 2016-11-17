@@ -13,8 +13,9 @@ interface System {
 #if !macro @:genericBuild(ecs.Macro.buildNodeListSystem()) #end
 class NodeListSystem<T> {}
 
-class NodeListSystemBase<T> implements System {
+class NodeListSystemBase<T:NodeBase> implements System {
 	
+	var engine:Engine;
 	var nodes:NodeList<T>;
 	
 	public function new() {
@@ -22,10 +23,11 @@ class NodeListSystemBase<T> implements System {
 	}
 	
 	public function onAdded(engine:Engine) {
-		
+		this.engine = engine;
 	}
 	
 	public function onRemoved(engine:Engine) {
+		engine = null;
 		nodes = null;
 	}
 	

@@ -11,4 +11,7 @@
 	
 	<assets path="assets" rename="assets" />
 	
+	<haxeflag name="--times"/>
+	<haxeflag name="-dce" value="full"/>
+	
 </project>

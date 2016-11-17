@@ -6,7 +6,7 @@ using tink.CoreApi;
 class Node<Rest> {}
 
 // TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
-class NodeList<T> {
+class NodeList<T:NodeBase> {
 	public var empty(get, never):Bool;
 	public var nodeAdded:Signal<T>;
 	public var nodeRemoved:Signal<T>;
@@ -21,9 +21,9 @@ class NodeList<T> {
 		nodeRemoved = nodeRemovedTrigger = Signal.trigger();
 	}
 	
-	public function add(entity:Entity, node:T) {
-		if(!nodes.exists(entity)) {
-			nodes.set(entity, node);
+	public function add(node:T) {
+		if(!nodes.exists(node.entity)) {
+			nodes.set(node.entity, node);
 			nodeAddedTrigger.trigger(node);
 		}
 	}
@@ -41,7 +41,9 @@ class NodeList<T> {
 	inline function get_empty() return Lambda.empty(nodes);
 }
 
-interface NodeBase {}
+interface NodeBase {
+	var entity(default, null):Entity;
+}
 
 abstract NodeType(String) to String {
 	inline function new(v:String)

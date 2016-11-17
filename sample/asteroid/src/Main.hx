@@ -13,8 +13,10 @@ class Main extends openfl.display.Sprite {
 		var input = new Input(stage);
 		
 		engine.addSystem(new GameSystem(engine, config));
+		engine.addSystem(new GunControlSystem(input));
 		engine.addSystem(new MotionControlSystem(input));
 		engine.addSystem(new MovementSystem(config));
+		engine.addSystem(new LifetimeSystem());
 		engine.addSystem(new RenderSystem(this));
 		
 		engine.addEntity(new Game());

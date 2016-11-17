@@ -29,9 +29,11 @@ class Macro {
 		
 		var tp = 'ecs.node.$name'.asTypePath();
 		var arr = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
-		var ctorArgs = complexTypes.map(function(ct) return macro entity.get($p{ct.toString().split('.')}));
+		var ctorArgs = [macro entity];
+		for(ct in complexTypes) ctorArgs.push(macro entity.get($p{ct.toString().split('.')}));
 			
 		var def = macro class $name implements ecs.Node.NodeBase {
+			public var entity(default, null):ecs.Entity;
 			
 			public static var componentTypes:Array<ecs.Component.ComponentType> = $a{arr};
 			public static function createNodeList(engine:ecs.Engine) {
@@ -40,13 +42,17 @@ class Macro {
 				
 				inline function addEntityIfMatch(entity:ecs.Entity) 
 					if(entity.hasAll(componentTypes))
-						nodes.add(entity, new $tp($a{ctorArgs}));
+						nodes.add(new $tp($a{ctorArgs}));
+						
+				inline function removeEntityIfNoLongerMatch(entity:ecs.Entity) 
+					if(!entity.hasAll(componentTypes))
+						nodes.removeEntity(entity);
 				
 				inline function track(entity:ecs.Entity) {
 					if(listeners.exists(entity)) return; // already tracking
 					listeners.set(entity, [
 						entity.componentAdded.handle(function() addEntityIfMatch(entity)),
-						entity.componentRemoved.handle(function() addEntityIfMatch(entity)),
+						entity.componentRemoved.handle(function() removeEntityIfNoLongerMatch(entity)),
 					]);
 				}
 				
@@ -77,7 +83,13 @@ class Macro {
 			
 		}
 		
-		var ctorArgs = []; 
+		var ctorArgs = [{
+			name: 'entity',
+			type: macro:ecs.Entity,
+			opt: false,
+			meta: null,
+			value: null,
+		}]; 
 		for(i in 0...names.length) {
 			var name = names[i];
 			var ct = complexTypes[i];
@@ -102,12 +114,13 @@ class Macro {
 		}
 		
 		// constructor
-		var args = complexTypes.map(function(ct) return Context.parse(ct.toString(), pos));
+		var exprs = names.map(function(name) return macro this.$name = $i{name});
+		exprs.push(macro this.entity = entity);
 		def.fields.push({
 			name: 'new',
 			kind: FFun({
 				args: ctorArgs,
-				expr: macro $b{names.map(function(name) return macro this.$name = $i{name})},
+				expr: macro $b{exprs},
 				ret: null,
 			}),
 			pos: pos,
@@ -141,6 +154,7 @@ class Macro {
 			
 		var def = macro class $sysname extends ecs.System.NodeListSystemBase<$nodect> {
 			override function onAdded(engine:ecs.Engine) {
+				super.onAdded(engine);
 				nodes = engine.getNodeList($p{nodename});
 			}
 		}
