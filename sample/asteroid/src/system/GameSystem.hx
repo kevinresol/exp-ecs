@@ -5,29 +5,25 @@ import ecs.Node;
 import node.Nodes;
 import util.*;
 
-class GameSystem implements System {
+class GameSystem extends System {
 	
-	var engine:Engine;
 	var config:Config;
 	var gameNodes:NodeList<GameNode>;
 	var spaceships:NodeList<SpaceshipNode>;
 	// var asteroids:NodeList<AsteroidNode>;
 	
-	public function new(engine, config) {
-		this.engine = engine;
+	public function new(config) {
+		super();
 		this.config = config;
 	}
 	
-	public function onAdded(engine:Engine) {
+	override function onAdded(engine:Engine) {
+		super.onAdded(engine);
 		gameNodes = engine.getNodeList(GameNode);
 		spaceships = engine.getNodeList(SpaceshipNode);
 	}
 	
-	public function onRemoved(engine:Engine) {
-		
-	}
-	
-	public function update(dt:Float) {
+	override function update(dt:Float) {
 		for(node in gameNodes) {
 			if(spaceships.empty) {
 				if(node.game.lives > 0) {
@@ -47,7 +43,4 @@ class GameSystem implements System {
 			}
 		}
 	}
-	
-	public function toString()
-		return Type.getClassName(Type.getClass(this));
 }
