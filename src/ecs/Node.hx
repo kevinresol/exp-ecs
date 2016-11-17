@@ -1,15 +1,44 @@
 package ecs;
 
+using tink.CoreApi;
+
 #if !macro @:genericBuild(ecs.Macro.buildNode()) #end
 class Node<Rest> {}
 
 // TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
-abstract NodeList<T>(Map<Entity, T>) from Map<Entity, T> to Map<Entity, T> {
-	public inline function new() this = new Map();
+class NodeList<T> {
+	public var empty(get, never):Bool;
+	public var nodeAdded:Signal<T>;
+	public var nodeRemoved:Signal<T>;
 	
-	public inline function add(entity:Entity, node:T) this.set(entity, node);
-	public inline function removeEntity(entity:Entity) this.remove(entity);
-	public inline function iterator() return this.iterator();
+	var nodeAddedTrigger:SignalTrigger<T>;
+	var nodeRemovedTrigger:SignalTrigger<T>;
+	var nodes:Map<Entity, T>;
+	
+	public function new() {
+		nodes = new Map();
+		nodeAdded = nodeAddedTrigger = Signal.trigger();
+		nodeRemoved = nodeRemovedTrigger = Signal.trigger();
+	}
+	
+	public function add(entity:Entity, node:T) {
+		if(!nodes.exists(entity)) {
+			nodes.set(entity, node);
+			nodeAddedTrigger.trigger(node);
+		}
+	}
+	
+	public function removeEntity(entity:Entity) {
+		switch nodes.get(entity) {
+			case null: // do nothing
+			case node: 
+				nodes.remove(entity);
+				nodeRemovedTrigger.trigger(node);
+		}
+	}
+	
+	public inline function iterator() return nodes.iterator();
+	inline function get_empty() return Lambda.empty(nodes);
 }
 
 interface NodeBase {}

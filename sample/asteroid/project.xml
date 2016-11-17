@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="Asteroid" package="com.sample.asteroid" version="1.0.0" company="Company Name" />
+	<app main="Main" path="bin" file="Asteroid" />
+	
+	<source path="src" />
+	
+	<haxelib name="openfl" />
+	<haxelib name="ecs" />
+	
+	<assets path="assets" rename="assets" />
+	
+</project>
