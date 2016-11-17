@@ -2,9 +2,9 @@ package ecs;
 
 import ecs.Component;
 
-class EntityStateMachine {
+class EntityStateMachine<T:EnumValue> {
 	var entity:Entity;
-	var states:Map<String, EntityState>;
+	var states:Map<T, EntityState>;
 	var current:EntityState;
 	
 	public function new(entity) {
@@ -12,11 +12,11 @@ class EntityStateMachine {
 		states = new Map();
 	}
 	
-	public function add(name:String, state:EntityState) {
+	public function add(name:T, state:EntityState) {
 		states.set(name, state);
 	}
 	
-	public function change(name:String) {
+	public function change(name:T) {
 		var toAdd = switch states.get(name) {
 			case null: throw 'Entity state $name does not exist';
 			case next if(next == current): return;

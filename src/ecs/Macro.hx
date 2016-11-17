@@ -17,19 +17,20 @@ class Macro {
 		var names = []; 
 		var complexTypes = [];
 		for(param in params) switch param.reduce() {
-			case TInst(_.get() => cls, _):
-				fullnames.push(cls.pack.concat([cls.name]).join('_'));
+			case TInst(_.get() => cls, p):
+				fullnames.push(cls.pack.concat([cls.name]).join('_') + (p.length == 0 ? '' : '<' + [for(p in p) p.getID()].join(',') + '>'));
 				names.push(cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1));
 				complexTypes.push(param.toComplex());
 			default: pos.makeFailure('Expected class').sure();
 		}
 		fullnames.sort(Reflect.compare);
+		
 		var name = 'Node_' + Context.signature(fullnames.join('_'));
 		try return Context.getType('ecs.node.$name') catch(e:Dynamic) {}
 		
 		var tp = 'ecs.node.$name'.asTypePath();
-		var arr = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
-		var ctorArgs = complexTypes.map(function(ct) return macro entity.get($p{ct.toString().split('.')}));
+		var arr = complexTypes.map(function(ct) return macro @:pos(pos) $p{ct.toString().split('.')});
+		var ctorArgs = complexTypes.map(function(ct) return macro @:pos(pos) entity.get($p{ct.toString().split('.')}));
 			
 		var def = macro class $name implements ecs.Node.NodeBase {
 			
@@ -76,7 +77,6 @@ class Macro {
 			}
 			
 		}
-		
 		var ctorArgs = []; 
 		for(i in 0...names.length) {
 			var name = names[i];
@@ -102,12 +102,11 @@ class Macro {
 		}
 		
 		// constructor
-		var args = complexTypes.map(function(ct) return Context.parse(ct.toString(), pos));
 		def.fields.push({
 			name: 'new',
 			kind: FFun({
 				args: ctorArgs,
-				expr: macro $b{names.map(function(name) return macro this.$name = $i{name})},
+				expr: macro @:pos(pos) $b{names.map(function(name) return macro @:pos(pos) this.$name = $i{name})},
 				ret: null,
 			}),
 			pos: pos,
@@ -115,7 +114,8 @@ class Macro {
 			meta: null
 		});
 		def.pack = ['ecs', 'node'];
-		
+		def.pos = pos;
+		trace(new haxe.macro.Printer().printTypeDefinition(def));
 		Context.defineType(def);
 		return Context.getType('ecs.node.$name');
 		

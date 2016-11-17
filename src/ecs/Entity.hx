@@ -19,7 +19,7 @@ class Entity {
 	}
 	
 	public function add(component:Component, ?type:ComponentType) {
-		if(type == null) type = component;
+		if(type == null) type = ComponentType.of(component);
 		if(components.exists(type)) remove(type);
 		components.set(type, component);
 		componentAddedTrigger.trigger(type);
