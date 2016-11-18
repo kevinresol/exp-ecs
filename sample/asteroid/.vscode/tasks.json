@@ -1,7 +1,7 @@
 {
     "version": "0.1.0",
-    "command": "haxe",
-    "args": ["openfl.hxml"],
+    "command": "openfl",
+    "args": ["test", "flash"],
     "problemMatcher": {
         "owner": "haxe",
         "pattern": {

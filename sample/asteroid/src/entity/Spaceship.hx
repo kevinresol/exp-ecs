@@ -3,6 +3,7 @@ package entity;
 import openfl.ui.Keyboard;
 import component.*;
 import ecs.*;
+import ecs.Component;
 import ecs.EntityStateMachine;
 import openfl.display.*;
 
@@ -14,21 +15,21 @@ abstract Spaceship(Entity) to Entity {
 		var playing = new EntityState();
 		playing.add(Motion, new Motion(0, 0, 0, 15));
 		playing.add(MotionControls, new MotionControls(Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, 100, 3));
+		playing.add(Display, new ComponentInstanceProvider(new Display(new graphic.SpaceshipView()), 'alive'));
+		playing.add(Gun, new Gun(8, 0, 0.3, 2));
+		playing.add(GunControls, new GunControls(Keyboard.SPACE));
+		playing.add(Collision, new Collision(9));
 		fsm.add('playing', playing);
 		fsm.change('playing');
 		
-		var sprite = new Sprite();
-		sprite.graphics.lineStyle(2, 0);
-		sprite.graphics.moveTo(20, 0);
-		sprite.graphics.lineTo(-20, -10);
-		sprite.graphics.lineTo(-10, 0);
-		sprite.graphics.lineTo(-20, 10);
-		sprite.graphics.lineTo(20, 0);
+		var destroyed = new EntityState();
+		var view = new graphic.SpaceshipDeathView();
+		destroyed.add(Display, new ComponentInstanceProvider(new Display(view), 'dead'));
+		destroyed.add(Animation, new Animation(view));
+		destroyed.add(Death, new Death(2));
+		fsm.add('destroyed', destroyed);
 		
 		this.add(new Position(250, 250, 0));
 		this.add(new component.Spaceship(fsm));
-		this.add(new Gun(8, 0, 0.3, 2));
-		this.add(new GunControls(Keyboard.SPACE));
-		this.add(new Display(sprite));
 	}
 }

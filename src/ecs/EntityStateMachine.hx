@@ -29,8 +29,11 @@ class EntityStateMachine {
 					else
 						entity.remove(key);
 				}
+				current = next;
 				toAdd;
-			case next: next.providers;
+			case next: 
+				current = next;
+				next.providers;
 		}
 		for(key in toAdd.keys())
 			entity.add(toAdd[key].get(), key);

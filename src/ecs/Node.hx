@@ -8,6 +8,7 @@ class Node<Rest> {}
 // TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
 class NodeList<T:NodeBase> {
 	public var empty(get, never):Bool;
+	public var head(get, never):T;
 	public var nodeAdded:Signal<T>;
 	public var nodeRemoved:Signal<T>;
 	
@@ -39,6 +40,10 @@ class NodeList<T:NodeBase> {
 	
 	public inline function iterator() return nodes.iterator();
 	inline function get_empty() return Lambda.empty(nodes);
+	function get_head() {
+		for(node in nodes) return node;
+		return null;
+	}
 }
 
 interface NodeBase {
