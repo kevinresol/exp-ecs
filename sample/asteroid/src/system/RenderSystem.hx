@@ -54,15 +54,9 @@ class RenderSystem extends NodeListSystem<{nodes:Node<Position, Display>}> {
 		for(node in nodes) {
 			var display = node.display.object;
 			var position = node.position;
-			#if openfl
-			display.x = position.position.x;
-			display.y = position.position.y;
-			display.rotation = position.rotation * 180 / Math.PI;
-			#elseif luxe
-			display.pos.x = position.position.x;
-			display.pos.y = position.position.y;
-			display.rotation_z = position.rotation * 180 / Math.PI;
-			#end
+			#if openfl display.x #elseif luxe display.pos.x #end = position.position.x;
+			#if openfl display.y #elseif luxe display.pos.y #end = position.position.y;
+			#if openfl display.rotation #elseif luxe display.rotation_z #end = position.rotation * 180 / Math.PI;
 		}
 	}
 }
