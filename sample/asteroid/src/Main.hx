@@ -7,14 +7,13 @@ import util.*;
 
 class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 	
-	var engine:ecs.Engine;
-	var input:Input;
+	var engine = new Engine();
+	var input = new Input();
 	
 	#if openfl
 	
 		public function new() {
 			super();
-			input = new Input();
 			stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, function(e) input.keyDown(e.keyCode));
 			stage.addEventListener(openfl.events.KeyboardEvent.KEY_UP, function(e) input.keyUp(e.keyCode));
 			start(input);
@@ -34,7 +33,6 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		}
 		
 		override function ready() {
-			input = new Input();
 			start(input);
 		}
 		
@@ -49,14 +47,12 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		}
 		
 		override function update(dt:Float) {
-			if(engine != null)
-				engine.update(dt);
+			engine.update(dt);
 		}
 		
 	#end
 	
 	function start(input) {
-		engine = new Engine();
 		var config = {
 			width: #if openfl stage.stageWidth #elseif luxe Luxe.screen.w #end,
 			height: #if openfl stage.stageHeight #elseif luxe Luxe.screen.h #end,
