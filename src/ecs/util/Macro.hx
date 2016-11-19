@@ -24,7 +24,7 @@ class Macro {
 					fullnames.push(cls.pack.concat([cls.name]).join('_'));
 					names.push(cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1));
 					complexTypes.push(param.toComplex());
-				default: pos.makeFailure('Expected a class that implements the Component interface, but got ${type.getID()}').sure();
+				default: pos.makeFailure('Expected a class that extends Component, but got ${type.getID()}').sure();
 			}
 		}
 		fullnames.sort(Reflect.compare);
