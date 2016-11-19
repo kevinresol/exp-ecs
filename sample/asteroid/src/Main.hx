@@ -28,16 +28,22 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		}
 	
 	#elseif luxe
-	
+		override function config(config:luxe.GameConfig) {
+			config.render.antialiasing = 4;
+			return config;
+		}
+		
 		override function ready() {
 			input = new Input();
 			start(input);
 		}
+		
 		override function onkeyup(event:luxe.Input.KeyEvent) {
 			if(event.keycode == luxe.Input.Key.escape) {
 				Luxe.shutdown();
 			} else input.keyUp(event.keycode);
 		}
+		
 		override function onkeydown(event:luxe.Input.KeyEvent) {
 			input.keyDown(event.keycode);
 		}

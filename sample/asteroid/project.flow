@@ -17,6 +17,7 @@
 
       //This configures the build process
     build : {
+      flags: ['-dce full'],
       dependencies : {
         luxe : '*',
         ecs : '*'
