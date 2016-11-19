@@ -1,33 +1,15 @@
 package system;
 
 import component.*;
-import ecs.*;
+import ecs.System;
 import ecs.Node;
 import util.*;
 
-private typedef SpaceshipNode = Node<Spaceship, Position, Collision>;
-private typedef AsteroidNode = Node<Asteroid, Position, Collision>;
-private typedef BulletNode = Node<Bullet, Position, Collision>;
-
-class CollisionSystem extends System {
-	
-	var spaceships:NodeList<SpaceshipNode>;
-	var asteroids:NodeList<AsteroidNode>;
-	var bullets:NodeList<BulletNode>;
-	
-	override function onAdded(engine:Engine) {
-		super.onAdded(engine);
-		spaceships = engine.getNodeList(SpaceshipNode);
-		asteroids = engine.getNodeList(AsteroidNode);
-		bullets = engine.getNodeList(BulletNode);
-	}
-	
-	override function onRemoved(engine:Engine) {
-		super.onRemoved(engine);
-		spaceships = null;
-		asteroids = null;
-		bullets = null;
-	}
+class CollisionSystem extends NodeListSystem<{
+	spaceships:Node<Spaceship, Position, Collision>,
+	asteroids:Node<Asteroid, Position, Collision>,
+	bullets:Node<Bullet, Position, Collision>,
+}> {
 	
 	override function update(dt:Float) {
 		for(bullet in bullets) for(asteroid in asteroids) {

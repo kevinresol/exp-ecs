@@ -21,19 +21,4 @@ class System {
 }
 
 #if !macro @:genericBuild(ecs.Macro.buildNodeListSystem()) #end
-class NodeListSystem<T> {}
-
-class NodeListSystemBase<T:NodeBase> extends System {
-	
-	var nodes:NodeList<T>;
-	
-	override function onRemoved(engine:Engine) {
-		super.onRemoved(engine);
-		nodes = null;
-	}
-	
-	override function update(dt:Float)
-		for(node in nodes) updateNode(node, dt);
-	
-	function updateNode(node:T, dt:Float) {}
-}
+class NodeListSystem<Rest> {}

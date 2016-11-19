@@ -3,6 +3,7 @@ package ecs;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 using tink.MacroApi;
+using StringTools;
 
 class Macro {
 	
@@ -16,12 +17,15 @@ class Macro {
 		var fullnames = [];
 		var names = []; 
 		var complexTypes = [];
-		for(param in params) switch param.reduce() {
-			case TInst(_.get() => cls, _):
-				fullnames.push(cls.pack.concat([cls.name]).join('_'));
-				names.push(cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1));
-				complexTypes.push(param.toComplex());
-			default: pos.makeFailure('Expected class').sure();
+		for(param in params) {
+			var type = param.reduce();
+			switch type {
+				case TInst(_.get() => cls, _) if(isComponent(type)):
+					fullnames.push(cls.pack.concat([cls.name]).join('_'));
+					names.push(cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1));
+					complexTypes.push(param.toComplex());
+				default: pos.makeFailure('Expected a class that implements the Component interface, but got ${type.getID()}').sure();
+			}
 		}
 		fullnames.sort(Reflect.compare);
 		var name = 'Node_' + Context.signature(fullnames.join('_'));
@@ -136,30 +140,54 @@ class Macro {
 	}
 	
 	public static function buildNodeListSystem() {
-		var type = switch Context.getLocalType() {
-			case TInst(_, [type]): type.reduce();
-			default: throw 'assert';
+		
+		var pos = Context.currentPos();
+		var param = switch Context.getLocalType() {
+			case TInst(_, [TAnonymous(_.get() => a)]): a;
+			default: pos.makeFailure('Expected a single anonymous structure as the type parameter for NodeListSystem').sure();
 		}
 		
-		var cls = switch type {
-			case TInst(_.get() => cls, _): cls;
-			default: throw 'assert';
+		var fullnames = [];
+		var names = []; 
+		var complexTypes = [];
+		var addedExprs = [];
+		var removedExprs = [];
+		
+		for(field in param.fields) {
+			var name = field.name;
+			var ct = field.type.toComplex();
+			names.push(name);
+			complexTypes.push(ct);
+			addedExprs.push(macro $i{name} = engine.getNodeList($p{ct.toString().split('.')}));
+			removedExprs.push(macro $i{name} = null);
 		}
 		
-		var sysname = 'NodeListSystem_' + Context.signature(cls);
+		var sysname = 'NodeListSystem_' + Context.signature(param);
 		try return Context.getType('ecs.system.$sysname') catch(e:Dynamic) {}
 		
-		var nodect = type.toComplex();
-		var nodename = nodect.toString().split('.');
-			
-		var def = macro class $sysname extends ecs.System.NodeListSystemBase<$nodect> {
+		var def = macro class $sysname extends ecs.System {
 			override function onAdded(engine:ecs.Engine) {
 				super.onAdded(engine);
-				nodes = engine.getNodeList($p{nodename});
+				$b{addedExprs}
+			}
+			override function onRemoved(engine:ecs.Engine) {
+				super.onRemoved(engine);
+				$b{removedExprs}
 			}
 		}
+		
+		for(i in 0...names.length)
+			def.fields.push({
+				name: names[i],
+				kind: {
+					var ct = complexTypes[i];
+					FVar(macro:ecs.Node.NodeList<$ct>);
+				},
+				pos: pos, 
+			});
 		def.pack = ['ecs', 'system'];
 		Context.defineType(def);
+		// trace(new haxe.macro.Printer().printTypeDefinition(def));
 		
 		return Context.getType('ecs.system.$sysname');
 	}
@@ -179,5 +207,19 @@ class Macro {
 		}
 		e.pos.makeFailure('Expected Class<NodeBase>').sure();
 		return macro null;
+	}
+	
+	static function isComponent(type:haxe.macro.Type) {
+		switch type.reduce() {
+			case TInst(_.get() => cls, _):
+				for(i in cls.interfaces) {
+					switch i.t.get() {
+						case {name: 'Component', pack: ['ecs']}: return true;
+						default:
+					}
+				}
+			default:
+		}
+		return false;
 	}
 }

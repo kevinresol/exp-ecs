@@ -7,8 +7,7 @@ import util.*;
 
 using tink.CoreApi;
 
-private typedef MotionControlNode = Node<MotionControls, Position, Motion>;
-class MotionControlSystem extends NodeListSystem<MotionControlNode> {
+class MotionControlSystem extends NodeListSystem<{nodes:Node<MotionControls, Position, Motion>}> {
 	var input:Input;
 	
 	public function new(input) {
@@ -16,16 +15,18 @@ class MotionControlSystem extends NodeListSystem<MotionControlNode> {
 		this.input = input;
 	}
 	
-	override function updateNode(node:MotionControlNode, dt:Float) {
-		var control = node.motionControls;
-		var position = node.position;
-		var motion = node.motion;
-		
-		if(input.isDown(control.left)) position.rotation -= control.rotationRate * dt;
-		if(input.isDown(control.right)) position.rotation += control.rotationRate * dt;
-		if(input.isDown(control.accelerate)) {
-			motion.velocity.x += Math.cos(position.rotation) * control.accelerationRate * dt;
-			motion.velocity.y += Math.sin(position.rotation) * control.accelerationRate * dt;
+	override function update(dt:Float) {
+		for(node in nodes) {
+			var control = node.motionControls;
+			var position = node.position;
+			var motion = node.motion;
+			
+			if(input.isDown(control.left)) position.rotation -= control.rotationRate * dt;
+			if(input.isDown(control.right)) position.rotation += control.rotationRate * dt;
+			if(input.isDown(control.accelerate)) {
+				motion.velocity.x += Math.cos(position.rotation) * control.accelerationRate * dt;
+				motion.velocity.y += Math.sin(position.rotation) * control.accelerationRate * dt;
+			}
 		}
 	}
 }

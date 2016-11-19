@@ -1,16 +1,18 @@
 package system;
 
-import ecs.Engine;
+import component.*;
 import ecs.Node;
 import ecs.System;
-import node.*;
 
 using tink.CoreApi;
 
-class MovementSystem extends NodeListSystem<MovementNode> {
+
+class MovementSystem extends NodeListSystem<{nodes:Node<Position, Velocity>}> {
 	
-	override function updateNode(node:MovementNode, dt:Float) {
-		node.position.x += node.velocity.x * dt;
-		trace(node.position.x);
+	override function update(dt:Float) {
+		for(node in nodes) {
+			node.position.x += node.velocity.x * dt;
+			trace(node.position.x);
+		}
 	}
 }

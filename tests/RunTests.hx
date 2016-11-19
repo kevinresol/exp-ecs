@@ -31,8 +31,6 @@ class RunTests {
 		
 		engine.addEntity(entity);
 		
-		engine.getNodeList(MovementNode);
-		
 		var timer = new Timer(33);
 		timer.run = function() engine.update(33/1000);
 		

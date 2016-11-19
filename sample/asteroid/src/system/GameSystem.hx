@@ -1,42 +1,22 @@
 package system;
 
 import component.*;
-import ecs.*;
+import ecs.System;
 import ecs.Node;
 import util.*;
 
-private typedef GameNode = Node<Game>;
-private typedef SpaceshipNode = Node<Spaceship, Position>;
-private typedef AsteroidNode = Node<Asteroid, Position, Collision>;
-private typedef BulletNode = Node<Bullet>;
-
-class GameSystem extends System {
+class GameSystem extends NodeListSystem<{
+	gameNodes:Node<Game>,
+	spaceships:Node<Spaceship, Position>,
+	asteroids:Node<Asteroid, Position, Collision>,
+	bullets:Node<Bullet>,
+}> {
 	
 	var config:Config;
-	var gameNodes:NodeList<GameNode>;
-	var spaceships:NodeList<SpaceshipNode>;
-	var asteroids:NodeList<AsteroidNode>;
-	var bullets:NodeList<BulletNode>;
 	
 	public function new(config) {
 		super();
 		this.config = config;
-	}
-	
-	override function onAdded(engine:Engine) {
-		super.onAdded(engine);
-		gameNodes = engine.getNodeList(GameNode);
-		spaceships = engine.getNodeList(SpaceshipNode);
-		asteroids = engine.getNodeList(AsteroidNode);
-		bullets = engine.getNodeList(BulletNode);
-	}
-	
-	override function onRemoved(engine:Engine) {
-		super.onRemoved(engine);
-		gameNodes = null;
-		spaceships = null;
-		asteroids = null;
-		bullets = null;
 	}
 	
 	override function update(dt:Float) {

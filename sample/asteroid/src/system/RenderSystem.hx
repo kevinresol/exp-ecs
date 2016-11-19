@@ -7,8 +7,7 @@ import ecs.System;
 
 using tink.CoreApi;
 
-private typedef RenderNode = Node<Position, Display>;
-class RenderSystem extends NodeListSystem<RenderNode> {
+class RenderSystem extends NodeListSystem<{nodes:Node<Position, Display>}> {
 	var container:openfl.display.DisplayObjectContainer;
 	var listeners:Array<CallbackLink>;
 	
@@ -29,21 +28,22 @@ class RenderSystem extends NodeListSystem<RenderNode> {
 	override function onRemoved(engine:Engine) {
 		super.onRemoved(engine);
 		while(listeners.length > 0) listeners.pop().dissolve();
-		nodes = null;
 	}
 	
-	function addToDisplay(node:RenderNode) {
+	function addToDisplay(node) {
 		container.addChild(node.display.object);
 	}
-	function removeFromDisplay(node:RenderNode) {
+	function removeFromDisplay(node) {
 		container.removeChild(node.display.object);
 	}
 	
-	override function updateNode(node:RenderNode, dt:Float) {
-		var display = node.display.object;
-		var position = node.position;
-		display.x = position.position.x;
-		display.y = position.position.y;
-		display.rotation = position.rotation * 180 / Math.PI;
+	override function update(dt:Float) {
+		for(node in nodes) {
+			var display = node.display.object;
+			var position = node.position;
+			display.x = position.position.x;
+			display.y = position.position.y;
+			display.rotation = position.rotation * 180 / Math.PI;
+		}
 	}
 }

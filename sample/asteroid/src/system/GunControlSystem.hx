@@ -7,8 +7,7 @@ import util.*;
 
 using tink.CoreApi;
 
-private typedef GunControlNode = Node<GunControls, Position, Gun>;
-class GunControlSystem extends NodeListSystem<GunControlNode> {
+class GunControlSystem extends NodeListSystem<{nodes:Node<GunControls, Position, Gun>}> {
 	var input:Input;
 	
 	public function new(input) {
@@ -16,16 +15,18 @@ class GunControlSystem extends NodeListSystem<GunControlNode> {
 		this.input = input;
 	}
 	
-	override function updateNode(node:GunControlNode, dt:Float) {
-		var control = node.gunControls;
-		var position = node.position;
-		var gun = node.gun;
-		
-		var triggered = input.isDown(control.trigger);
-		gun.elapsed += dt;
-		if(triggered && gun.elapsed > gun.interval) {
-			engine.addEntity(new entity.Bullet(gun, position));
-			gun.elapsed = 0;
+	override function update(dt:Float) {
+		for(node in nodes) {
+			var control = node.gunControls;
+			var position = node.position;
+			var gun = node.gun;
+			
+			var triggered = input.isDown(control.trigger);
+			gun.elapsed += dt;
+			if(triggered && gun.elapsed > gun.interval) {
+				engine.addEntity(new entity.Bullet(gun, position));
+				gun.elapsed = 0;
+			}
 		}
 	}
 }
