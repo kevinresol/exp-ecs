@@ -6,7 +6,6 @@ import ecs.System;
 
 using tink.CoreApi;
 
-private typedef BulletNode = Node<Bullet>;
 class BulletSystem extends NodeListSystem<{nodes:Node<Bullet>}> {
 	override function update(dt:Float) {
 		for(node in nodes) {
