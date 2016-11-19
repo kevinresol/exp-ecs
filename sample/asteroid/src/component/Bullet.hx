@@ -1,6 +1,6 @@
 package component;
 
-import ecs.*;
+import ecs.component.*;
 
 class Bullet extends Component {
 	public var lifetime:Float;

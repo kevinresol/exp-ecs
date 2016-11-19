@@ -1,6 +1,8 @@
 package component;
 
-class Position extends ecs.Component {	
+import ecs.component.*;
+
+class Position extends Component {	
 	public var x:Float;
 	public var y:Float;
 	

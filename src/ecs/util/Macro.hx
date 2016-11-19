@@ -1,4 +1,4 @@
-package ecs;
+package ecs.util;
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -36,23 +36,23 @@ class Macro {
 		var ctorArgs = [macro entity];
 		for(ct in complexTypes) ctorArgs.push(macro entity.get($p{ct.toString().split('.')}));
 			
-		var def = macro class $name implements ecs.Node.NodeBase {
-			public var entity(default, null):ecs.Entity;
+		var def = macro class $name implements ecs.node.NodeBase {
+			public var entity(default, null):ecs.entity.Entity;
 			
-			public static var componentTypes:Array<ecs.Component.ComponentType> = $a{arr};
+			public static var componentTypes:Array<ecs.component.ComponentType> = $a{arr};
 			public static function createNodeList(engine:ecs.Engine) {
-				var nodes = new ecs.Node.NodeList();
+				var nodes = new ecs.node.NodeList();
 				var listeners = new Map();
 				
-				inline function addEntityIfMatch(entity:ecs.Entity) 
+				inline function addEntityIfMatch(entity:ecs.entity.Entity) 
 					if(entity.hasAll(componentTypes))
 						nodes.add(new $tp($a{ctorArgs}));
 						
-				inline function removeEntityIfNoLongerMatch(entity:ecs.Entity) 
+				inline function removeEntityIfNoLongerMatch(entity:ecs.entity.Entity) 
 					if(!entity.hasAll(componentTypes))
 						nodes.removeEntity(entity);
 				
-				inline function track(entity:ecs.Entity) {
+				inline function track(entity:ecs.entity.Entity) {
 					if(listeners.exists(entity)) return; // already tracking
 					listeners.set(entity, [
 						entity.componentAdded.handle(function() addEntityIfMatch(entity)),
@@ -60,7 +60,7 @@ class Macro {
 					]);
 				}
 				
-				inline function untrack(entity:ecs.Entity) {
+				inline function untrack(entity:ecs.entity.Entity) {
 					if(!listeners.exists(entity)) return; // not tracking
 					var l = listeners.get(entity);
 					while(l.length > 0) l.pop().dissolve();
@@ -89,7 +89,7 @@ class Macro {
 		
 		var ctorArgs = [{
 			name: 'entity',
-			type: macro:ecs.Entity,
+			type: macro:ecs.entity.Entity,
 			opt: false,
 			meta: null,
 			value: null,
@@ -165,7 +165,7 @@ class Macro {
 		var sysname = 'NodeListSystem_' + Context.signature(param);
 		try return Context.getType('ecs.system.$sysname') catch(e:Dynamic) {}
 		
-		var def = macro class $sysname extends ecs.System {
+		var def = macro class $sysname extends ecs.system.System {
 			override function onAdded(engine:ecs.Engine) {
 				super.onAdded(engine);
 				$b{addedExprs}
@@ -181,7 +181,7 @@ class Macro {
 				name: names[i],
 				kind: {
 					var ct = complexTypes[i];
-					FVar(macro:ecs.Node.NodeList<$ct>);
+					FVar(macro:ecs.node.NodeList<$ct>);
 				},
 				pos: pos, 
 			});
@@ -195,7 +195,7 @@ class Macro {
 	static var re = ~/Class<([^>]*)>/;
 	public static function getNodeList(ethis:Expr, e:Expr) {
 		var type = Context.typeof(e);
-		if(!Context.unify(type, (macro:Class<ecs.Node.NodeBase>).toType().sure()))
+		if(!Context.unify(type, (macro:Class<ecs.node.NodeBase>).toType().sure()))
 			e.pos.makeFailure('Expected Class<NodeBase>').sure();
 			
 		switch type {
@@ -214,7 +214,7 @@ class Macro {
 			case TInst(_.get() => cls, _):
 				if(cls.superClass == null) return false;
 				return switch cls.superClass.t.get() {
-					case {name: 'Component', pack: ['ecs']}: true;
+					case {name: 'Component', pack: ['ecs', 'component']}: true;
 					default: false;
 				}
 			default: return false;

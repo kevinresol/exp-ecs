@@ -1,6 +1,6 @@
 package component;
 
-import ecs.*;
+import ecs.component.*;
 
 class Collision extends Component {
 	public var radius:Int;

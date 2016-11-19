@@ -1,8 +1,8 @@
 package system;
 
 import component.*;
-import ecs.System;
-import ecs.Node;
+import ecs.system.*;
+import ecs.node.*;
 import util.*;
 
 class CollisionSystem extends NodeListSystem<{

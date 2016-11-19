@@ -1,6 +1,6 @@
 package component;
 
-import ecs.*;
+import ecs.component.*;
 
 class GunControls extends Component {
 	public var trigger:Int;

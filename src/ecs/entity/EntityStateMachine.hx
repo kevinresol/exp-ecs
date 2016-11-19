@@ -1,6 +1,6 @@
-package ecs;
+package ecs.entity;
 
-import ecs.Component;
+import ecs.component.*;
 
 class EntityStateMachine {
 	var entity:Entity;
@@ -37,18 +37,5 @@ class EntityStateMachine {
 		}
 		for(key in toAdd.keys())
 			entity.add(toAdd[key].get(), key);
-	}
-}
-
-class EntityState {
-	
-	public var providers:Map<ComponentType, ComponentProvider>;
-	
-	public function new() {
-		providers = new Map();
-	}
-	
-	public function add(type:ComponentType, provider:ComponentProvider) {
-		providers.set(type, provider);
 	}
 }

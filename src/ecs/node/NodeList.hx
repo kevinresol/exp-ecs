@@ -1,9 +1,8 @@
-package ecs;
+package ecs.node;
 
+import ecs.node.Node;
+import ecs.entity.*;
 using tink.CoreApi;
-
-#if !macro @:genericBuild(ecs.Macro.buildNode()) #end
-class Node<Rest> {}
 
 // TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
 class NodeList<T:NodeBase> {
@@ -44,25 +43,4 @@ class NodeList<T:NodeBase> {
 		for(node in nodes) return node;
 		return null;
 	}
-}
-
-interface NodeBase {
-	var entity(default, null):Entity;
-}
-
-abstract NodeType(String) to String {
-	inline function new(v:String)
-		this = v;
-	
-	@:from
-	public static inline function ofClass(v:Class<NodeBase>):NodeType
-		return new NodeType(Type.getClassName(v));
-		
-	@:from
-	public static inline function ofInstance(v:NodeBase):NodeType
-		return ofClass(Type.getClass(v));
-		
-	@:to
-	public inline function toClass():Class<NodeBase>
-		return cast Type.resolveClass(this);
 }

@@ -1,9 +1,8 @@
 package entity;
 
 import component.*;
-import ecs.*;
-import ecs.Component;
-import ecs.EntityStateMachine;
+import ecs.entity.*;
+import ecs.component.*;
 
 abstract Spaceship(Entity) to Entity {
 	public function new(x, y) {

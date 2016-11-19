@@ -1,8 +1,9 @@
 package ;
 
 import ecs.*;
-import ecs.EntityStateMachine;
-import ecs.Component;
+import ecs.entity.*;
+import ecs.component.*;
+import ecs.node.*;
 import component.*;
 import node.*;
 import system.*;
@@ -19,9 +20,9 @@ class RunTests {
 		
 		var fsm = new EntityStateMachine(entity);
 		var forward = new EntityState();
-		forward.add(Velocity, new ComponentInstanceProvider(new Velocity(1, 0), 'forward'));
+		forward.add(Velocity, new Velocity(1, 0).asProvider('forward'));
 		var backward = new EntityState();
-		backward.add(Velocity, new ComponentInstanceProvider(new Velocity(-1, 0), 'backward'));
+		backward.add(Velocity, new Velocity(-1, 0).asProvider('backward'));
 		fsm.add('forward', forward);
 		fsm.add('backward', backward);
 		fsm.change('forward');

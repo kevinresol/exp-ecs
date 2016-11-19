@@ -1,6 +1,8 @@
 package ecs;
 
-import ecs.Node;
+import ecs.entity.*;
+import ecs.node.*;
+import ecs.system.*;
 import tink.priority.Queue;
 
 using tink.CoreApi;
@@ -52,7 +54,7 @@ class Engine {
 	}
 	
 	public macro function getNodeList(ethis, e) {
-		return Macro.getNodeList(ethis, e);
+		return ecs.util.Macro.getNodeList(ethis, e);
 	}
 	
 	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {

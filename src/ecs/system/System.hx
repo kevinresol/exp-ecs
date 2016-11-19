@@ -1,6 +1,7 @@
-package ecs;
+package ecs.system;
 
-import ecs.Node;
+import ecs.*;
+import ecs.node.*;
 using tink.CoreApi;
 
 class System {
@@ -19,6 +20,3 @@ class System {
 	public function toString()
 		return Type.getClassName(Type.getClass(this));
 }
-
-#if !macro @:genericBuild(ecs.Macro.buildNodeListSystem()) #end
-class NodeListSystem<Rest> {}

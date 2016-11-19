@@ -1,8 +1,7 @@
 package entity;
 
 import component.*;
-import ecs.*;
-import ecs.EntityStateMachine;
+import ecs.entity.*;
 
 abstract Asteroid(Entity) to Entity {
 	public function new(radius, x, y) {

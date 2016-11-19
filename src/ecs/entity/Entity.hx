@@ -1,6 +1,6 @@
-package ecs;
+package ecs.entity;
 
-import ecs.Component;
+import ecs.component.*;
 using tink.CoreApi;
 
 class Entity {

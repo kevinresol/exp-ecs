@@ -1,8 +1,8 @@
 package system;
 
 import component.*;
-import ecs.Node;
-import ecs.System;
+import ecs.node.*;
+import ecs.system.*;
 import util.*;
 
 using tink.CoreApi;

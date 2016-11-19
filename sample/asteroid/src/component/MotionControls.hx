@@ -1,6 +1,6 @@
 package component;
 
-import ecs.*;
+import ecs.component.*;
 
 class MotionControls extends Component {
 	public var left:Int;
