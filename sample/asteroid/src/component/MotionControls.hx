@@ -2,7 +2,7 @@ package component;
 
 import ecs.*;
 
-class MotionControls implements Component {
+class MotionControls extends Component {
 	public var left:Int;
 	public var right:Int;
 	public var accelerate:Int;

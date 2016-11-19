@@ -1,6 +1,6 @@
 package component;
 
-class Velocity implements ecs.Component {	
+class Velocity extends ecs.Component {	
 	public var x:Float;
 	public var y:Float;
 	

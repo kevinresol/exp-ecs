@@ -212,14 +212,12 @@ class Macro {
 	static function isComponent(type:haxe.macro.Type) {
 		switch type.reduce() {
 			case TInst(_.get() => cls, _):
-				for(i in cls.interfaces) {
-					switch i.t.get() {
-						case {name: 'Component', pack: ['ecs']}: return true;
-						default:
-					}
+				if(cls.superClass == null) return false;
+				return switch cls.superClass.t.get() {
+					case {name: 'Component', pack: ['ecs']}: true;
+					default: false;
 				}
-			default:
+			default: return false;
 		}
-		return false;
 	}
 }

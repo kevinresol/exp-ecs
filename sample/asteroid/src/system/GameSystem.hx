@@ -32,7 +32,7 @@ class GameSystem extends NodeListSystem<{
 						}
 					}
 					if(clear) {
-						engine.addEntity(new entity.Spaceship());
+						engine.addEntity(new entity.Spaceship(newPos.x, newPos.y));
 						node.game.lives--;
 					}
 				} else {

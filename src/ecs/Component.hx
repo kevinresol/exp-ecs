@@ -1,6 +1,9 @@
 package ecs;
 
-interface Component {}
+class Component {
+	public inline function asProvider(?id:String)
+		return new ComponentInstanceProvider(this, id);
+}
 
 abstract ComponentType(String) {
 	inline function new(v:String)

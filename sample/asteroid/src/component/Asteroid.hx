@@ -2,7 +2,7 @@ package component;
 
 import ecs.*;
 
-class Asteroid implements Component {
+class Asteroid extends Component {
 	public function new() {}
 		
 }

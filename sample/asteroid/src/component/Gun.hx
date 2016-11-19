@@ -3,7 +3,7 @@ package component;
 import ecs.*;
 import util.*;
 
-class Gun implements Component {
+class Gun extends Component {
 	public var offset:Point;
 	public var elapsed:Float = 0;
 	public var interval:Float;

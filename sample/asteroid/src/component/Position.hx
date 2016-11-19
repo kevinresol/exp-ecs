@@ -3,7 +3,7 @@ package component;
 import ecs.*;
 import util.*;
 
-class Position implements Component {
+class Position extends Component {
 	public var position:Point;
 	public var rotation:Float;
 	

@@ -3,7 +3,7 @@ package component;
 import ecs.*;
 import util.*;
 
-class Motion implements Component {
+class Motion extends Component {
 	public var velocity:Point;
 	public var angularVelocity:Float;
 	public var damping:Float;
