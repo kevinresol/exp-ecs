@@ -1,6 +1,5 @@
 package entity;
 
-import openfl.display.*;
 import component.*;
 import ecs.*;
 import ecs.EntityStateMachine;

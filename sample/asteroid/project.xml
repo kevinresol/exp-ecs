@@ -3,6 +3,7 @@
 	
 	<meta title="Asteroid" package="com.sample.asteroid" version="1.0.0" company="Company Name" />
 	<app main="Main" path="bin" file="Asteroid" />
+	<window background="#000000"/>
 	
 	<source path="src" />
 	

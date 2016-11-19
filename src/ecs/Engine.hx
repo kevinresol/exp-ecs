@@ -42,7 +42,6 @@ class Engine {
 	}
 	
 	public function addSystem(system:System) {
-		trace(system.toString());
 		systems.push(system);
 		system.onAdded(this);
 	}
