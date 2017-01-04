@@ -46,7 +46,7 @@ class Macro {
 				
 				inline function addEntityIfMatch(entity:ecs.entity.Entity) 
 					if(entity.hasAll(componentTypes))
-						nodes.add(new $tp($a{ctorArgs}));
+						nodes.add(new $tp(entity));
 						
 				inline function removeEntityIfNoLongerMatch(entity:ecs.entity.Entity) 
 					if(!entity.hasAll(componentTypes))
@@ -94,18 +94,12 @@ class Macro {
 			meta: null,
 			value: null,
 		}]; 
+		var ctorExprs = [macro this.entity = entity];
 		for(i in 0...names.length) {
 			var name = names[i];
 			var ct = complexTypes[i];
 			
-			// Prepare the constructor args for the node class
-			ctorArgs.push({
-				name: name,
-				type: ct,
-				opt: false,
-				meta: null,
-				value: null,
-			});
+			ctorExprs.push(macro this.$name = entity.get($p{ct.toString().split('.')}));
 			
 			// Create instance field for each component, named in the component's class name camel-cased
 			def.fields.push({
@@ -118,13 +112,11 @@ class Macro {
 		}
 		
 		// constructor
-		var exprs = names.map(function(name) return macro this.$name = $i{name});
-		exprs.push(macro this.entity = entity);
 		def.fields.push({
 			name: 'new',
 			kind: FFun({
 				args: ctorArgs,
-				expr: macro $b{exprs},
+				expr: macro $b{ctorExprs},
 				ret: null,
 			}),
 			pos: pos,
