@@ -1,8 +1,11 @@
 # Macro-powered Entity-Component-System framework
 
-This is a Entity-Component-System game framework, inspired by the [Ash Framework](http://www.ashframework.org/)
 
+This is a Entity-Component-System framework, inspired by the [Ash Framework](http://www.ashframework.org/)  
 Thanks to the Haxe macro system we are able to reduce boilerplate code and allow some optimizations.
+
+This is platform-agnostic, you can use it on any targets supported by Haxe (e.g. cpp, js, lua, etc)  
+This is also game-framework-agnostic, you can use it with any game frameworks such as Kha, OpenFL, Heaps, etc.
 
 ## Elements of the framework
 
@@ -23,7 +26,7 @@ A container holding an Entity and the Components of interest.
 This is mostly for optimization, pre-fetching components from the entity so that we don't need to do so on every iteration.
 
 **NodeList**  
-A list of Nodes
+A list of Nodes. The specialized `TrackingNodeList` will keep track of entities together with their components and add/remove them from the list when appropriate.
 
 ## Example
 
@@ -57,8 +60,8 @@ class Playground {
 	}
 }
 
-// NodeListSystem is a System that automatically manage the required NodeList
-// use metadata `@:nodes` to indicate the Nodes of interest
+// NodeListSystem is a System that automatically manage the required NodeList.
+// Use metadata `@:nodes` to indicate the Nodes of interest
 class MovementSystem extends NodeListSystem {
 	// prepares a NodeList that contains entities having both the Position and Velocity components
 	@:nodes var nodes:Node<Position, Velocity>;
