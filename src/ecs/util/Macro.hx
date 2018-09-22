@@ -139,57 +139,31 @@ class Macro {
 		
 	}
 	
-	public static function buildNodeListSystem() {
-		
-		var pos = Context.currentPos();
-		var param = switch Context.getLocalType() {
-			case TInst(_, [TAnonymous(_.get() => a)]): a;
-			default: pos.makeFailure('Expected a single anonymous structure as the type parameter for NodeListSystem').sure();
-		}
-		
-		var fullnames = [];
-		var names = []; 
-		var complexTypes = [];
+	public static function buildNodeListSystem():Array<Field> {
+		var builder = new ClassBuilder();
 		var addedExprs = [];
 		var removedExprs = [];
-		
-		for(field in param.fields) {
-			var name = field.name;
-			var ct = field.type.toComplex();
-			names.push(name);
-			complexTypes.push(ct);
-			addedExprs.push(macro $i{name} = engine.getNodeList($p{ct.toString().split('.')}));
-			removedExprs.push(macro $i{name} = null);
-		}
-		
-		var sysname = 'NodeListSystem_' + Context.signature(param);
-		try return Context.getType('ecs.system.$sysname') catch(e:Dynamic) {}
-		
-		var def = macro class $sysname extends ecs.system.System {
-			override function onAdded(engine:ecs.Engine) {
-				super.onAdded(engine);
-				$b{addedExprs}
-			}
-			override function onRemoved(engine:ecs.Engine) {
-				super.onRemoved(engine);
-				$b{removedExprs}
+		for(field in builder) {
+			switch field.extractMeta(':nodes') {
+				case Success(_):
+					var name = field.name;
+					switch field.kind {
+						case FVar(ct, e):
+							var ct = ct.toType().sure().toComplex();
+							field.kind = FVar(macro:ecs.node.NodeList<$ct>, e);
+							addedExprs.push(macro $i{name} = engine.getNodeList($p{ct.toString().split('.')}));
+							removedExprs.push(macro $i{name} = null);
+						case _: field.pos.error('Unsupported');
+					}
+				case Failure(_):
 			}
 		}
 		
-		for(i in 0...names.length)
-			def.fields.push({
-				name: names[i],
-				kind: {
-					var ct = complexTypes[i];
-					FVar(macro:ecs.node.NodeList<$ct>);
-				},
-				pos: pos, 
-			});
-		def.pack = ['ecs', 'system'];
-		Context.defineType(def);
-		// trace(new haxe.macro.Printer().printTypeDefinition(def));
-		
-		return Context.getType('ecs.system.$sysname');
+		builder.addMembers(macro class {
+			override function setNodeLists(engine:ecs.Engine) $b{addedExprs}
+			override function unsetNodeLists() $b{removedExprs}
+		});
+		return builder.export();
 	}
 	
 	static var re = ~/Class<([^>]*)>/;

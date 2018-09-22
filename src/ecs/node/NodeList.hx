@@ -8,8 +8,8 @@ using tink.CoreApi;
 class NodeList<T:NodeBase> {
 	public var empty(get, never):Bool;
 	public var head(get, never):T;
-	public var nodeAdded:Signal<T>;
-	public var nodeRemoved:Signal<T>;
+	public var nodeAdded(default, null):Signal<T>;
+	public var nodeRemoved(default, null):Signal<T>;
 	
 	var nodeAddedTrigger:SignalTrigger<T>;
 	var nodeRemovedTrigger:SignalTrigger<T>;

@@ -10,7 +10,7 @@
 	<haxelib name="openfl" />
 	<haxelib name="ecs" />
 	
-	<assets path="assets" rename="assets" />
+	<!-- <assets path="assets" rename="assets" /> -->
 	
 	<haxeflag name="--times"/>
 	<haxeflag name="-dce" value="full"/>

@@ -6,7 +6,9 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class DeathSystem extends NodeListSystem<{nodes:Node<Death>}> {
+class DeathSystem extends NodeListSystem {
+	@:nodes var nodes:Node<Death>;
+	
 	override function update(dt:Float) {
 		for(node in nodes) {
 			node.death.countdown -= dt;

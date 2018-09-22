@@ -6,7 +6,9 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class BulletSystem extends NodeListSystem<{nodes:Node<Bullet>}> {
+class BulletSystem extends NodeListSystem {
+	@:nodes var nodes:Node<Bullet>;
+	
 	override function update(dt:Float) {
 		for(node in nodes) {
 			node.bullet.lifetime -= dt;

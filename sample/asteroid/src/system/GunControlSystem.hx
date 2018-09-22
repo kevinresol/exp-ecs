@@ -7,7 +7,8 @@ import util.*;
 
 using tink.CoreApi;
 
-class GunControlSystem extends NodeListSystem<{nodes:Node<GunControls, Position, Gun>}> {
+class GunControlSystem extends NodeListSystem {
+	@:nodes var nodes:Node<GunControls, Position, Gun>;
 	var input:Input;
 	
 	public function new(input) {

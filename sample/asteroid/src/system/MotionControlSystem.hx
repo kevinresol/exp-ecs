@@ -7,7 +7,8 @@ import util.*;
 
 using tink.CoreApi;
 
-class MotionControlSystem extends NodeListSystem<{nodes:Node<MotionControls, Position, Motion>}> {
+class MotionControlSystem extends NodeListSystem {
+	@:nodes var nodes:Node<MotionControls, Position, Motion>;
 	var input:Input;
 	
 	public function new(input) {

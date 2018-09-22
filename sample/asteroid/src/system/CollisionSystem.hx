@@ -5,11 +5,10 @@ import ecs.system.*;
 import ecs.node.*;
 import util.*;
 
-class CollisionSystem extends NodeListSystem<{
-	spaceships:Node<Spaceship, Position, Collision>,
-	asteroids:Node<Asteroid, Position, Collision>,
-	bullets:Node<Bullet, Position, Collision>,
-}> {
+class CollisionSystem extends NodeListSystem {
+	@:nodes var spaceships:Node<Spaceship, Position, Collision>;
+	@:nodes var asteroids:Node<Asteroid, Position, Collision>;
+	@:nodes var bullets:Node<Bullet, Position, Collision>;
 	
 	override function update(dt:Float) {
 		for(bullet in bullets) for(asteroid in asteroids) {

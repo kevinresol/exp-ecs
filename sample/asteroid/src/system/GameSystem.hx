@@ -5,12 +5,11 @@ import ecs.system.*;
 import ecs.node.*;
 import util.*;
 
-class GameSystem extends NodeListSystem<{
-	gameNodes:Node<Game>,
-	spaceships:Node<Spaceship, Position>,
-	asteroids:Node<Asteroid, Position, Collision>,
-	bullets:Node<Bullet>,
-}> {
+class GameSystem extends NodeListSystem {
+	@:nodes var gameNodes:Node<Game>;
+	@:nodes var spaceships:Node<Spaceship, Position>;
+	@:nodes var asteroids:Node<Asteroid, Position, Collision>;
+	@:nodes var bullets:Node<Bullet>;
 	
 	var config:Config;
 	
