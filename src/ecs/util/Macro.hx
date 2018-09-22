@@ -28,7 +28,7 @@ class Macro {
 					case TInst(_.get() => cls, _) if(isComponent(type)):
 						names.push(cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1));
 						complexTypes.push(type.toComplex());
-					default: pos.makeFailure('Expected a class that extends Component, but got ${type.getID()}').sure();
+					default: pos.makeFailure('Expected a class that extends Component, but ${type.getID()} doesn\'t.').sure();
 				}
 			}
 			
@@ -98,10 +98,11 @@ class Macro {
 					switch field.kind {
 						case FVar(ct, e):
 							var ct = ct.toType().sure().toComplex();
-							field.kind = FVar(macro:ecs.node.TrackingNodeList<$ct>, e);
-							addedExprs.push(macro $i{name} = cast engine.getNodeList($p{ct.toString().split('.')}));
+							field.kind = FVar(macro:ecs.node.NodeList<$ct>, e);
+							addedExprs.push(macro $i{name} = engine.getNodeList($p{ct.toString().split('.')}));
 							removedExprs.push(macro $i{name} = null);
-						case _: field.pos.error('Unsupported');
+						case _:
+							field.pos.error('Unsupported');
 					}
 				case Failure(_):
 			}
@@ -116,31 +117,19 @@ class Macro {
 	
 	static var re = ~/Class<([^>]*)>/;
 	public static function getNodeList(ethis:Expr, e:Expr) {
-		var type = Context.typeof(e);
-		if(!Context.unify(type, (macro:Class<ecs.node.NodeBase>).toType().sure()))
-			e.pos.makeFailure('Expected Class<NodeBase>').sure();
-			
-		switch type {
-			case TType(_.get() => def, []) if(re.match(def.name)):
+		return switch Context.typeof(e) {
+			case type = TType(_.get() => def, []) if(re.match(def.name) && Context.unify(type, (macro:Class<ecs.node.NodeBase>).toType().sure())):
 				var name = re.matched(1);
 				var cls = macro $p{name.split('.')};
-				return macro @:privateAccess $ethis._getNodeList($cls, $cls.createNodeList);
+				macro @:privateAccess $ethis._getNodeList($cls, $cls.createNodeList);
 			default:
+				e.pos.error('Expected Class<NodeBase>');
 		}
-		e.pos.makeFailure('Expected Class<NodeBase>').sure();
-		return macro null;
 	}
 	
+	static var COMPONENT_TYPE = Context.getType('ecs.component.Component');
 	static function isComponent(type:haxe.macro.Type) {
-		switch type.reduce() {
-			case TInst(_.get() => cls, _):
-				if(cls.superClass == null) return false;
-				return switch cls.superClass.t.get() {
-					case {name: 'Component', pack: ['ecs', 'component']}: true;
-					default: false;
-				}
-			default: return false;
-		}
+		return type.isSubTypeOf(COMPONENT_TYPE).isSuccess();
 	}
 	
 	static function toTypeParams(types:Array<haxe.macro.Type>):Array<TypeParam> {
