@@ -2,6 +2,7 @@ package ecs;
 
 import ecs.entity.*;
 import ecs.node.*;
+import ecs.node.NodeList;
 import ecs.system.*;
 import tink.priority.Queue;
 
@@ -14,7 +15,7 @@ class Engine {
 	public var entityRemoved(default, null):Signal<Entity>;
 	
 	var systems:Array<System>;
-	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
+	var nodeLists:Map<NodeType, NodeListBase<Dynamic>>;
 	
 	var entityAddedTrigger:SignalTrigger<Entity>;
 	var entityRemovedTrigger:SignalTrigger<Entity>;
@@ -57,7 +58,7 @@ class Engine {
 		return ecs.util.Macro.getNodeList(ethis, e);
 	}
 	
-	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
+	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeListBase<T>):NodeListBase<T> {
 		if(!nodeLists.exists(type)) nodeLists.set(type, factory(this));
 		return cast nodeLists.get(type);
 	}

@@ -4,8 +4,12 @@ import ecs.node.Node;
 import ecs.entity.*;
 using tink.CoreApi;
 
+
+#if !macro @:genericBuild(ecs.util.Macro.buildNodeList()) #end
+class NodeList<Rest> {}
+
 // TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
-class NodeList<T:NodeBase> {
+class NodeListBase<T:NodeBase> {
 	public var empty(get, never):Bool;
 	public var head(get, never):T;
 	public var nodeAdded(default, null):Signal<T>;
