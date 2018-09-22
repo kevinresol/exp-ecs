@@ -34,14 +34,12 @@ class Macro {
 			}
 			
 			var tp = 'ecs.node.$name'.asTypePath();
-			var arr = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
-			var ctorArgs = [macro entity];
-			for(ct in complexTypes) ctorArgs.push(macro entity.get($p{ct.toString().split('.')}));
+			var ctExprs = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
 				
 			var def = macro class $name implements ecs.node.NodeBase {
 				public var entity(default, null):ecs.entity.Entity;
 				
-				public static var componentTypes:Array<ecs.component.ComponentType> = $a{arr};
+				public static var componentTypes:Array<ecs.component.ComponentType> = $a{ctExprs};
 				public static function createNodeList(engine:ecs.Engine) {
 					var nodes = new ecs.node.NodeList();
 					var listeners = new Map();
