@@ -22,7 +22,7 @@ class Engine {
 	
 	public function new() {
 		entities = [];
-		systems = new Queue();
+		systems = [];
 		nodeLists = new Map();
 		entityAdded = entityAddedTrigger = Signal.trigger();
 		entityRemoved = entityRemovedTrigger = Signal.trigger();
@@ -34,7 +34,7 @@ class Engine {
 	}
 	
 	public function addEntity(entity:Entity) {
-		entities.remove(entity);
+		removeEntity(entity); // re-add to the end of the list
 		entities.push(entity);
 		entityAddedTrigger.trigger(entity);
 	}
@@ -45,6 +45,7 @@ class Engine {
 	}
 	
 	public function addSystem(system:System) {
+		removeSystem(system); // re-add to the end of the list
 		systems.push(system);
 		system.onAdded(this);
 	}

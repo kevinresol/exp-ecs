@@ -18,7 +18,7 @@ class EntityStateMachine {
 	
 	public function change(name:String) {
 		var toAdd = switch states.get(name) {
-			case null: throw 'Entity state $name does not exist';
+			case null: throw 'Entity state "$name" does not exist';
 			case next if(next == current): return;
 			case next if(current != null):
 				var toAdd = new Map();

@@ -1,0 +1,4 @@
+-D tink_macro=0.17.0
+# @install: lix --silent download "haxelib:/tink_macro#0.17.0" into tink_macro/0.17.0/haxelib
+-lib tink_core
+-cp ${HAXE_LIBCACHE}/tink_macro/0.17.0/haxelib/src
