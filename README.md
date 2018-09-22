@@ -1,6 +1,6 @@
 # Macro-powered Entity-Component-System framework
 
-This is a Entity-Component-System, inspired by the [Ash Framework](http://www.ashframework.org/)
+This is a Entity-Component-System game framework, inspired by the [Ash Framework](http://www.ashframework.org/)
 
 Thanks to the Haxe macro system we are able to reduce boilerplate code and allow some optimizations.
 
