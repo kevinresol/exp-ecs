@@ -11,7 +11,7 @@ class RenderSystem extends NodeListSystem {
 	
 	@:nodes var nodes:Node<Position, Display>;
 	
-	var listeners:Array<CallbackLink>;
+	var listeners:CallbackLink;
 	
 	#if openfl
 	var container:openfl.display.DisplayObjectContainer;
@@ -33,7 +33,8 @@ class RenderSystem extends NodeListSystem {
 	
 	override function onRemoved(engine:Engine) {
 		super.onRemoved(engine);
-		while(listeners.length > 0) listeners.pop().dissolve();
+		listeners.dissolve();
+		listeners = null;
 	}
 	
 	function addToDisplay(node:Node<Position, Display>) {

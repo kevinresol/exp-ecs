@@ -21,7 +21,6 @@ class Macro {
 			var pos = ctx.pos;
 			var name = ctx.name;
 			
-			var fullnames = [];
 			var names = []; 
 			var complexTypes = [];
 			for(type in ctx.types) {
@@ -35,14 +34,13 @@ class Macro {
 			
 			var tp = 'ecs.node.$name'.asTypePath();
 			var ctExprs = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
-			var nodeListTp = 'ecs.node.NodeList'.asTypePath([TPType(TPath(tp))]);
+			var nodeListTp = 'ecs.node.TrackingNodeList'.asTypePath([TPType(TPath(tp))]);
 			
 			var def = macro class $name implements ecs.node.NodeBase {
 				public var entity(default, null):ecs.entity.Entity;
 				
 				public static function createNodeList(engine:ecs.Engine) {
-					var types:Array<ecs.component.ComponentType> = $a{ctExprs}
-					return new $nodeListTp(engine, function(e) return new $tp(e), types);
+					return new $nodeListTp(engine, $p{['ecs', 'node', name, 'new']}, $a{ctExprs});
 				}
 				
 			}
@@ -100,7 +98,7 @@ class Macro {
 					switch field.kind {
 						case FVar(ct, e):
 							var ct = ct.toType().sure().toComplex();
-							field.kind = FVar(macro:ecs.node.NodeList<$ct>, e);
+							field.kind = FVar(macro:ecs.node.TrackingNodeList<$ct>, e);
 							addedExprs.push(macro $i{name} = cast engine.getNodeList($p{ct.toString().split('.')}));
 							removedExprs.push(macro $i{name} = null);
 						case _: field.pos.error('Unsupported');

@@ -11,8 +11,12 @@ class Entity {
 	var components:Map<ComponentType, Component>;
 	var componentAddedTrigger:SignalTrigger<ComponentType>;
 	var componentRemovedTrigger:SignalTrigger<ComponentType>;
+	var name:String;
 	
-	public function new() {
+	static var id:Int = 0;
+	
+	public function new(?name) {
+		this.name = name == null ? 'Entity#${++id}' : name;
 		components = new Map();
 		componentAdded = componentAddedTrigger = Signal.trigger();
 		componentRemoved = componentRemovedTrigger = Signal.trigger();
@@ -41,5 +45,9 @@ class Entity {
 	public function hasAll(types:Array<ComponentType>) {
 		for(type in types) if(!components.exists(type)) return false;
 		return true;
+	}
+	
+	public function toString():String {
+		return name;
 	}
 }

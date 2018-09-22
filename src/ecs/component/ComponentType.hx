@@ -1,5 +1,6 @@
 package ecs.component;
 
+@:forward(split)
 abstract ComponentType(String) {
 	inline function new(v:String)
 		this = v;

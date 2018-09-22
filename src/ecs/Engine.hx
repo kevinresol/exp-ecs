@@ -15,7 +15,7 @@ class Engine {
 	public var entityRemoved(default, null):Signal<Entity>;
 	
 	var systems:Array<System>;
-	var nodeLists:Map<NodeType, NodeListBase<Dynamic>>;
+	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	
 	var entityAddedTrigger:SignalTrigger<Entity>;
 	var entityRemovedTrigger:SignalTrigger<Entity>;
@@ -58,7 +58,7 @@ class Engine {
 		return ecs.util.Macro.getNodeList(ethis, e);
 	}
 	
-	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeListBase<T>):NodeListBase<T> {
+	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
 		if(!nodeLists.exists(type)) nodeLists.set(type, factory(this));
 		return cast nodeLists.get(type);
 	}
