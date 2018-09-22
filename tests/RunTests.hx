@@ -12,11 +12,14 @@ import haxe.*;
 import tink.unit.*;
 import tink.testrunner.*;
 
+using tink.CoreApi;
+
 class RunTests {
 	static function main() {
 		Runner.run(TestBatch.make([
 			new EngineTest(),
 			new StateMachineTest(),
+			new NodeListTest(),
 		])).handle(Runner.exit);
 	}
 }
@@ -91,3 +94,55 @@ class StateMachineTest {
 	inline function equals<T>(v1:T, v2:T)
 		return v1 == v2;
 }
+
+@:asserts
+class NodeListTest {
+	public function new() {}
+	
+	@:variant('Add entity to engine before creating the node list'(true))
+	@:variant('Add entity to engine after creating the node list'(false))
+	public function add(lateAdd) {
+		Callback.defer(function() {
+			
+			var engine = new Engine();
+			var entity = new Entity();
+			
+			var added = 0, removed = 0;
+			
+			if(!lateAdd) engine.addEntity(entity);
+			
+			var list = engine.getNodeList(MovementNode);
+			list.nodeAdded.handle(function(_) added++);
+			list.nodeRemoved.handle(function(_) removed++);
+			
+			if(lateAdd) engine.addEntity(entity);
+			
+			asserts.assert(list.toString() == 'TrackingNodeList#Position,Velocity');
+			asserts.assert(added == 0);
+			asserts.assert(removed == 0);
+			var velocity = new Velocity(0, 0);
+			var position = new Position(0, 0);
+			
+			entity.add(velocity);
+			asserts.assert(added == 0);
+			asserts.assert(removed == 0);
+			
+			entity.add(position);
+			asserts.assert(added == 1);
+			asserts.assert(removed == 0);
+			
+			entity.remove(velocity);
+			asserts.assert(added == 1);
+			asserts.assert(removed == 1);
+			
+			entity.add(velocity);
+			asserts.assert(added == 2);
+			asserts.assert(removed == 1);
+			
+			asserts.done();
+		});
+		return asserts;
+	}
+}
+
+typedef MovementNode = Node<Position, Velocity>;

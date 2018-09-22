@@ -55,7 +55,7 @@ class Engine {
 			system.onRemoved(this);
 	}
 	
-	public macro function getNodeList(ethis, e) {
+	public macro function getNodeList<T:NodeBase>(ethis, e:ExprOf<Class<T>>):ExprOf<NodeList<T>> {
 		return ecs.util.Macro.getNodeList(ethis, e);
 	}
 	

@@ -19,7 +19,10 @@ class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 		this.engine = engine;
 		this.componentTypes = componentTypes;
 		
-		for(entity in engine.entities) add(entity);
+		for(entity in engine.entities) {
+			track(entity);
+			if(entity.hasAll(componentTypes)) add(entity);
+		}
 			
 		binding = [
 			engine.entityAdded.handle(function(entity) {
@@ -44,8 +47,12 @@ class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 	function track(entity:Entity) {
 		if(listeners.exists(entity)) return; // already tracking
 		listeners.set(entity, [
-			entity.componentAdded.handle(function(_) if(entity.hasAll(componentTypes)) add(entity)),
-			entity.componentRemoved.handle(function(_) if(!entity.hasAll(componentTypes)) remove(entity)),
+			entity.componentAdded.handle(function(c) {
+				if(entity.hasAll(componentTypes)) add(entity);
+			}),
+			entity.componentRemoved.handle(function(c) {
+				if(!entity.hasAll(componentTypes)) remove(entity);
+			}),
 		]);
 	}
 	
