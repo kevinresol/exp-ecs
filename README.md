@@ -25,7 +25,7 @@ This is mostly for optimization, pre-fetching components from the entity so that
 **NodeList**  
 A list of Nodes
 
-## Usage
+## Example
 
 ```haxe
 import ecs.*;
@@ -60,7 +60,7 @@ class Playground {
 // NodeListSystem is a System that automatically manage the required NodeList
 // use metadata `@:nodes` to indicate the Nodes of interest
 class MovementSystem extends NodeListSystem {
-	// prepares a NodeList containing entities that has both the Position and Velocity components
+	// prepares a NodeList that contains entities having both the Position and Velocity components
 	@:nodes var nodes:Node<Position, Velocity>;
 	
 	override function update(dt:Float) {
@@ -73,7 +73,7 @@ class MovementSystem extends NodeListSystem {
 }
 
 class RenderSystem extends NodeListSystem {
-	// prepares a NodeList containing entities that has the Position component
+	// prepares a NodeList that contains entities having the Position component
 	@:nodes var nodes:Node<Position>;
 	
 	override function update(dt:Float) {
