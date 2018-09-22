@@ -35,13 +35,14 @@ class Macro {
 			
 			var tp = 'ecs.node.$name'.asTypePath();
 			var ctExprs = complexTypes.map(function(ct) return macro $p{ct.toString().split('.')});
-			var nodeListTp = 'ecs.node.NodeList'.asTypePath(toTypeParams(ctx.types));
+			var nodeListTp = 'ecs.node.NodeList'.asTypePath([TPType(TPath(tp))]);
 			
 			var def = macro class $name implements ecs.node.NodeBase {
 				public var entity(default, null):ecs.entity.Entity;
 				
 				public static function createNodeList(engine:ecs.Engine) {
-					return new $nodeListTp(engine, function(e) return new $tp(e));
+					var types:Array<ecs.component.ComponentType> = $a{ctExprs}
+					return new $nodeListTp(engine, function(e) return new $tp(e), types);
 				}
 				
 			}
@@ -88,81 +89,6 @@ class Macro {
 		});
 	}
 	
-	public static function buildNodeList() {
-		var types = switch Context.getLocalType() {
-			case TInst(_, params):
-				params.sort(function(t1, t2) return Reflect.compare(t1.getID(), t2.getID()));
-				params;
-			default: throw 'assert';
-		}
-		
-		return BuildCache.getTypeN('ecs.node.NodeList', types, function(ctx:BuildContextN) {
-			var name = ctx.name;
-			var cts = ctx.types.map(function(type) return type.toComplex());
-			var ctExprs = cts.map(function(ct) return macro $p{ct.toString().split('.')});
-			var nodeCt = TPath('ecs.node.Node'.asTypePath(toTypeParams(ctx.types)));
-			// var baseTp = 'ecs.node.NodeList.NodeListBase'.asTypePath(toTypeParams(ctx.types));
-			
-			var def = macro class $name extends ecs.node.NodeList.NodeListBase<$nodeCt> {
-				static var componentTypes:Array<ecs.component.ComponentType> = $a{ctExprs};
-				
-				var factory:ecs.entity.Entity->$nodeCt;
-				var engine:ecs.Engine;
-				var listeners = new Map();
-				
-				public function new(engine, factory) {
-					super();
-					
-					this.engine = engine;
-					this.factory = factory;
-					
-					for(entity in engine.entities) {
-						addEntityIfMatch(entity);
-						track(entity);
-					}
-						
-					// TODO: if we destroy a node list, we need to dissolve the handlers
-					engine.entityAdded.handle(function(e) {
-						addEntityIfMatch(e);
-						track(e);
-					});
-					engine.entityRemoved.handle(function(e) {
-						removeEntity(e);
-						untrack(e);
-					});
-				}
-				
-				public function destroy() {
-					
-				}
-				
-				function addEntityIfMatch(entity:ecs.entity.Entity) 
-					if(entity.hasAll(componentTypes))
-						add(factory(entity));
-						
-				function removeEntityIfNoLongerMatch(entity:ecs.entity.Entity) 
-					if(!entity.hasAll(componentTypes))
-						removeEntity(entity);
-						
-				function track(entity:ecs.entity.Entity) {
-					if(listeners.exists(entity)) return; // already tracking
-					listeners.set(entity, [
-						entity.componentAdded.handle(function() addEntityIfMatch(entity)),
-						entity.componentRemoved.handle(function() removeEntityIfNoLongerMatch(entity)),
-					]);
-				}
-				
-				function untrack(entity:ecs.entity.Entity) {
-					if(!listeners.exists(entity)) return; // not tracking
-					var l = listeners.get(entity);
-					while(l.length > 0) l.pop().dissolve();
-					listeners.remove(entity);
-				}
-			}
-			return def;
-		});
-	}
-	
 	public static function buildNodeListSystem():Array<Field> {
 		var builder = new ClassBuilder();
 		var addedExprs = [];
@@ -173,12 +99,8 @@ class Macro {
 					var name = field.name;
 					switch field.kind {
 						case FVar(ct, e):
-							switch ct {
-								case TPath({params: params}):
-									field.kind = FVar(TPath('ecs.node.NodeList'.asTypePath(params)), e);
-								case _: throw 'assert';
-							}
 							var ct = ct.toType().sure().toComplex();
+							field.kind = FVar(macro:ecs.node.NodeList<$ct>, e);
 							addedExprs.push(macro $i{name} = cast engine.getNodeList($p{ct.toString().split('.')}));
 							removedExprs.push(macro $i{name} = null);
 						case _: field.pos.error('Unsupported');
