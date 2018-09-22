@@ -4,7 +4,6 @@ import ecs.entity.*;
 import ecs.node.*;
 import ecs.node.NodeList;
 import ecs.system.*;
-import tink.priority.Queue;
 
 using tink.CoreApi;
 

@@ -1,0 +1,4 @@
+-cp tests
+-lib ecs
+-main Playground
+-js bin/playground/index.js
