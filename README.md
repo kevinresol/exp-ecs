@@ -6,29 +6,23 @@ Thanks to the Haxe macro system we are able to reduce boilerplate code and allow
 
 ## Elements of the framework
 
-**Engine**
+**Engine**  
+The "core" that manages everything
 
-The core of the framework
-
-**Entity**
-
+**Entity**  
 A container holding various components
 
-**Component**
-
+**Component**  
 Building blocks of an entity, contains attributes/properties but not any logics
 
-**System**
-
+**System**  
 Logics that operate on Components
 
-**Node**
-
+**Node**  
 A container holding an Entity and the Components of interest.
 This is mostly for optimization, pre-fetching components from the entity so that we don't need to do so on every iteration.
 
-**NodeList**
-
+**NodeList**  
 A list of Nodes
 
 ## Usage
