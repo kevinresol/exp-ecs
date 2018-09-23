@@ -105,7 +105,8 @@ class Macro {
 						case FVar(ct, e):
 							var ct = ct.toType().sure().toComplex();
 							field.kind = FVar(macro:ecs.node.NodeList<$ct>, e);
-							addedExprs.push(macro $i{name} = engine.getNodeList($p{ct.toString().split('.')}));
+							var parts = ct.toString().split('.');
+							addedExprs.push(macro $i{name} = engine.getNodeList($p{parts}, $p{parts.concat(['createNodeList'])}));
 							removedExprs.push(macro $i{name} = null);
 						case _:
 							field.pos.error('Unsupported');
@@ -119,18 +120,6 @@ class Macro {
 			override function unsetNodeLists() $b{removedExprs}
 		});
 		return builder.export();
-	}
-	
-	static var re = ~/Class<([^>]*)>/;
-	public static function getNodeList(ethis:Expr, e:Expr) {
-		return switch Context.typeof(e) {
-			case type = TType(_.get() => def, []) if(re.match(def.name) && Context.unify(type, (macro:Class<ecs.node.NodeBase>).toType().sure())):
-				var name = re.matched(1);
-				var cls = macro $p{name.split('.')};
-				macro @:privateAccess $ethis._getNodeList($cls, $cls.createNodeList);
-			default:
-				e.pos.error('Expected Class<NodeBase>');
-		}
 	}
 	
 	static var COMPONENT_TYPE = Context.getType('ecs.component.Component');

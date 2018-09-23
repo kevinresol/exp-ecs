@@ -111,7 +111,7 @@ class NodeListTest {
 			
 			if(!lateAdd) engine.addEntity(entity);
 			
-			var list = engine.getNodeList(MovementNode);
+			var list = engine.getNodeList(MovementNode, MovementNode.createNodeList);
 			list.nodeAdded.handle(function(_) added++);
 			list.nodeRemoved.handle(function(_) removed++);
 			

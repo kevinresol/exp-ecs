@@ -45,7 +45,7 @@ class RenderSystem extends System {
 }
 
 class CustomSystem extends System {
-	var nodes:TrackingNodeList<CustomNode>;
+	var nodes:NodeList<CustomNode>;
 	
 	override function update(dt:Float) {
 		for(node in nodes) {
@@ -56,7 +56,7 @@ class CustomSystem extends System {
 	
 	override function onAdded(engine) {
 		super.onAdded(engine);
-		nodes = new TrackingNodeList(engine, CustomNode.new, entity -> entity.has(Position));
+		nodes = engine.getNodeList(CustomNode, engine -> new TrackingNodeList(engine, CustomNode.new, entity -> entity.has(Position)));
 	}
 	
 	override function onRemoved(engine) {

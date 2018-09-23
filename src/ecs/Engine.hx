@@ -54,11 +54,7 @@ class Engine {
 			system.onRemoved(this);
 	}
 	
-	public macro function getNodeList<T:NodeBase>(ethis, e:ExprOf<Class<T>>):ExprOf<NodeList<T>> {
-		return ecs.util.Macro.getNodeList(ethis, e);
-	}
-	
-	function _getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
+	public function getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
 		if(!nodeLists.exists(type)) nodeLists.set(type, factory(this));
 		return cast nodeLists.get(type);
 	}
