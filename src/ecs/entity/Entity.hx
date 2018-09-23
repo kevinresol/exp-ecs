@@ -5,6 +5,7 @@ using tink.CoreApi;
 
 class Entity {
 	
+	public var id(default, null):Int;
 	public var componentAdded:Signal<ComponentType>;
 	public var componentRemoved:Signal<ComponentType>;
 	
@@ -13,10 +14,11 @@ class Entity {
 	var componentRemovedTrigger:SignalTrigger<ComponentType>;
 	var name:String;
 	
-	static var id:Int = 0;
+	static var ids:Int = 0;
 	
 	public function new(?name) {
-		this.name = name == null ? 'Entity#${++id}' : name;
+		this.id = ++ids;
+		this.name = name;
 		components = new Map();
 		componentAdded = componentAddedTrigger = Signal.trigger();
 		componentRemoved = componentRemovedTrigger = Signal.trigger();
@@ -38,16 +40,20 @@ class Entity {
 		return component;
 	}
 	
-	public function get<T:Component>(type:ComponentType):T {
+	public inline function get<T:Component>(type:ComponentType):T {
 		return cast components.get(type);
 	}
 	
+	public inline function has(type:ComponentType) {
+		return components.exists(type);
+	}
+	
 	public function hasAll(types:Array<ComponentType>) {
-		for(type in types) if(!components.exists(type)) return false;
+		for(type in types) if(!has(type)) return false;
 		return true;
 	}
 	
 	public function toString():String {
-		return name;
+		return name == null ? 'Entity#$id' : name;
 	}
 }
