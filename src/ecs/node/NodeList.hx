@@ -5,8 +5,7 @@ using tink.CoreApi;
 
 // TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
 class NodeList<T:NodeBase> {
-	public var empty(get, never):Bool;
-	public var head(get, never):T;
+	public var id(default, null):Int;
 	public var nodeAdded(default, null):Signal<T>;
 	public var nodeRemoved(default, null):Signal<T>;
 	
@@ -14,12 +13,17 @@ class NodeList<T:NodeBase> {
 	var nodeRemovedTrigger:SignalTrigger<T>;
 	var nodes:Map<Entity, T>;
 	var factory:Entity->T;
+	var name:String;
 	
-	public function new(factory) {
+	static var ids:Int = 0;
+	
+	public function new(factory, ?name) {
+		id == ++ids;
 		nodes = new Map();
 		nodeAdded = nodeAddedTrigger = Signal.trigger();
 		nodeRemoved = nodeRemovedTrigger = Signal.trigger();
 		this.factory = factory;
+		this.name = name;
 	}
 	
 	public function add(entity:Entity) {
@@ -53,13 +57,8 @@ class NodeList<T:NodeBase> {
 	}
 	
 	public inline function iterator() return nodes.iterator();
-	inline function get_empty() return Lambda.empty(nodes);
-	function get_head() {
-		for(node in nodes) return node;
-		return null;
-	}
 	
 	public function toString():String {
-		return 'NodeList';
+		return name == null ? 'NodeList#$id' : name;
 	}
 }

@@ -14,23 +14,16 @@ using tink.CoreApi;
  */
 class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 	
-	public var id(default, null):Int;
-	
 	var condition:Entity->Bool;
 	var engine:Engine;
 	var listeners:Map<Entity, CallbackLink> = new Map();
 	var binding:CallbackLink;
-	var name:String;
-	
-	static var ids:Int = 0;
 	
 	public function new(engine, factory, condition, ?name) {
-		super(factory);
+		super(factory, name);
 		
 		this.engine = engine;
 		this.condition = condition;
-		this.name = name;
-		this.id == ++ids;
 		
 		for(entity in engine.entities) {
 			track(entity);
