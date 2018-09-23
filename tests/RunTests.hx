@@ -124,18 +124,22 @@ class NodeListTest {
 			var position = new Position(0, 0);
 			
 			entity.add(velocity);
+			asserts.assert(list.length == 0);
 			asserts.assert(added == 0);
 			asserts.assert(removed == 0);
 			
 			entity.add(position);
+			asserts.assert(list.length == 1);
 			asserts.assert(added == 1);
 			asserts.assert(removed == 0);
 			
 			entity.remove(velocity);
+			asserts.assert(list.length == 0);
 			asserts.assert(added == 1);
 			asserts.assert(removed == 1);
 			
 			entity.add(velocity);
+			asserts.assert(list.length == 1);
 			asserts.assert(added == 2);
 			asserts.assert(removed == 1);
 			
