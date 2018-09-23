@@ -7,6 +7,11 @@ import ecs.component.*;
 
 using tink.CoreApi;
 
+/**
+ * This is a specialized NodeList implementation that will watch the engine's entity list and their component list and:
+ * 1. add to the list those entities fulfilling the condition
+ * 2. remove from the list those entities not fulfilling the condition
+ */
 class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 	
 	public var id(default, null):Int;
