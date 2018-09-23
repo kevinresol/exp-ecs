@@ -54,15 +54,16 @@ class Playground {
 		// create and add 2 systems to engine
 		engine.addSystem(new MovementSystem());
 		engine.addSystem(new RenderSystem());
+		engine.addSystem(new CustomSystem());
 		
 		// run the engine
 		new Timer(16).run = function() engine.update(16 / 1000);
 	}
 }
 
-// NodeListSystem is a System that automatically manage the required NodeList.
-// Use metadata `@:nodes` to indicate the Nodes of interest
-class MovementSystem extends NodeListSystem {
+// Use metadata `@:nodes` to create a TrackingNodeList that contains nodes of entities that contains the specified components
+// NodeList created this way will be cached in the engine, i.e. multiple systems will share the same NodeList instance if their Node type is the same
+class MovementSystem extends System {
 	// prepares a NodeList that contains entities having both the Position and Velocity components
 	@:nodes var nodes:Node<Position, Velocity>;
 	
@@ -75,7 +76,7 @@ class MovementSystem extends NodeListSystem {
 	}
 }
 
-class RenderSystem extends NodeListSystem {
+class RenderSystem extends System {
 	// prepares a NodeList that contains entities having the Position component
 	@:nodes var nodes:Node<Position>;
 	
@@ -85,5 +86,31 @@ class RenderSystem extends NodeListSystem {
 			trace('${node.entity} @ ${node.position.x}, ${node.position.y}');
 		}
 	}
+}
+
+// Besides using `@:nodes`, you can also create a NodeList manually
+class CustomSystem extends System {
+	var nodes:NodeList<CustomNode>;
+	
+	override function update(dt:Float) {
+		for(node in nodes) {
+			$type(node); // CustomNode
+		}
+	}
+	
+	override function onAdded(engine) {
+		super.onAdded(engine);
+		nodes = new TrackingNodeList(engine, CustomNode.new, entity -> entity.has(Position));
+	}
+	
+	override function onRemoved(engine) {
+		super.onRemoved(engine);
+		nodes = null;
+	}
+}
+
+class CustomNode implements NodeBase {
+	public var entity(default, null):Entity;
+	public function new(entity) this.entity = entity;
 }
 ```

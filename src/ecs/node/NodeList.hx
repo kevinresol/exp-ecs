@@ -8,6 +8,8 @@ class NodeList<T:NodeBase> {
 	public var id(default, null):Int;
 	public var nodeAdded(default, null):Signal<T>;
 	public var nodeRemoved(default, null):Signal<T>;
+	public var empty(get, never):Bool;
+	public var head(get, never):T;
 	
 	var nodeAddedTrigger:SignalTrigger<T>;
 	var nodeRemovedTrigger:SignalTrigger<T>;
@@ -57,6 +59,11 @@ class NodeList<T:NodeBase> {
 	}
 	
 	public inline function iterator() return nodes.iterator();
+	inline function get_empty() return !iterator().hasNext();
+	inline function get_head() {
+		var iter = iterator();
+		return iter.hasNext() ? iter.next() : null;
+	}
 	
 	public function toString():String {
 		return name == null ? 'NodeList#$id' : name;

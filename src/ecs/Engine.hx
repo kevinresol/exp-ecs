@@ -13,7 +13,7 @@ class Engine {
 	public var entityAdded(default, null):Signal<Entity>;
 	public var entityRemoved(default, null):Signal<Entity>;
 	
-	var systems:Array<System>;
+	var systems:Array<SystemBase>;
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	
 	var entityAddedTrigger:SignalTrigger<Entity>;
@@ -66,7 +66,7 @@ class Engine {
 	public function toString() {
 		var buf = new StringBuf();
 		// buf.add(entities);
-		buf.add([for(s in systems) s.toString()]);
+		// buf.add([for(s in systems) s.toString()]);
 		// buf.add(nodeLists);
 		return buf.toString();
 	}

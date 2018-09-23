@@ -7,7 +7,7 @@ import node.*;
 
 using tink.CoreApi;
 
-class GameSystem extends NodeListSystem<{nodes:Node<Position, State>}> {
+class GameSystem extends System<{nodes:Node<Position, State>}> {
 	
 	override function update(dt:Float) {
 		for(node in nodes) {

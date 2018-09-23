@@ -87,13 +87,13 @@ class Macro {
 				access: [APublic],
 				meta: null
 			});
-			def.pack = ['ecs', 'node'];
 			
+			def.pack = ['ecs', 'node'];
 			return def;
 		});
 	}
 	
-	public static function buildNodeListSystem():Array<Field> {
+	public static function buildSystem():Array<Field> {
 		var builder = new ClassBuilder();
 		var addedExprs = [];
 		var removedExprs = [];

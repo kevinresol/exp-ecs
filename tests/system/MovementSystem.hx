@@ -7,7 +7,7 @@ import ecs.system.*;
 using tink.CoreApi;
 
 
-class MovementSystem extends NodeListSystem<{nodes:Node<Position, Velocity>}> {
+class MovementSystem extends System<{nodes:Node<Position, Velocity>}> {
 	
 	override function update(dt:Float) {
 		for(node in nodes) {

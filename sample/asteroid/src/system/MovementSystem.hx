@@ -7,7 +7,7 @@ import util.*;
 
 using tink.CoreApi;
 
-class MovementSystem extends NodeListSystem {
+class MovementSystem extends System {
 	@:nodes var nodes:Node<Position, Motion>;
 	
 	var config:Config;
