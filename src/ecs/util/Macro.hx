@@ -38,9 +38,15 @@ class Macro {
 			
 			var def = macro class $name implements ecs.node.NodeBase {
 				public var entity(default, null):ecs.entity.Entity;
+				static var componentTypes:Array<ecs.component.ComponentType> = $a{ctExprs};
 				
 				public static function createNodeList(engine:ecs.Engine) {
-					return new $nodeListTp(engine, $p{['ecs', 'node', name, 'new']}, $a{ctExprs});
+					return new $nodeListTp(
+						engine,
+						$p{['ecs', 'node', name, 'new']},
+						function(entity) return entity.hasAll(componentTypes),
+						'TrackingNodeList#' + [for(t in componentTypes) t.split('.').pop()].join(',')
+					);
 				}
 				
 			}
