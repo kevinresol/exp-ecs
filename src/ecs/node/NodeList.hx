@@ -20,7 +20,6 @@ class NodeList<T:NodeBase> {
 	static var ids:Int = 0;
 	
 	public function new(factory, ?name) {
-		id == ++ids;
 		nodes = new Map();
 		id = ++ids;
 		nodeAdded = nodeAddedTrigger = Signal.trigger();
