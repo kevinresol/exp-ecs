@@ -50,12 +50,12 @@ class Playground {
 		entity.add(new Position(0, 0));
 		
 		// add entity to engine
-		engine.addEntity(entity);
+		engine.entities.add(entity);
 		
 		// create and add 2 systems to engine
-		engine.addSystem(new MovementSystem());
-		engine.addSystem(new RenderSystem());
-		engine.addSystem(new CustomSystem());
+		engine.systems.add(new MovementSystem());
+		engine.systems.add(new RenderSystem());
+		engine.systems.add(new CustomSystem());
 		
 		// run the engine
 		new Timer(16).run = function() engine.update(16 / 1000);
@@ -110,6 +110,7 @@ class CustomSystem extends System {
 	}
 }
 
+// Manually declare a Node type
 class CustomNode implements NodeBase {
 	public var entity(default, null):Entity;
 	public function new(entity) this.entity = entity;

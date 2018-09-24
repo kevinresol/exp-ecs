@@ -14,10 +14,10 @@ class Playground {
 		entity.add(new Velocity(1, 0));
 		entity.add(new Position(0, 0));
 		
-		engine.addEntity(entity);
-		engine.addSystem(new MovementSystem());
-		engine.addSystem(new RenderSystem());
-		engine.addSystem(new CustomSystem());
+		engine.entities.add(entity);
+		engine.systems.add(new MovementSystem());
+		engine.systems.add(new RenderSystem());
+		engine.systems.add(new CustomSystem());
 		
 		new Timer(16).run = function() engine.update(16 / 1000);
 	}
