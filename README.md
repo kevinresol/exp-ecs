@@ -1,5 +1,6 @@
 # Macro-powered Entity-Component-System framework
 
+[![Build Status](https://travis-ci.org/kevinresol/ecs.svg?branch=develop)](https://travis-ci.org/kevinresol/ecs)
 
 This is a Entity-Component-System framework, inspired by the [Ash Framework](http://www.ashframework.org/)  
 Thanks to the Haxe macro system we are able to reduce boilerplate code and allow some optimizations.
