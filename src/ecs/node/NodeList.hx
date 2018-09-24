@@ -22,6 +22,7 @@ class NodeList<T:NodeBase> {
 	public function new(factory, ?name) {
 		id == ++ids;
 		nodes = new Map();
+		id = ++ids;
 		nodeAdded = nodeAddedTrigger = Signal.trigger();
 		nodeRemoved = nodeRemovedTrigger = Signal.trigger();
 		this.factory = factory;
