@@ -23,3 +23,5 @@ script:
   - lix run travix lua
   - lix run travix php
   - lix run travix cpp
+  - lix run travix hl
+  - lix run travix python
