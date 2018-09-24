@@ -7,7 +7,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class RenderSystem extends NodeListSystem {
+class RenderSystem extends System {
 	
 	@:nodes var nodes:Node<Position, Display>;
 	

@@ -1,22 +1,30 @@
 package ecs.system;
 
 import ecs.*;
-import ecs.node.*;
-using tink.CoreApi;
 
-class System {
+#if !macro @:autoBuild(ecs.util.Macro.buildSystem()) #end
+class System implements SystemBase {
 	var engine:Engine;
 	
 	public function new() {}
 	
 	public function update(dt:Float) {}
 	
-	public function onAdded(engine:Engine)
+	public function onAdded(engine:Engine) {
 		this.engine = engine;
+		setNodeLists(engine);
+	}
 	
-	public function onRemoved(engine:Engine)
-		engine = null;
+	public function onRemoved(engine:Engine) {
+		this.engine = null;
+		unsetNodeLists();
+	}
 	
-	public function toString()
-		return Type.getClassName(Type.getClass(this));
+	function setNodeLists(engine:Engine) {
+		throw 'abstract';
+	}
+	
+	function unsetNodeLists() {
+		throw 'abstract';
+	}
 }

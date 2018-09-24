@@ -6,7 +6,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class DeathSystem extends NodeListSystem {
+class DeathSystem extends System {
 	@:nodes var nodes:Node<Death>;
 	
 	override function update(dt:Float) {

@@ -5,7 +5,7 @@ import ecs.system.*;
 import ecs.node.*;
 import util.*;
 
-class GameSystem extends NodeListSystem {
+class GameSystem extends System {
 	@:nodes var gameNodes:Node<Game>;
 	@:nodes var spaceships:Node<Spaceship, Position>;
 	@:nodes var asteroids:Node<Asteroid, Position, Collision>;

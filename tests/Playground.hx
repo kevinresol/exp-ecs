@@ -17,12 +17,13 @@ class Playground {
 		engine.addEntity(entity);
 		engine.addSystem(new MovementSystem());
 		engine.addSystem(new RenderSystem());
+		engine.addSystem(new CustomSystem());
 		
 		new Timer(16).run = function() engine.update(16 / 1000);
 	}
 }
 
-class MovementSystem extends NodeListSystem {
+class MovementSystem extends System {
 	@:nodes var nodes:Node<Position, Velocity>;
 	
 	override function update(dt:Float) {
@@ -33,7 +34,7 @@ class MovementSystem extends NodeListSystem {
 	}
 }
 
-class RenderSystem extends NodeListSystem {
+class RenderSystem extends System {
 	@:nodes var nodes:Node<Position>;
 	
 	override function update(dt:Float) {
@@ -41,4 +42,30 @@ class RenderSystem extends NodeListSystem {
 			trace('${node.entity} @ ${node.position.x}, ${node.position.y}');
 		}
 	}
+}
+
+class CustomSystem extends System {
+	var nodes:NodeList<CustomNode>;
+	
+	override function update(dt:Float) {
+		for(node in nodes) {
+			$type(node); // CustomNode
+			trace(node.entity.get(Position));
+		}
+	}
+	
+	override function onAdded(engine) {
+		super.onAdded(engine);
+		nodes = engine.getNodeList(CustomNode, engine -> new TrackingNodeList(engine, CustomNode.new, entity -> entity.has(Position)));
+	}
+	
+	override function onRemoved(engine) {
+		super.onRemoved(engine);
+		nodes = null;
+	}
+}
+
+class CustomNode implements NodeBase {
+	public var entity(default, null):Entity;
+	public function new(entity) this.entity = entity;
 }

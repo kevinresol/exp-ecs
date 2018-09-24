@@ -9,6 +9,7 @@ class NodeList<T:NodeBase> {
 	public var length(get, never):Int;
 	public var empty(get, never):Bool;
 	public var head(get, never):T;
+	public var id(default, null):Int;
 	public var nodeAdded(default, null):Signal<T>;
 	public var nodeRemoved(default, null):Signal<T>;
 	
@@ -17,13 +18,18 @@ class NodeList<T:NodeBase> {
 	var entities:Array<Int>;
 	var nodes:Array<T>;
 	var factory:Entity->T;
+	var name:String;
 	
-	public function new(factory) {
+	static var ids:Int = 0;
+	
+	public function new(factory, ?name) {
 		entities = [];
 		nodes = [];
+		id = ++ids;
 		nodeAdded = nodeAddedTrigger = Signal.trigger();
 		nodeRemoved = nodeRemovedTrigger = Signal.trigger();
 		this.factory = factory;
+		this.name = name;
 	}
 	
 	public function add(entity:Entity) {
@@ -67,7 +73,7 @@ class NodeList<T:NodeBase> {
 	inline function get_head() return nodes[0];
 	
 	public function toString():String {
-		return 'NodeList';
+		return name == null ? 'NodeList#$id' : name;
 	}
 }
 

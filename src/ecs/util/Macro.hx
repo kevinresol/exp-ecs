@@ -38,9 +38,15 @@ class Macro {
 			
 			var def = macro class $name implements ecs.node.NodeBase {
 				public var entity(default, null):ecs.entity.Entity;
+				static var componentTypes:Array<ecs.component.ComponentType> = $a{ctExprs};
 				
 				public static function createNodeList(engine:ecs.Engine) {
-					return new $nodeListTp(engine, $p{['ecs', 'node', name, 'new']}, $a{ctExprs});
+					return new $nodeListTp(
+						engine,
+						$p{['ecs', 'node', name, 'new']},
+						function(entity) return entity.hasAll(componentTypes),
+						'TrackingNodeList#' + [for(t in componentTypes) t.split('.').pop()].join(',')
+					);
 				}
 				
 			}
@@ -81,13 +87,13 @@ class Macro {
 				access: [APublic],
 				meta: null
 			});
-			def.pack = ['ecs', 'node'];
 			
+			def.pack = ['ecs', 'node'];
 			return def;
 		});
 	}
 	
-	public static function buildNodeListSystem():Array<Field> {
+	public static function buildSystem():Array<Field> {
 		var builder = new ClassBuilder();
 		var addedExprs = [];
 		var removedExprs = [];
@@ -99,7 +105,8 @@ class Macro {
 						case FVar(ct, e):
 							var ct = ct.toType().sure().toComplex();
 							field.kind = FVar(macro:ecs.node.NodeList<$ct>, e);
-							addedExprs.push(macro $i{name} = engine.getNodeList($p{ct.toString().split('.')}));
+							var parts = ct.toString().split('.');
+							addedExprs.push(macro $i{name} = engine.getNodeList($p{parts}, $p{parts.concat(['createNodeList'])}));
 							removedExprs.push(macro $i{name} = null);
 						case _:
 							field.pos.error('Unsupported');
@@ -113,18 +120,6 @@ class Macro {
 			override function unsetNodeLists() $b{removedExprs}
 		});
 		return builder.export();
-	}
-	
-	static var re = ~/Class<([^>]*)>/;
-	public static function getNodeList(ethis:Expr, e:Expr) {
-		return switch Context.typeof(e) {
-			case type = TType(_.get() => def, []) if(re.match(def.name) && Context.unify(type, (macro:Class<ecs.node.NodeBase>).toType().sure())):
-				var name = re.matched(1);
-				var cls = macro $p{name.split('.')};
-				macro @:privateAccess $ethis._getNodeList($cls, $cls.createNodeList);
-			default:
-				e.pos.error('Expected Class<NodeBase>');
-		}
 	}
 	
 	static var COMPONENT_TYPE = Context.getType('ecs.component.Component');

@@ -7,27 +7,33 @@ import ecs.component.*;
 
 using tink.CoreApi;
 
+/**
+ * This is a specialized NodeList implementation that will watch the engine's entity list and their component list and:
+ * 1. add to the list those entities fulfilling the condition
+ * 2. remove from the list those entities not fulfilling the condition
+ */
 class TrackingNodeList<T:NodeBase> extends NodeList<T> {
-	var componentTypes:Array<ComponentType>;
+	
+	var condition:Entity->Bool;
 	var engine:Engine;
 	var listeners:Map<Entity, CallbackLink> = new Map();
 	var binding:CallbackLink;
 	
-	public function new(engine, factory, componentTypes) {
-		super(factory);
+	public function new(engine, factory, condition, ?name) {
+		super(factory, name);
 		
 		this.engine = engine;
-		this.componentTypes = componentTypes;
+		this.condition = condition;
 		
 		for(entity in engine.entities) {
 			track(entity);
-			if(entity.hasAll(componentTypes)) add(entity);
+			if(condition(entity)) add(entity);
 		}
 			
 		binding = [
 			engine.entityAdded.handle(function(entity) {
 				track(entity);
-				if(entity.hasAll(componentTypes)) add(entity);
+				if(condition(entity)) add(entity);
 			}),
 			engine.entityRemoved.handle(function(entity) {
 				untrack(entity);
@@ -47,12 +53,8 @@ class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 	function track(entity:Entity) {
 		if(listeners.exists(entity)) return; // already tracking
 		listeners.set(entity, [
-			entity.componentAdded.handle(function(c) {
-				if(entity.hasAll(componentTypes)) add(entity);
-			}),
-			entity.componentRemoved.handle(function(c) {
-				if(!entity.hasAll(componentTypes)) remove(entity);
-			}),
+			entity.componentAdded.handle(function(_) if(condition(entity)) add(entity)),
+			entity.componentRemoved.handle(function(_) if(!condition(entity)) remove(entity)),
 		]);
 	}
 	
@@ -63,6 +65,6 @@ class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 	}
 	
 	override function toString():String {
-		return 'TrackingNodeList#' + componentTypes.map(function(type) return type.split('.').pop()).join(',');
+		return name == null ? 'TrackingNodeList#$id' : name;
 	}
 }

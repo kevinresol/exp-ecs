@@ -5,7 +5,7 @@ import ecs.system.*;
 import ecs.node.*;
 import util.*;
 
-class CollisionSystem extends NodeListSystem {
+class CollisionSystem extends System {
 	@:nodes var spaceships:Node<Spaceship, Position, Collision>;
 	@:nodes var asteroids:Node<Asteroid, Position, Collision>;
 	@:nodes var bullets:Node<Bullet, Position, Collision>;

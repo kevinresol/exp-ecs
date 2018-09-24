@@ -6,7 +6,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class BulletSystem extends NodeListSystem {
+class BulletSystem extends System {
 	@:nodes var nodes:Node<Bullet>;
 	
 	override function update(dt:Float) {
