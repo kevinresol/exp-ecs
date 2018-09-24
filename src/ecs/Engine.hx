@@ -4,56 +4,31 @@ import ecs.entity.*;
 import ecs.node.*;
 import ecs.node.NodeList;
 import ecs.system.*;
+import tink.state.State;
 
 using tink.CoreApi;
 
 class Engine {
 	
-	public var entities(default, null):ReadOnlyArray<Entity>;
-	public var entityAdded(default, null):Signal<Entity>;
-	public var entityRemoved(default, null):Signal<Entity>;
-	public var systems:ReadOnlyArray<SystemBase>;
+	public var entities(default, null):EntityCollection;
+	public var systems(default, null):SystemCollection;
 	
-	var _entities:Array<Entity>;
-	var _systems:Array<SystemBase>;
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
-	
-	var entityAddedTrigger:SignalTrigger<Entity>;
-	var entityRemovedTrigger:SignalTrigger<Entity>;
+	var allowModifyEntities:State<Bool>;
 	
 	public function new() {
-		entities = _entities = [];
-		systems = _systems = [];
+		allowModifyEntities = new State(true);
+		entities = new EntityCollection(allowModifyEntities);
+		systems = new SystemCollection(this);
 		nodeLists = new Map();
-		entityAdded = entityAddedTrigger = Signal.trigger();
-		entityRemoved = entityRemovedTrigger = Signal.trigger();
 	}
 	
 	public function update(dt:Float) {
-		for(system in _systems)
+		for(system in systems) {
+			allowModifyEntities.set(false);
 			system.update(dt);
-	}
-	
-	public function addEntity(entity:Entity) {
-		removeEntity(entity); // re-add to the end of the list
-		_entities.push(entity);
-		entityAddedTrigger.trigger(entity);
-	}
-	
-	public function removeEntity(entity:Entity) {
-		if(_entities.remove(entity))
-			entityRemovedTrigger.trigger(entity);
-	}
-	
-	public function addSystem(system:System) {
-		removeSystem(system); // re-add to the end of the list
-		_systems.push(system);
-		system.onAdded(this);
-	}
-	
-	public function removeSystem(system:System) {
-		if(_systems.remove(system))
-			system.onRemoved(this);
+			allowModifyEntities.set(true);
+		}
 	}
 	
 	public function getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
@@ -68,4 +43,91 @@ class Engine {
 		// buf.add(nodeLists);
 		return buf.toString();
 	}
+}
+
+class SystemCollection {
+	var array:Array<System>;
+	var engine:Engine;
+	
+	public function new(engine) {
+		this.engine = engine;
+		array = [];
+	}
+	
+	public function add(system:System) {
+		remove(system); // re-add to the end of the list
+		array.push(system);
+		system.onAdded(engine);
+	}
+	
+	public function remove(system:System) {
+		if(array.remove(system))
+			system.onRemoved(engine);
+	}
+	
+	public inline function iterator()
+		return array.iterator();
+}
+
+class EntityCollection {
+	public var added(default, null):Signal<Entity>;
+	public var removed(default, null):Signal<Entity>;
+	
+	var allowModify:State<Bool>;
+	var array:Array<Entity>;
+	var addedTrigger:SignalTrigger<Entity>;
+	var removedTrigger:SignalTrigger<Entity>;
+	
+	var pending:Array<Pair<Entity, Bool>>;
+	
+	public function new(allowModify:State<Bool>) {
+		this.allowModify = allowModify;
+		
+		array = [];
+		pending = [];
+		added = addedTrigger = Signal.trigger();
+		removed = removedTrigger = Signal.trigger();
+	}
+	
+	public function add(entity:Entity) {
+		if(allowModify.value) {
+			_add(entity);
+		} else {
+			registerUpdate();
+			pending.push(new Pair(entity, true));
+		}
+	}
+	
+	public function remove(entity:Entity) {
+		if(allowModify.value) {
+			_remove(entity);
+		} else {
+			registerUpdate();
+			pending.push(new Pair(entity, false));
+		}
+	}
+	
+	inline function registerUpdate() {
+		if(pending.length == 0)
+			allowModify.observe().nextTime(function(v) return v).handle(update);
+	}
+	
+	function update() {
+		for(v in pending) if(v.b) _add(v.a) else _remove(v.a);
+		pending = [];
+	}
+	
+	inline function _remove(entity:Entity) {
+		if(array.remove(entity))
+			removedTrigger.trigger(entity);
+	}
+	
+	inline function _add(entity:Entity) {
+		remove(entity); // re-add to the end of the list
+		array.push(entity);
+		addedTrigger.trigger(entity);
+	}
+	
+	public inline function iterator()
+		return array.iterator();
 }

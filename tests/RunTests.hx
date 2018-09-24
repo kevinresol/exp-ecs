@@ -34,8 +34,8 @@ class EngineTest {
 		var entity = new Entity();
 		
 		var added = 0;
-		engine.entityAdded.handle(function(entity) added++);
-		engine.addEntity(entity);
+		engine.entities.added.handle(function(entity) added++);
+		engine.entities.add(entity);
 		
 		asserts.assert(added == 1);
 		return asserts.done();
@@ -47,17 +47,19 @@ class EngineTest {
 		var entity2 = new Entity();
 		
 		var added = 0;
-		engine.entityAdded.handle(function(entity) added++);
-		engine.addEntity(entity1);
-		engine.addEntity(entity2);
+		engine.entities.added.handle(function(entity) added++);
+		engine.entities.add(entity1);
+		engine.entities.add(entity2);
 		asserts.assert(added == 2);
-		asserts.assert(engine.entities[0] == entity1, 'engine.entities[0] == entity1');
-		asserts.assert(engine.entities[1] == entity2, 'engine.entities[1] == entity2');
+		var entities = [for(e in engine.entities) e];
+		asserts.assert(entities[0] == entity1, 'engine.entities[0] == entity1');
+		asserts.assert(entities[1] == entity2, 'engine.entities[1] == entity2');
 		
-		engine.addEntity(entity1);
+		engine.entities.add(entity1);
 		asserts.assert(added == 3);
-		asserts.assert(engine.entities[0] == entity2, 'engine.entities[0] == entity2');
-		asserts.assert(engine.entities[1] == entity1, 'engine.entities[1] == entity1');
+		var entities = [for(e in engine.entities) e];
+		asserts.assert(entities[0] == entity2, 'engine.entities[0] == entity2');
+		asserts.assert(entities[1] == entity1, 'engine.entities[1] == entity1');
 		
 		return asserts.done();
 	}
@@ -110,13 +112,13 @@ class NodeListTest {
 			
 			var added = 0, removed = 0;
 			
-			if(!lateAdd) engine.addEntity(entity);
+			if(!lateAdd) engine.entities.add(entity);
 			
 			var list = engine.getNodeList(MovementNode, MovementNode.createNodeList);
 			list.nodeAdded.handle(function(_) added++);
 			list.nodeRemoved.handle(function(_) removed++);
 			
-			if(lateAdd) engine.addEntity(entity);
+			if(lateAdd) engine.entities.add(entity);
 			
 			asserts.assert(list.toString() == 'TrackingNodeList#Position,Velocity');
 			asserts.assert(added == 0);
@@ -163,7 +165,7 @@ class NodeListBenchmark implements Benchmark {
 			var entity = new Entity();
 			entity.add(new Velocity(0, 0));
 			entity.add(new Position(0, 0));
-			engine.addEntity(entity);
+			engine.entities.add(entity);
 		}
 		list = engine.getNodeList(MovementNode, MovementNode.createNodeList);
 		return Noise;

@@ -31,11 +31,11 @@ class TrackingNodeList<T:NodeBase> extends NodeList<T> {
 		}
 			
 		binding = [
-			engine.entityAdded.handle(function(entity) {
+			engine.entities.added.handle(function(entity) {
 				track(entity);
 				if(condition(entity)) add(entity);
 			}),
-			engine.entityRemoved.handle(function(entity) {
+			engine.entities.removed.handle(function(entity) {
 				untrack(entity);
 				remove(entity);
 			}),

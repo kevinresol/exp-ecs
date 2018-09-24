@@ -1,3 +1,4 @@
 -cp src
 -D ecs
 -lib tink_macro
+-lib tink_state
