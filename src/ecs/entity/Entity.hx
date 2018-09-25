@@ -6,12 +6,12 @@ using tink.CoreApi;
 class Entity {
 	
 	public var id(default, null):Int;
-	public var componentAdded:Signal<ComponentType>;
-	public var componentRemoved:Signal<ComponentType>;
+	public var componentAdded:Signal<Component>;
+	public var componentRemoved:Signal<Component>;
 	
 	var components:Map<ComponentType, Component>;
-	var componentAddedTrigger:SignalTrigger<ComponentType>;
-	var componentRemovedTrigger:SignalTrigger<ComponentType>;
+	var componentAddedTrigger:SignalTrigger<Component>;
+	var componentRemovedTrigger:SignalTrigger<Component>;
 	var name:String;
 	
 	static var ids:Int = 0;
@@ -28,14 +28,14 @@ class Entity {
 		if(type == null) type = component;
 		if(components.exists(type)) remove(type);
 		components.set(type, component);
-		componentAddedTrigger.trigger(type);
+		componentAddedTrigger.trigger(component);
 	}
 	
 	public function remove(type:ComponentType) {
 		var component = components.get(type);
 		if(component != null) {
 			components.remove(type);
-			componentRemovedTrigger.trigger(type);
+			componentRemovedTrigger.trigger(component);
 		}
 		return component;
 	}

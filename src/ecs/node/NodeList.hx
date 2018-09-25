@@ -55,6 +55,7 @@ class NodeList<T:NodeBase> {
 					nodes.splice(i, 1);
 					entities.splice(i, 1);
 					nodeRemovedTrigger.trigger(node);
+					node.destroy();
 					true;
 			}
 	}

@@ -150,6 +150,65 @@ class NodeListTest {
 		});
 		return asserts;
 	}
+	
+	@:variant('Add entity to engine before creating the node list'(true))
+	@:variant('Add entity to engine after creating the node list'(false))
+	public function optional(lateAdd) {
+		Callback.defer(function() {
+			var engine = new Engine();
+			var entity = new Entity();
+			
+			var added = 0, removed = 0;
+			
+			if(!lateAdd) engine.entities.add(entity);
+			
+			var list = engine.getNodeList(OptionalNode, OptionalNode.createNodeList);
+			list.nodeAdded.handle(function(_) added++);
+			list.nodeRemoved.handle(function(_) removed++);
+			
+			if(lateAdd) engine.entities.add(entity);
+			
+			asserts.assert(list.toString() == 'TrackingNodeList#Position,?Velocity');
+			asserts.assert(added == 0);
+			var velocity = new Velocity(0, 0);
+			var position = new Position(0, 0);
+			
+			entity.add(position);
+			asserts.assert(list.length == 1);
+			asserts.assert(added == 1);
+			asserts.assert(removed == 0);
+			for(node in list) {
+				asserts.assert(node.position != null, 'node.position != null');
+				asserts.assert(node.velocity == null, 'node.velocity == null');
+			}
+			
+			entity.add(velocity);
+			asserts.assert(list.length == 1);
+			asserts.assert(added == 1);
+			asserts.assert(removed == 0);
+			for(node in list) {
+				asserts.assert(node.position != null, 'node.position != null');
+				asserts.assert(node.velocity != null, 'node.velocity != null');
+			}
+			
+			entity.remove(velocity);
+			asserts.assert(list.length == 1);
+			asserts.assert(added == 1);
+			asserts.assert(removed == 0);
+			for(node in list) {
+				asserts.assert(node.position != null, 'node.position != null');
+				asserts.assert(node.velocity == null, 'node.velocity == null');
+			}
+			
+			entity.remove(position);
+			asserts.assert(list.length == 0);
+			asserts.assert(added == 1);
+			asserts.assert(removed == 1);
+			
+			asserts.done();
+		});
+		return asserts;
+	}
 }
 
 class NodeListBenchmark implements Benchmark {
@@ -183,3 +242,7 @@ class NodeListBenchmark implements Benchmark {
 }
 
 typedef MovementNode = Node<Position, Velocity>;
+typedef OptionalNode = Node<{
+	position:Position,
+	?velocity:Velocity,
+}>;

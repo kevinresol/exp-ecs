@@ -2,6 +2,10 @@ package ecs.node;
 
 import ecs.entity.*;
 
-interface NodeBase {
-	var entity(default, null):Entity;
+class NodeBase {
+	public var entity(default, null):Entity;
+	
+	public function destroy() {
+		entity = null;
+	}
 }
