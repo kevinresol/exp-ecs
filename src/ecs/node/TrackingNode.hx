@@ -6,8 +6,10 @@ using tink.CoreApi;
 class TrackingNode extends NodeBase {
 	var binding:CallbackLink;
 	
-	public function new(entity) {
+	public function new(entity, ?name) {
 		this.entity = entity;
+		this.name = name;
+		
 		binding = [
 			entity.componentAdded.handle(onComponentAdded),
 			entity.componentRemoved.handle(onComponentRemoved),

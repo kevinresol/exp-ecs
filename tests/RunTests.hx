@@ -12,6 +12,7 @@ import haxe.*;
 import tink.unit.*;
 import tink.testrunner.*;
 
+using StringTools;
 using tink.CoreApi;
 
 class RunTests {
@@ -178,6 +179,7 @@ class NodeListTest {
 			asserts.assert(added == 1);
 			asserts.assert(removed == 0);
 			for(node in list) {
+				asserts.assert(node.toString().startsWith('TrackingNode#Position,?Velocity'));
 				asserts.assert(node.position != null, 'node.position != null');
 				asserts.assert(node.velocity == null, 'node.velocity == null');
 			}

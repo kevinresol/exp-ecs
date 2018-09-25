@@ -87,7 +87,7 @@ class Node {
 			static var componentTypes:Array<ecs.component.ComponentType> = $a{ctExprs};
 			
 			public function new(entity) {
-				super(entity);
+				super(entity, 'TrackingNode#' + $v{description});
 				$b{ctorExprs}
 			}
 			
