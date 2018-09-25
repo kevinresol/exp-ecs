@@ -4,7 +4,6 @@ import ecs.entity.*;
 using tink.CoreApi;
 using Lambda;
 
-// TODO: find something else to back a NodeList, because ObjectMap is pretty slow on iterating
 class NodeList<T:NodeBase> {
 	public var length(get, never):Int;
 	public var empty(get, never):Bool;
@@ -60,10 +59,11 @@ class NodeList<T:NodeBase> {
 			}
 	}
 	
-	
 	public function destroy() {
-		entities = null;
+		for(node in nodes) node.destroy();
 		nodes = null;
+		entities = null;
+		
 		// TODO: destroy signals
 	}
 	

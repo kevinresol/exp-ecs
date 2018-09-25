@@ -39,6 +39,8 @@ class EngineTest {
 		engine.entities.add(entity);
 		
 		asserts.assert(added == 1);
+		
+		engine.destroy();
 		return asserts.done();
 	}
 	
@@ -62,6 +64,7 @@ class EngineTest {
 		asserts.assert(entities[0] == entity2, 'engine.entities[0] == entity2');
 		asserts.assert(entities[1] == entity1, 'engine.entities[1] == entity1');
 		
+		engine.destroy();
 		return asserts.done();
 	}
 	
@@ -147,6 +150,7 @@ class NodeListTest {
 			asserts.assert(added == 2);
 			asserts.assert(removed == 1);
 			
+			engine.destroy();
 			asserts.done();
 		});
 		return asserts;
@@ -207,6 +211,7 @@ class NodeListTest {
 			asserts.assert(added == 1);
 			asserts.assert(removed == 1);
 			
+			engine.destroy();
 			asserts.done();
 		});
 		return asserts;

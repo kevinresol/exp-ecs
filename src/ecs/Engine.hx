@@ -36,6 +36,16 @@ class Engine {
 		return cast nodeLists.get(type);
 	}
 	
+	public function destroy() {
+		for(list in nodeLists) list.destroy();
+		nodeLists = null;
+		
+		entities.destroy();
+		entities = null;
+		
+		systems = null;
+	}
+	
 	public function toString() {
 		var buf = new StringBuf();
 		// buf.add(entities);
@@ -126,6 +136,12 @@ class EntityCollection {
 		remove(entity); // re-add to the end of the list
 		array.push(entity);
 		addedTrigger.trigger(entity);
+	}
+	
+	public function destroy() {
+		for(entity in array) entity.destroy();
+		array = null;
+		// TODO: destroy signals
 	}
 	
 	public inline function iterator()

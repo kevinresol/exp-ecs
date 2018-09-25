@@ -53,6 +53,11 @@ class Entity {
 		return true;
 	}
 	
+	public function destroy() {
+		components = null;
+		// TODO: destroy signals
+	}
+	
 	public function toString():String {
 		return name == null ? 'Entity#$id' : name;
 	}
