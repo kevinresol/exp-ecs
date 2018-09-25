@@ -3,6 +3,7 @@ package ;
 import ecs.*;
 import ecs.entity.*;
 import ecs.component.*;
+import ecs.system.*;
 import ecs.node.*;
 import component.*;
 import node.*;
@@ -21,6 +22,7 @@ class RunTests {
 			new EngineTest(),
 			new StateMachineTest(),
 			new NodeListTest(),
+			new EngineBenchmark(),
 			new NodeListBenchmark(),
 		])).handle(Runner.exit);
 	}
@@ -243,6 +245,38 @@ class NodeListBenchmark implements Benchmark {
 			pos.x += vel.x;
 			pos.y += vel.y;
 		}
+	}
+}
+
+class EngineBenchmark implements Benchmark {
+	
+	var engine:Engine = new Engine();
+	
+	public function new() {}
+	
+	@:setup
+	public function setup() {
+		engine = new Engine();
+		return Noise;
+	}
+	
+	@:benchmark(10000)
+	public function addEntity() {
+		var entity = new Entity();
+		engine.entities.add(entity);
+	}
+	
+	@:benchmark(10000)
+	public function addSystem() {
+		var system = new System();
+		engine.systems.add(system);
+	}
+	
+	@:teardown
+	public function teardown() {
+		engine.destroy();
+		engine = null;
+		return Noise;
 	}
 }
 

@@ -65,7 +65,8 @@ class CustomSystem extends System {
 	}
 }
 
-class CustomNode implements NodeBase {
-	public var entity(default, null):Entity;
-	public function new(entity) this.entity = entity;
+class CustomNode extends NodeBase {
+	public function new(entity) {
+		this.entity = entity;
+	}
 }

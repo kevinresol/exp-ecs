@@ -22,13 +22,9 @@ class System implements SystemBase {
 		unsetNodeLists();
 	}
 	
-	function setNodeLists(engine:Engine) {
-		throw 'abstract';
-	}
+	function setNodeLists(engine:Engine) {}
 	
-	function unsetNodeLists() {
-		throw 'abstract';
-	}
+	function unsetNodeLists() {}
 }
 #else
 
