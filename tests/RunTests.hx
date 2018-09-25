@@ -109,7 +109,7 @@ class NodeListTest {
 	@:variant('Add entity to engine before creating the node list'(true))
 	@:variant('Add entity to engine after creating the node list'(false))
 	public function add(lateAdd) {
-		Callback.defer(function() {
+		return asserts.defer(function() {
 			
 			var engine = new Engine();
 			var entity = new Entity();
@@ -153,13 +153,12 @@ class NodeListTest {
 			engine.destroy();
 			asserts.done();
 		});
-		return asserts;
 	}
 	
 	@:variant('Add entity to engine before creating the node list'(true))
 	@:variant('Add entity to engine after creating the node list'(false))
 	public function optional(lateAdd) {
-		Callback.defer(function() {
+		return asserts.defer(function() {
 			var engine = new Engine();
 			var entity = new Entity();
 			
@@ -214,7 +213,6 @@ class NodeListTest {
 			engine.destroy();
 			asserts.done();
 		});
-		return asserts;
 	}
 }
 
