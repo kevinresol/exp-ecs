@@ -184,11 +184,15 @@ class EventEmitter<Event:EnumValue> {
 	}
 	
 	public function flushSystem() {
-		if(flush(postSystem)) postSystem = [];
+		if(flush(postSystem))
+			postSystem = [];
+			// TODO: use this in haxe 4: postSystem.resize(0);
 	}
 	
 	public function flushUpdate() {
-		if(flush(postUpdate)) postUpdate = [];
+		if(flush(postUpdate))
+			postUpdate = [];
+			// TODO: use this in haxe 4: postUpdate.resize(0);
 	}
 	
 	inline function flush(events:Array<Event>) {
