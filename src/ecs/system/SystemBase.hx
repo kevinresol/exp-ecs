@@ -4,8 +4,8 @@ import ecs.*;
 import ecs.node.*;
 using tink.CoreApi;
 
-interface SystemBase {
+interface SystemBase<Event:EnumValue> {
 	function update(dt:Float):Void;
-	function onAdded(engine:Engine):Void;
-	function onRemoved(engine:Engine):Void;
+	function onAdded(engine:Engine<Event>):Void;
+	function onRemoved(engine:Engine<Event>):Void;
 }

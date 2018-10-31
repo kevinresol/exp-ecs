@@ -7,7 +7,7 @@ import util.*;
 
 using tink.CoreApi;
 
-class MovementSystem extends System {
+class MovementSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var nodes:Node<Position, Motion>;
 	
 	var config:Config;

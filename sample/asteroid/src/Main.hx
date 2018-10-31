@@ -7,7 +7,7 @@ import util.*;
 
 class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 	
-	var engine = new Engine();
+	var engine = new Engine<Event>();
 	var input = new Input();
 	
 	#if openfl
@@ -58,17 +58,21 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 			height: #if openfl stage.stageHeight #elseif luxe Luxe.screen.h #end,
 		};
 		
-		engine.addSystem(new GameSystem(config));
-		engine.addSystem(new GunControlSystem(input));
-		engine.addSystem(new MotionControlSystem(input));
-		engine.addSystem(new MovementSystem(config));
-		engine.addSystem(new CollisionSystem());
-		engine.addSystem(new BulletSystem());
-		engine.addSystem(new AnimationSystem());
-		engine.addSystem(new DeathSystem());
-		engine.addSystem(new RenderSystem(#if openfl this #end));
+		engine.systems.add(new GameSystem(config));
+		engine.systems.add(new GunControlSystem(input));
+		engine.systems.add(new MotionControlSystem(input));
+		engine.systems.add(new MovementSystem(config));
+		engine.systems.add(new CollisionSystem());
+		engine.systems.add(new BulletSystem());
+		engine.systems.add(new AnimationSystem());
+		engine.systems.add(new DeathSystem());
+		engine.systems.add(new RenderSystem(#if openfl this #end));
 		
-		engine.addEntity(new Game());
+		engine.entities.add(new Game());
 	}
+	
+}
+
+enum Event {
 	
 }

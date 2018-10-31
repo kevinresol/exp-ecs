@@ -6,7 +6,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class AnimationSystem extends System {
+class AnimationSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var nodes:Node<Animation>;
 	override function update(dt:Float) {
 		for(node in nodes)

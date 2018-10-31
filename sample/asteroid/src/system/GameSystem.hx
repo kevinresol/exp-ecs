@@ -5,7 +5,7 @@ import ecs.system.*;
 import ecs.node.*;
 import util.*;
 
-class GameSystem extends System {
+class GameSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var gameNodes:Node<Game>;
 	@:nodes var spaceships:Node<Spaceship, Position>;
 	@:nodes var asteroids:Node<Asteroid, Position, Collision>;
@@ -31,7 +31,7 @@ class GameSystem extends System {
 						}
 					}
 					if(clear) {
-						engine.addEntity(new entity.Spaceship(newPos.x, newPos.y));
+						engine.entities.add(new entity.Spaceship(newPos.x, newPos.y));
 						node.game.lives--;
 					}
 				} else {
@@ -47,7 +47,7 @@ class GameSystem extends System {
 					var position = null;
 					do position = new Point(Math.random() * config.width, Math.random() * config.height)
 					while(Point.distance(position, spaceship.position.position) < 80);
-					engine.addEntity(new entity.Asteroid(30, position.x, position.y));
+					engine.entities.add(new entity.Asteroid(30, position.x, position.y));
 				}
 			}
 		}

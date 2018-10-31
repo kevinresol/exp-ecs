@@ -12,10 +12,10 @@ using tink.CoreApi;
  * 1. add to the list those entities fulfilling the condition
  * 2. remove from the list those entities not fulfilling the condition
  */
-class TrackingNodeList<T:NodeBase> extends NodeList<T> {
+class TrackingNodeList<T:NodeBase, Event:EnumValue> extends NodeList<T> {
 	
 	var condition:Entity->Bool;
-	var engine:Engine;
+	var engine:Engine<Event>;
 	var listeners:Map<Entity, CallbackLink> = new Map();
 	var binding:CallbackLink;
 	

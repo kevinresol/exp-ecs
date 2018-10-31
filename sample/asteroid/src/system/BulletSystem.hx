@@ -6,14 +6,14 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class BulletSystem extends System {
+class BulletSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var nodes:Node<Bullet>;
 	
 	override function update(dt:Float) {
 		for(node in nodes) {
 			node.bullet.lifetime -= dt;
 			if(node.bullet.lifetime < 0)
-				engine.removeEntity(node.entity);
+				engine.entities.remove(node.entity);
 		}
 	}
 }

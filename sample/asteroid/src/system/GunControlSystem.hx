@@ -7,7 +7,7 @@ import util.*;
 
 using tink.CoreApi;
 
-class GunControlSystem extends System {
+class GunControlSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var nodes:Node<GunControls, Position, Gun>;
 	var input:Input;
 	
@@ -25,7 +25,7 @@ class GunControlSystem extends System {
 			var triggered = input.isDown(control.trigger);
 			gun.elapsed += dt;
 			if(triggered && gun.elapsed > gun.interval) {
-				engine.addEntity(new entity.Bullet(gun, position));
+				engine.entities.add(new entity.Bullet(gun, position));
 				gun.elapsed = 0;
 			}
 		}

@@ -8,10 +8,11 @@ import tink.state.State;
 
 using tink.CoreApi;
 
-class Engine {
+class Engine<Event:EnumValue> {
 	
 	public var entities(default, null):EntityCollection;
-	public var systems(default, null):SystemCollection;
+	public var systems(default, null):SystemCollection<Event>;
+	public var events(default, null):SignalTrigger<Event>;
 	
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	var allowModifyEntities:State<Bool>;
@@ -20,6 +21,7 @@ class Engine {
 		allowModifyEntities = new State(true);
 		entities = new EntityCollection(allowModifyEntities);
 		systems = new SystemCollection(this);
+		events = Signal.trigger();
 		nodeLists = new Map();
 	}
 	
@@ -31,7 +33,7 @@ class Engine {
 		}
 	}
 	
-	public function getNodeList<T:NodeBase>(type:NodeType, factory:Engine->NodeList<T>):NodeList<T> {
+	public function getNodeList<T:NodeBase>(type:NodeType, factory:Engine<Event>->NodeList<T>):NodeList<T> {
 		if(!nodeLists.exists(type)) nodeLists.set(type, factory(this));
 		return cast nodeLists.get(type);
 	}
@@ -55,22 +57,22 @@ class Engine {
 	}
 }
 
-class SystemCollection {
-	var array:Array<System>;
-	var engine:Engine;
+class SystemCollection<Event:EnumValue> {
+	var array:Array<System<Event>>;
+	var engine:Engine<Event>;
 	
 	public function new(engine) {
 		this.engine = engine;
 		array = [];
 	}
 	
-	public function add(system:System) {
+	public function add(system:System<Event>) {
 		remove(system); // re-add to the end of the list
 		array.push(system);
 		system.onAdded(engine);
 	}
 	
-	public function remove(system:System) {
+	public function remove(system:System<Event>) {
 		if(array.remove(system))
 			system.onRemoved(engine);
 	}

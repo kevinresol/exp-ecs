@@ -5,24 +5,24 @@ package ecs.system;
 import ecs.*;
 
 @:autoBuild(ecs.system.System.build())
-class System implements SystemBase {
-	var engine:Engine;
+class System<Event:EnumValue> implements SystemBase<Event> {
+	var engine:Engine<Event>;
 	
 	public function new() {}
 	
 	public function update(dt:Float) {}
 	
-	public function onAdded(engine:Engine) {
+	public function onAdded(engine:Engine<Event>) {
 		this.engine = engine;
 		setNodeLists(engine);
 	}
 	
-	public function onRemoved(engine:Engine) {
+	public function onRemoved(engine:Engine<Event>) {
 		this.engine = null;
 		unsetNodeLists();
 	}
 	
-	function setNodeLists(engine:Engine) {}
+	function setNodeLists(engine:Engine<Event>) {}
 	
 	function unsetNodeLists() {}
 }
@@ -59,7 +59,7 @@ class System {
 		}
 		
 		builder.addMembers(macro class {
-			override function setNodeLists(engine:ecs.Engine) $b{addedExprs}
+			override function setNodeLists(engine:ecs.Engine<Event>) $b{addedExprs}
 			override function unsetNodeLists() $b{removedExprs}
 		});
 		return builder.export();

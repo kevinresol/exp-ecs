@@ -75,7 +75,7 @@ class Node {
 	
 	static function buildClass(name:String, fields:Array<NodeField>, pos) {
 		var tp = 'ecs.node.$name'.asTypePath();
-		var nodeListTp = 'ecs.node.TrackingNodeList'.asTypePath([TPType(TPath(tp))]);
+		var nodeListTp = 'ecs.node.TrackingNodeList'.asTypePath([TPType(TPath(tp)), TPType(macro:Event)]);
 		var ctExprs = [for(field in fields) if(!field.optional) macro $p{field.type.toString().split('.')}];
 		var description = [for(field in fields) (field.optional ? '?' : '') + field.type.toString().split('.').pop()].join(',');
 		var ctorExprs = [];
@@ -91,7 +91,7 @@ class Node {
 				$b{ctorExprs}
 			}
 			
-			public static function createNodeList(engine:ecs.Engine) {
+			public static function createNodeList<Event:EnumValue>(engine:ecs.Engine<Event>) {
 				return new $nodeListTp(
 					engine,
 					$p{['ecs', 'node', name, 'new']},

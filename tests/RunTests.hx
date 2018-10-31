@@ -250,7 +250,7 @@ class NodeListBenchmark implements Benchmark {
 
 class EngineBenchmark implements Benchmark {
 	
-	var engine:Engine = new Engine();
+	var engine:Engine<Events> = new Engine();
 	
 	public function new() {}
 	
@@ -285,3 +285,7 @@ typedef OptionalNode = Node<{
 	position:Position,
 	?velocity:Velocity,
 }>;
+
+enum Events {
+	
+}

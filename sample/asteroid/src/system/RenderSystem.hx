@@ -7,7 +7,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class RenderSystem extends System {
+class RenderSystem<Event:EnumValue> extends System<Event> {
 	
 	@:nodes var nodes:Node<Position, Display>;
 	
@@ -22,7 +22,7 @@ class RenderSystem extends System {
 	}
 	#end
 	
-	override function onAdded(engine:Engine) {
+	override function onAdded(engine:Engine<Event>) {
 		super.onAdded(engine);
 		for(node in nodes) addToDisplay(node);
 		listeners = [
@@ -31,7 +31,7 @@ class RenderSystem extends System {
 		];
 	}
 	
-	override function onRemoved(engine:Engine) {
+	override function onRemoved(engine:Engine<Event>) {
 		super.onRemoved(engine);
 		listeners.dissolve();
 		listeners = null;
