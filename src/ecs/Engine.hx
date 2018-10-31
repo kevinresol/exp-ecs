@@ -4,6 +4,7 @@ import ecs.entity.*;
 import ecs.node.*;
 import ecs.node.NodeList;
 import ecs.system.*;
+import ecs.util.*;
 import tink.state.State;
 
 using tink.CoreApi;
@@ -196,11 +197,7 @@ class EventEmitter<Event:EnumValue> {
 	}
 	
 	inline function flush(events:Array<Event>) {
-		return if(events.length > 0) {
-			for(e in events) trigger.trigger(e);
-			true;
-		} else {
-			false;
-		}
+		for(e in new ConstArrayIterator(events)) trigger.trigger(e);
+		return events.length > 0;
 	}
 }
