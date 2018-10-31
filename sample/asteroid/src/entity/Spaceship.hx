@@ -20,7 +20,7 @@ abstract Spaceship(Entity) to Entity {
 		playing.add(Display, new Display(new graphic.SpaceshipView()).asProvider('alive'));
 		playing.add(Gun, new Gun(8, 0, 0.3, 2));
 		playing.add(GunControls, new GunControls(space));
-		playing.add(Collision, new Collision(9));
+		playing.add(Collision, new Collision([0], 9));
 		fsm.add('playing', playing);
 		fsm.change('playing');
 		

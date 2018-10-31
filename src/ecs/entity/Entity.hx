@@ -40,8 +40,8 @@ class Entity {
 		return component;
 	}
 	
-	public inline function get<T:Component>(type:ComponentType):T {
-		return cast components.get(type);
+	public inline function get<T:Component>(type:Class<T>):T {
+		return cast components.get((cast type:Class<Component>));
 	}
 	
 	public inline function has(type:ComponentType) {

@@ -3,31 +3,37 @@ package system;
 import component.*;
 import ecs.system.*;
 import ecs.node.*;
+import ecs.event.*;
+import ecs.entity.*;
 import util.*;
+using tink.CoreApi;
 
 class CollisionSystem<Event:EnumValue> extends System<Event> {
-	@:nodes var spaceships:Node<Spaceship, Position, Collision>;
-	@:nodes var asteroids:Node<Asteroid, Position, Collision>;
-	@:nodes var bullets:Node<Bullet, Position, Collision>;
+	@:nodes var nodes:Node<Position, Collision>;
+	
+	var factory:Factory<Event, Pair<Entity, Entity>>;
+	
+	public function new(factory) {
+		super();
+		this.factory = factory;
+	}
 	
 	override function update(dt:Float) {
-		for(bullet in bullets) for(asteroid in asteroids) {
-			if(Point.distance(asteroid.position.position, bullet.position.position) <= asteroid.collision.radius) {
-				if(asteroid.collision.radius > 10) {
-					engine.entities.add(new entity.Asteroid(asteroid.collision.radius - 10, asteroid.position.position.x + Math.random() * 10 - 5, asteroid.position.position.y + Math.random() * 10 - 5));
-					engine.entities.add(new entity.Asteroid(asteroid.collision.radius - 10, asteroid.position.position.x + Math.random() * 10 - 5, asteroid.position.position.y + Math.random() * 10 - 5));
-				}
-				engine.entities.remove(bullet.entity);
-				engine.entities.remove(asteroid.entity);
-				break;
-			}
-		}
+		var arr = @:privateAccess nodes.nodes; // TODO: expose as ReadOnlyArray in NodeList
 		
-		for(spaceship in spaceships) for(asteroid in asteroids) {
-			if(Point.distance(asteroid.position.position, spaceship.position.position) <= asteroid.collision.radius + spaceship.collision.radius) {
-				spaceship.spaceship.fsm.change('destroyed');
-				break;
+		for(i in 0...arr.length) for(j in i+1...arr.length) {
+			var n1 = arr[i];
+			var n2 = arr[j];
+			if(match(n1.collision.groups, n2.collision.groups)) {
+				if(Point.distance(n1.position.position, n2.position.position) < n1.collision.radius + n2.collision.radius) {
+					engine.events.trigger(factory(new Pair(n1.entity, n2.entity)));
+				}
 			}
 		}
+	}
+	
+	function match(g1:Array<Int>, g2:Array<Int>) {
+		for(v in g1) if(g2.indexOf(v) != -1) return true;
+		return false;
 	}
 }
