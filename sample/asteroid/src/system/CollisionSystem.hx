@@ -26,13 +26,14 @@ class CollisionSystem<Event:EnumValue> extends System<Event> {
 			var n2 = arr[j];
 			if(match(n1.collision.groups, n2.collision.groups)) {
 				if(Point.distance(n1.position.position, n2.position.position) < n1.collision.radius + n2.collision.radius) {
-					engine.events.trigger(factory(new Pair(n1.entity, n2.entity)));
+					engine.events.afterSystem(factory(new Pair(n1.entity, n2.entity)));
 				}
 			}
 		}
 	}
 	
 	function match(g1:Array<Int>, g2:Array<Int>) {
+		if(g1 == g2) return false;
 		for(v in g1) if(g2.indexOf(v) != -1) return true;
 		return false;
 	}

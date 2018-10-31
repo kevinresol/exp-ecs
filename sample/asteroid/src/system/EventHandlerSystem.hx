@@ -8,10 +8,10 @@ import ecs.entity.*;
 import util.*;
 using tink.CoreApi;
 
-class CollisionResultSystem<Event:EnumValue> extends System<Event> {
+class EventHandlerSystem<Event:EnumValue, Data> extends System<Event> {
 	
-	var selector:Selector<Event, Pair<Entity, Entity>>;
-	var handler:Callback<Pair<Entity, Entity>>;
+	var selector:Selector<Event, Data>;
+	var handler:Callback<Data>;
 	var binding:CallbackLink;
 	
 	public function new(selector, handler) {
@@ -22,7 +22,7 @@ class CollisionResultSystem<Event:EnumValue> extends System<Event> {
 	
 	override function onAdded(engine) {
 		super.onAdded(engine);
-		binding = engine.events.asSignal().select(selector).handle(data -> Callback.defer(handler.invoke.bind(data)));
+		binding = engine.events.select(selector).handle(handler);
 	}
 	
 	override function onRemoved(engine) {

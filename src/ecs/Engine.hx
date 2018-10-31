@@ -12,7 +12,7 @@ class Engine<Event:EnumValue> {
 	
 	public var entities(default, null):EntityCollection;
 	public var systems(default, null):SystemCollection<Event>;
-	public var events(default, null):SignalTrigger<Event>;
+	public var events(default, null):EventEmitter<Event>;
 	
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	var allowModifyEntities:State<Bool>;
@@ -21,7 +21,7 @@ class Engine<Event:EnumValue> {
 		allowModifyEntities = new State(true);
 		entities = new EntityCollection(allowModifyEntities);
 		systems = new SystemCollection(this);
-		events = Signal.trigger();
+		events = new EventEmitter();
 		nodeLists = new Map();
 	}
 	
@@ -29,8 +29,10 @@ class Engine<Event:EnumValue> {
 		for(system in systems) {
 			allowModifyEntities.set(false);
 			system.update(dt);
+			events.flushSystem();
 			allowModifyEntities.set(true);
 		}
+		events.flushUpdate();
 	}
 	
 	public function getNodeList<T:NodeBase>(type:NodeType, factory:Engine<Event>->NodeList<T>):NodeList<T> {
@@ -148,4 +150,53 @@ class EntityCollection {
 	
 	public inline function iterator()
 		return array.iterator();
+}
+
+class EventEmitter<Event:EnumValue> {
+	var trigger:SignalTrigger<Event>;
+	var postSystem:Array<Event>;
+	var postUpdate:Array<Event>;
+	
+	public function new() {
+		trigger = Signal.trigger();
+		postSystem = [];
+		postUpdate = [];
+	}
+	
+	public inline function handle(f) {
+		return trigger.asSignal().handle(f);
+	}
+	
+	public inline function select(f) {
+		return trigger.asSignal().select(f);
+	}
+	
+	public inline function immediate(v:Event) {
+		trigger.trigger(v);
+	}
+	
+	public inline function afterSystem(v:Event) {
+		postSystem.push(v);
+	}
+	
+	public inline function afterUpdate(v:Event) {
+		postUpdate.push(v);
+	}
+	
+	public function flushSystem() {
+		if(flush(postSystem)) postSystem = [];
+	}
+	
+	public function flushUpdate() {
+		if(flush(postUpdate)) postUpdate = [];
+	}
+	
+	inline function flush(events:Array<Event>) {
+		return if(events.length > 0) {
+			for(e in events) trigger.trigger(e);
+			true;
+		} else {
+			false;
+		}
+	}
 }

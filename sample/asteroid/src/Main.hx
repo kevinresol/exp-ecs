@@ -65,7 +65,7 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		engine.systems.add(new MotionControlSystem(input));
 		engine.systems.add(new MovementSystem(config));
 		engine.systems.add(new CollisionSystem(Collision));
-		engine.systems.add(new CollisionResultSystem(
+		engine.systems.add(new EventHandlerSystem(
 			(e:Event) -> switch e {
 				case Collision(v): Some(v);
 				case _: None;
@@ -74,10 +74,9 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 				var c1:component.Collision = pair.a.get(component.Collision);
 				var c2:component.Collision = pair.b.get(component.Collision);
 				function hasGroup(v:Int) return c1.groups.indexOf(v) != -1 && c2.groups.indexOf(v) != -1;
-				function with(c) return pair.a.has(c) ? pair.a : pair.b;
+				function with(c) return pair.a.has(c) ? pair.a : pair.b.has(c) ? pair.b : null;
 				if(hasGroup(0)) {
-					var spaceship:component.Spaceship = pair.a.get(component.Spaceship);
-					if(spaceship == null) spaceship = pair.b.get(component.Spaceship);
+					var spaceship = with(component.Spaceship).get(component.Spaceship);
 					spaceship.fsm.change('destroyed');
 				} else if(hasGroup(1)) {
 					var entity = with(component.Asteroid);
