@@ -1,11 +1,6 @@
-package system;
+package ecs.system;
 
-import component.*;
-import ecs.system.*;
-import ecs.node.*;
 import ecs.event.*;
-import ecs.entity.*;
-import util.*;
 using tink.CoreApi;
 
 class EventHandlerSystem<Event:EnumValue, Data> extends System<Event> {

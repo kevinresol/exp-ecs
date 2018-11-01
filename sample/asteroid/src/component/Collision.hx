@@ -3,10 +3,12 @@ package component;
 import ecs.component.*;
 
 class Collision extends Component {
-	public var groups:Array<Int>;
+	public var group:Int;
+	public var with:Array<Int>;
 	public var radius:Int;
-	public function new(groups, radius) {
-		this.groups = groups;
+	public function new(group, with, radius) {
+		this.group = group;
+		this.with = with;
 		this.radius = radius;
 	}
 		

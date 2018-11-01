@@ -65,44 +65,17 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		engine.systems.add(new MotionControlSystem(input));
 		engine.systems.add(new MovementSystem(config));
 		engine.systems.add(new CollisionSystem(Collision));
-		engine.systems.add(new EventHandlerSystem(
-			(e:Event) -> switch e {
-				case Collision(v): Some(v);
-				case _: None;
-			}, 
-			(pair:Pair<Entity, Entity>) -> {
-				var c1:component.Collision = pair.a.get(component.Collision);
-				var c2:component.Collision = pair.b.get(component.Collision);
-				function hasGroup(v:Int) return c1.groups.indexOf(v) != -1 && c2.groups.indexOf(v) != -1;
-				function with(c) return pair.a.has(c) ? pair.a : pair.b.has(c) ? pair.b : null;
-				if(hasGroup(0)) {
-					var spaceship = with(component.Spaceship).get(component.Spaceship);
-					spaceship.fsm.change('destroyed');
-				} else if(hasGroup(1)) {
-					var entity = with(component.Asteroid);
-					var radius = entity.get(component.Asteroid).radius;
-					var position = entity.get(component.Position).position;
-					
-					if(radius > 10) {
-						engine.entities.add(new entity.Asteroid(radius - 10, position.x + Math.random() * 10 - 5, position.y + Math.random() * 10 - 5));
-						engine.entities.add(new entity.Asteroid(radius - 10, position.x + Math.random() * 10 - 5, position.y + Math.random() * 10 - 5));
-					}
-					
-					engine.entities.remove(pair.a);
-					engine.entities.remove(pair.b);
-				}
-			}
-		));
+		engine.systems.add(new SpaceshipAsteroidCollisionHandlerSystem());
+		engine.systems.add(new BulletAsteroidCollisionHandlerSystem());
 		engine.systems.add(new LifespanSystem());
 		engine.systems.add(new AnimationSystem());
 		engine.systems.add(new DeathSystem());
 		engine.systems.add(new RenderSystem(#if openfl this #end));
-		
 		engine.entities.add(new Game());
 	}
 	
 }
 
 enum Event {
-	Collision(pair:Pair<Entity, Entity>);
+	Collision(data:{entity1:Entity, entity2:Entity, group1:Int, group2:Int});
 }

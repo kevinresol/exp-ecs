@@ -30,8 +30,8 @@ class Engine<Event:EnumValue> {
 		for(system in systems) {
 			allowModifyEntities.set(false);
 			system.update(dt);
-			events.flushSystem();
 			allowModifyEntities.set(true);
+			events.flushSystem();
 		}
 		events.flushUpdate();
 	}

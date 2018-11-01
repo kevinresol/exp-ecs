@@ -58,10 +58,8 @@ class System {
 			}
 		}
 		
-		builder.addMembers(macro class {
-			override function setNodeLists(engine:ecs.Engine<Event>) $b{addedExprs}
-			override function unsetNodeLists() $b{removedExprs}
-		});
+		if(addedExprs.length > 0) builder.addMembers(macro class {override function setNodeLists(engine:ecs.Engine<Event>) $b{addedExprs}});
+		if(removedExprs.length > 0) builder.addMembers(macro class {override function unsetNodeLists() $b{removedExprs}});
 		return builder.export();
 	}
 }
