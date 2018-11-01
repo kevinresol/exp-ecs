@@ -25,7 +25,7 @@ class EventHandlerSystem<Event:EnumValue, Data> extends System<Event> {
 
 class SimpleEventHandlerSystem<Event:EnumValue, Data> extends EventHandlerSystem<Event, Data> {
 	
-	var selector:Selector<Event, Data>;
+	var selector:EventSelector<Event, Data>;
 	var handler:Callback<Data>;
 	
 	public function new(selector, handler) {

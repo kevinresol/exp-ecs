@@ -57,7 +57,7 @@ class RenderSystem<Event:EnumValue> extends System<Event> {
 class CollisionSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var nodes:Node<Position>;
 	
-	var factory:Factory<Event, {entites:Pair<Entity, Entity>}>;
+	var factory:EventFactory<Event, {entites:Pair<Entity, Entity>}>;
 	
 	public function new(options) {
 		super();
@@ -66,13 +66,13 @@ class CollisionSystem<Event:EnumValue> extends System<Event> {
 	
 	override function update(dt:Float) {
 		// when two entities collide:
-		engine.events.trigger(factory({entites: new Pair(null, null)}));
+		engine.events.immediate(factory({entites: new Pair(null, null)}));
 	}
 }
 
 class DamageSystem<Event:EnumValue> extends System<Event> {
 	
-	var selector:Selector<Event, {entites:Pair<Entity, Entity>}>;
+	var selector:EventSelector<Event, {entites:Pair<Entity, Entity>}>;
 	var binding:CallbackLink;
 	
 	public function new(options) {
@@ -82,7 +82,7 @@ class DamageSystem<Event:EnumValue> extends System<Event> {
 	
 	override function onAdded(engine:Engine<Event>) {
 		super.onAdded(engine);
-		binding = engine.events.asSignal().select(selector).handle(data -> $type(data));
+		binding = engine.events.select(selector).handle(data -> $type(data));
 	}
 	
 	override function onRemoved(engine:Engine<Event>) {

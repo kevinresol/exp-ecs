@@ -4,6 +4,7 @@ import ecs.entity.*;
 import ecs.node.*;
 import ecs.node.NodeList;
 import ecs.system.*;
+import ecs.event.*;
 import ecs.util.*;
 import tink.state.State;
 
@@ -153,51 +154,3 @@ class EntityCollection {
 		return array.iterator();
 }
 
-class EventEmitter<Event:EnumValue> {
-	var trigger:SignalTrigger<Event>;
-	var postSystem:Array<Event>;
-	var postUpdate:Array<Event>;
-	
-	public function new() {
-		trigger = Signal.trigger();
-		postSystem = [];
-		postUpdate = [];
-	}
-	
-	public inline function handle(f) {
-		return trigger.asSignal().handle(f);
-	}
-	
-	public inline function select(f) {
-		return trigger.asSignal().select(f);
-	}
-	
-	public inline function immediate(v:Event) {
-		trigger.trigger(v);
-	}
-	
-	public inline function afterSystem(v:Event) {
-		postSystem.push(v);
-	}
-	
-	public inline function afterUpdate(v:Event) {
-		postUpdate.push(v);
-	}
-	
-	public function flushSystem() {
-		if(flush(postSystem))
-			postSystem = [];
-			// TODO: use this in haxe 4: postSystem.resize(0);
-	}
-	
-	public function flushUpdate() {
-		if(flush(postUpdate))
-			postUpdate = [];
-			// TODO: use this in haxe 4: postUpdate.resize(0);
-	}
-	
-	inline function flush(events:Array<Event>) {
-		for(e in new ConstArrayIterator(events)) trigger.trigger(e);
-		return events.length > 0;
-	}
-}

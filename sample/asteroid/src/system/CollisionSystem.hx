@@ -11,7 +11,7 @@ using tink.CoreApi;
 class CollisionSystem<Event:EnumValue> extends System<Event> {
 	@:nodes var nodes:Node<Position, Collision>;
 	
-	var factory:Factory<Event, {entity1:Entity, entity2:Entity, group1:Int, group2:Int}>;
+	var factory:EventFactory<Event, {entity1:Entity, entity2:Entity, group1:Int, group2:Int}>;
 	
 	public function new(factory) {
 		super();
@@ -26,7 +26,7 @@ class CollisionSystem<Event:EnumValue> extends System<Event> {
 			var n2 = arr[j];
 			if(match(n1.collision, n2.collision)) {
 				if(Point.distance(n1.position.position, n2.position.position) < n1.collision.radius + n2.collision.radius) {
-					engine.events.afterSystem(factory({
+					engine.events.afterSystemUpdate(factory({
 						entity1: n1.entity,
 						entity2: n2.entity,
 						group1: n1.collision.group,
