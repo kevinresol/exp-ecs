@@ -8,12 +8,11 @@ using tink.CoreApi;
 class BulletAsteroidCollisionHandlerSystem extends EventHandlerSystem<Event, Pair<Entity, Entity>> {
 	public function new() {
 		super(
-			(e:Event) -> switch e {
-				case Collision(v) if(v.group1 == 2): Some(new Pair(v.entity1, v.entity2));
-				case Collision(v) if(v.group2 == 2): Some(new Pair(v.entity2, v.entity1));
+			e -> switch e {
+				case Collision({entity1: e2, entity2: e1, group2: g}) | Collision({entity1: e1, entity2: e2, group1: g}) if(g == 2): Some(new Pair(e1, e2));
 				case _: None;
 			}, 
-			(pair:Pair<Entity, Entity>) -> {
+			pair -> {
 				var bullet = pair.a;
 				var asteroid = pair.b;
 				var radius = asteroid.get(component.Asteroid).radius;

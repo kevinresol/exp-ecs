@@ -7,11 +7,11 @@ import Main;
 class SpaceshipAsteroidCollisionHandlerSystem extends EventHandlerSystem<Event, Entity> {
 	public function new() {
 		super(
-			(e:Event) -> switch e {
-				case Collision({entity2: entity, group2: group}) | Collision({entity1: entity, group1: group}) if(group == 1): Some(entity);
+			e -> switch e {
+				case Collision({entity2: e, group2: g}) | Collision({entity1: e, group1: g}) if(g == 1): Some(e);
 				case _: None;
 			}, 
-			(entity:Entity) -> {
+			entity -> {
 				var spaceship = entity.get(component.Spaceship);
 				spaceship.fsm.change('destroyed');
 			}
