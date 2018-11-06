@@ -10,7 +10,7 @@ import tink.state.State;
 
 using tink.CoreApi;
 
-class Engine<Event:EnumValue> {
+class Engine<Event> {
 	
 	public var entities(default, null):EntityCollection;
 	public var systems(default, null):SystemCollection<Event>;
@@ -61,7 +61,7 @@ class Engine<Event:EnumValue> {
 	}
 }
 
-class SystemCollection<Event:EnumValue> {
+class SystemCollection<Event> {
 	var array:Array<System<Event>>;
 	var engine:Engine<Event>;
 	

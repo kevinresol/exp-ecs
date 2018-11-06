@@ -33,7 +33,7 @@ enum Event {
 
 typedef MovementNode = Node<Position, Velocity>;
 
-class MovementSystem<Event:EnumValue> extends System<Event> {
+class MovementSystem<Event> extends System<Event> {
 	@:nodes var nodes:Node<Position, Velocity>;
 	
 	override function update(dt:Float) {
@@ -44,7 +44,7 @@ class MovementSystem<Event:EnumValue> extends System<Event> {
 	}
 }
 
-class RenderSystem<Event:EnumValue> extends System<Event> {
+class RenderSystem<Event> extends System<Event> {
 	@:nodes var nodes:Node<Position>;
 	
 	override function update(dt:Float) {
@@ -54,7 +54,7 @@ class RenderSystem<Event:EnumValue> extends System<Event> {
 	}
 }
 
-class CollisionSystem<Event:EnumValue> extends System<Event> {
+class CollisionSystem<Event> extends System<Event> {
 	@:nodes var nodes:Node<Position>;
 	
 	var factory:EventFactory<Event, {entites:Pair<Entity, Entity>}>;
@@ -70,7 +70,7 @@ class CollisionSystem<Event:EnumValue> extends System<Event> {
 	}
 }
 
-class DamageSystem<Event:EnumValue> extends System<Event> {
+class DamageSystem<Event> extends System<Event> {
 	
 	var selector:EventSelector<Event, {entites:Pair<Entity, Entity>}>;
 	var binding:CallbackLink;
@@ -91,7 +91,7 @@ class DamageSystem<Event:EnumValue> extends System<Event> {
 	}
 }
 
-class CustomSystem<Event:EnumValue> extends System<Event> {
+class CustomSystem<Event> extends System<Event> {
 	var nodes:NodeList<CustomNode>;
 	
 	override function update(dt:Float) {

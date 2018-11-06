@@ -5,7 +5,7 @@ package ecs.system;
 import ecs.*;
 
 @:autoBuild(ecs.system.System.build())
-class System<Event:EnumValue> implements SystemBase<Event> {
+class System<Event> implements SystemBase<Event> {
 	var engine:Engine<Event>;
 	
 	public function new() {}

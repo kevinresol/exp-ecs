@@ -6,7 +6,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class DeathSystem<Event:EnumValue> extends System<Event> {
+class DeathSystem<Event> extends System<Event> {
 	@:nodes var nodes:Node<Death>;
 	
 	override function update(dt:Float) {

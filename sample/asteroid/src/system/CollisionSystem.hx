@@ -8,7 +8,7 @@ import ecs.entity.*;
 import util.*;
 using tink.CoreApi;
 
-class CollisionSystem<Event:EnumValue> extends System<Event> {
+class CollisionSystem<Event> extends System<Event> {
 	@:nodes var nodes:Node<Position, Collision>;
 	
 	var factory:EventFactory<Event, {entity1:Entity, entity2:Entity, group1:Int, group2:Int}>;

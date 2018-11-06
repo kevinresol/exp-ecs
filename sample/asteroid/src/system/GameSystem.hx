@@ -5,7 +5,7 @@ import ecs.system.*;
 import ecs.node.*;
 import util.*;
 
-class GameSystem<Event:EnumValue> extends System<Event> {
+class GameSystem<Event> extends System<Event> {
 	@:nodes var spaceships:Node<Spaceship, Position>;
 	@:nodes var asteroids:Node<Asteroid, Position, Collision>;
 	@:nodes var bullets:Node<Bullet>;

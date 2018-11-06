@@ -3,7 +3,7 @@ package ecs.event;
 import ecs.util.*;
 using tink.CoreApi;
 
-class EventEmitter<Event:EnumValue> {
+class EventEmitter<Event> {
 	var trigger:SignalTrigger<Event>;
 	var postSystemUpdate:Array<Event>;
 	var postEngineUpdate:Array<Event>;

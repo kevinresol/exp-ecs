@@ -7,7 +7,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class RenderSystem<Event:EnumValue> extends System<Event> {
+class RenderSystem<Event> extends System<Event> {
 	
 	@:nodes var nodes:Node<Position, Display>;
 	

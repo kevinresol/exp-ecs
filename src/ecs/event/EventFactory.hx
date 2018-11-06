@@ -1,3 +1,3 @@
 package ecs.event;
 
-typedef EventFactory<Event:EnumValue, Data> = Data->Event;
+typedef EventFactory<Event, Data> = Data->Event;

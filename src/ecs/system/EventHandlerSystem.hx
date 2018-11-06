@@ -3,7 +3,7 @@ package ecs.system;
 import ecs.event.*;
 using tink.CoreApi;
 
-class EventHandlerSystem<Event:EnumValue, Data> extends System<Event> {
+class EventHandlerSystem<Event, Data> extends System<Event> {
 	
 	var binding:CallbackLink;
 	
@@ -23,7 +23,7 @@ class EventHandlerSystem<Event:EnumValue, Data> extends System<Event> {
 	}
 }
 
-class SimpleEventHandlerSystem<Event:EnumValue, Data> extends EventHandlerSystem<Event, Data> {
+class SimpleEventHandlerSystem<Event, Data> extends EventHandlerSystem<Event, Data> {
 	
 	var selector:EventSelector<Event, Data>;
 	var handler:Callback<Data>;

@@ -92,9 +92,7 @@ class Node {
 				$b{ctorExprs}
 			}
 			
-			// TODO: https://github.com/HaxeFoundation/haxe/issues/7600
-			// public static function createNodeList<Event:EnumValue>(engine:ecs.Engine<Event>) {
-			public static function createNodeList(engine:ecs.Engine<Event>) {
+			public static function createNodeList<Event>(engine:ecs.Engine<Event>) {
 				return new $nodeListTp(
 					engine,
 					$p{['ecs', 'node', name, 'new']},
@@ -110,12 +108,6 @@ class Node {
 			
 			override function onComponentAdded(__component:ecs.component.Component) $b{onAddedExprs};
 			override function onComponentRemoved(__component:ecs.component.Component) $b{onRemovedExprs};
-		}
-		
-		// TODO: https://github.com/HaxeFoundation/haxe/issues/7600
-		switch def.fields.find(f -> f.name == 'createNodeList').kind {
-			case FFun(f): f.params = [{constraints:[macro:EnumValue], name:'Event'}];
-			case _:
 		}
 		
 		for(field in fields) {

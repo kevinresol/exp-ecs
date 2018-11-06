@@ -6,7 +6,7 @@ import ecs.system.*;
 
 using tink.CoreApi;
 
-class LifespanSystem<Event:EnumValue> extends System<Event> {
+class LifespanSystem<Event> extends System<Event> {
 	@:nodes var nodes:Node<Lifespan>;
 	
 	override function update(dt:Float) {
