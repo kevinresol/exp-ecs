@@ -1,8 +1,6 @@
-package component;
+package;
 
-import ecs.component.*;
-
-class Game extends Component {
+class GameState {
 	public var lives = 3;
 	public var level = 0;
 	public var points = 0;

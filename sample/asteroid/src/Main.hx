@@ -9,6 +9,7 @@ using tink.CoreApi;
 
 class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 	
+	var state = new GameState();
 	var engine = new Engine<Event>();
 	var input = new Input();
 	
@@ -60,7 +61,7 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 			height: #if openfl stage.stageHeight #elseif luxe Luxe.screen.h #end,
 		};
 		
-		engine.systems.add(new GameSystem(config));
+		engine.systems.add(new GameSystem(config, state));
 		engine.systems.add(new GunControlSystem(input));
 		engine.systems.add(new MotionControlSystem(input));
 		engine.systems.add(new MovementSystem(config));
@@ -71,7 +72,6 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		engine.systems.add(new AnimationSystem());
 		engine.systems.add(new DeathSystem());
 		engine.systems.add(new RenderSystem(#if openfl this #end));
-		engine.entities.add(new Game());
 	}
 	
 }
