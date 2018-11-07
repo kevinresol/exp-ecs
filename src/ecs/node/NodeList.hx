@@ -12,11 +12,12 @@ class NodeList<T:NodeBase> {
 	public var id(default, null):Int;
 	public var nodeAdded(default, null):Signal<T>;
 	public var nodeRemoved(default, null):Signal<T>;
+	public var nodes(get, never):ReadOnlyArray<T>;
 	
 	var nodeAddedTrigger:SignalTrigger<T>;
 	var nodeRemovedTrigger:SignalTrigger<T>;
 	var entities:Array<Int>;
-	var nodes:Array<T>;
+	var _nodes:Array<T>;
 	var factory:Entity->T;
 	var name:String;
 	
@@ -24,7 +25,7 @@ class NodeList<T:NodeBase> {
 	
 	public function new(factory, ?name) {
 		entities = [];
-		nodes = [];
+		_nodes = [];
 		id = ++ids;
 		nodeAdded = nodeAddedTrigger = Signal.trigger();
 		nodeRemoved = nodeRemovedTrigger = Signal.trigger();
@@ -37,7 +38,7 @@ class NodeList<T:NodeBase> {
 			if(entities.indexOf(entity.id) == -1) {
 				var node = factory(entity);
 				entities.push(entity.id);
-				nodes.push(node);
+				_nodes.push(node);
 				nodeAddedTrigger.trigger(node);
 				true;
 			} else {
@@ -51,8 +52,8 @@ class NodeList<T:NodeBase> {
 				case -1:
 					false;
 				case i:
-					var node = nodes[i];
-					nodes.splice(i, 1);
+					var node = _nodes[i];
+					_nodes.splice(i, 1);
 					entities.splice(i, 1);
 					nodeRemovedTrigger.trigger(node);
 					node.destroy();
@@ -61,18 +62,19 @@ class NodeList<T:NodeBase> {
 	}
 	
 	public function destroy() {
-		for(node in nodes) node.destroy();
-		nodes = null;
+		for(node in _nodes) node.destroy();
+		_nodes = null;
 		entities = null;
 		
 		// TODO: destroy signals
 	}
 	
-	public inline function iterator() return new ConstArrayIterator(nodes);
+	public inline function iterator() return new ConstArrayIterator(_nodes);
 	
-	inline function get_length() return nodes.length;
-	inline function get_empty() return nodes.length == 0;
-	inline function get_head() return nodes[0];
+	inline function get_nodes():ReadOnlyArray<T> return _nodes;
+	inline function get_length() return _nodes.length;
+	inline function get_empty() return _nodes.length == 0;
+	inline function get_head() return _nodes[0];
 	
 	public function toString():String {
 		return name == null ? 'NodeList#$id' : name;

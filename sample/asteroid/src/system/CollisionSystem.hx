@@ -19,7 +19,7 @@ class CollisionSystem<Event> extends System<Event> {
 	}
 	
 	override function update(dt:Float) {
-		var arr = @:privateAccess nodes.nodes; // TODO: expose as ReadOnlyArray in NodeList
+		var arr = nodes.nodes;
 		
 		for(i in 0...arr.length) for(j in i+1...arr.length) {
 			var n1 = arr[i];
