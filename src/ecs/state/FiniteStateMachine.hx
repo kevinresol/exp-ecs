@@ -21,7 +21,9 @@ class FiniteStateMachine<Target, Item> {
 	
 	public function transit(to:String):Outcome<Noise, Error> {
 		return
-			switch states.get(to) {
+			if(current == to)
+				Success(Noise);
+			else switch states.get(to) {
 				case null:
 					Failure(new Error('State "$to" doesn\'t exist'));
 					
