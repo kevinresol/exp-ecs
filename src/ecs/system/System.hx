@@ -25,6 +25,9 @@ class System<Event> implements SystemBase<Event> {
 	function setNodeLists(engine:Engine<Event>) {}
 	
 	function unsetNodeLists() {}
+	
+	public function toString():String
+		return Type.getClassName(Type.getClass(this));
 }
 #else
 

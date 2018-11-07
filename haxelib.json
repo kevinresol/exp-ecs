@@ -10,6 +10,7 @@
   "version": "0.0.0",
   "dependencies": {
     "tink_macro": "",
+    "tink_priority": "",
     "tink_state": ""
   }
 }

@@ -1,9 +1,12 @@
 package system;
 
 import component.*;
+import ecs.event.*;
 import ecs.system.*;
 import ecs.node.*;
 import util.*;
+
+using tink.CoreApi;
 
 class GameSystem<Event> extends System<Event> {
 	@:nodes var spaceships:Node<Spaceship, Position>;
@@ -12,11 +15,13 @@ class GameSystem<Event> extends System<Event> {
 	
 	var config:Config;
 	var game:GameState;
+	var gameover:EventFactory<Event, Noise>;
 	
-	public function new(config, game) {
+	public function new(config, game, gameover) {
 		super();
 		this.config = config;
 		this.game = game;
+		this.gameover = gameover;
 	}
 	
 	override function update(dt:Float) {
@@ -39,6 +44,7 @@ class GameSystem<Event> extends System<Event> {
 					// game over
 					trace('Game Over');
 					game.over = true;
+					engine.events.afterEngineUpdate(gameover(Noise));
 				}
 			}
 				

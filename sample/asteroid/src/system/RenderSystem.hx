@@ -32,6 +32,7 @@ class RenderSystem<Event> extends System<Event> {
 	}
 	
 	override function onRemoved(engine:Engine<Event>) {
+		for(node in nodes) removeFromDisplay(node);
 		super.onRemoved(engine);
 		listeners.dissolve();
 		listeners = null;

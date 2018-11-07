@@ -64,30 +64,6 @@ class Engine<Event> {
 	}
 }
 
-class SystemCollection<Event> {
-	var array:Array<System<Event>>;
-	var engine:Engine<Event>;
-	
-	public function new(engine) {
-		this.engine = engine;
-		array = [];
-	}
-	
-	public function add(system:System<Event>) {
-		remove(system); // re-add to the end of the list
-		array.push(system);
-		system.onAdded(engine);
-	}
-	
-	public function remove(system:System<Event>) {
-		if(array.remove(system))
-			system.onRemoved(engine);
-	}
-	
-	public inline function iterator()
-		return array.iterator();
-}
-
 class EntityCollection {
 	public var added(default, null):Signal<Entity>;
 	public var removed(default, null):Signal<Entity>;

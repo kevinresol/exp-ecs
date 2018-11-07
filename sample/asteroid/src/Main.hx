@@ -4,6 +4,8 @@ import ecs.Engine;
 import system.*;
 import entity.*;
 import ecs.entity.*;
+import ecs.state.*;
+import ecs.system.*;
 import util.*;
 using tink.CoreApi;
 
@@ -61,21 +63,42 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 			height: #if openfl stage.stageHeight #elseif luxe Luxe.screen.h #end,
 		};
 		
-		engine.systems.add(new GameSystem(config, state));
+		engine.systems.add(new GameSystem(config, state, function(_) return GameOver));
 		engine.systems.add(new GunControlSystem(input));
 		engine.systems.add(new MotionControlSystem(input));
-		engine.systems.add(new MovementSystem(config));
+		// engine.systems.add(new MovementSystem(config));
 		engine.systems.add(new CollisionSystem(Collision));
 		engine.systems.add(new SpaceshipAsteroidCollisionHandlerSystem());
 		engine.systems.add(new BulletAsteroidCollisionHandlerSystem());
 		engine.systems.add(new LifespanSystem());
 		engine.systems.add(new AnimationSystem());
 		engine.systems.add(new DeathSystem());
-		engine.systems.add(new RenderSystem(#if openfl this #end));
+		engine.systems.add(EventHandlerSystem.simple(
+			function(e) return e == GameOver ? Some(Noise) : None,
+			function(_) return {
+				engine.states.transit('gameover');
+				stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, function listener(e) {
+					if(e.keyCode == openfl.ui.Keyboard.SPACE) {
+						stage.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, listener);
+						state.reset();
+						engine.states.transit('playing');
+					}
+				});
+			}
+		));
+		
+		engine.states.add('playing', new EngineState([
+			{system: new MovementSystem(config), before: CollisionSystem},
+			{system: new RenderSystem(#if openfl this #end)},
+		]), ['gameover']);
+		engine.states.add('gameover', new EngineState([]), ['playing']);
+		engine.states.transit('playing');
+		
 	}
 	
 }
 
 enum Event {
 	Collision(data:{entity1:Entity, entity2:Entity, group1:Int, group2:Int});
+	GameOver;
 }
