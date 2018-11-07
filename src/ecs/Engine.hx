@@ -17,6 +17,7 @@ class Engine<Event> {
 	public var systems(default, null):SystemCollection<Event>;
 	public var events(default, null):EventEmitter<Event>;
 	public var states(default, null):EngineStateMachine<Event>;
+	public var delay(default, null):Delay;
 	
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	var allowModifyEntities:State<Bool>;
@@ -27,6 +28,7 @@ class Engine<Event> {
 		systems = new SystemCollection(this);
 		events = new EventEmitter();
 		states = new EngineStateMachine(this);
+		delay = new Delay();
 		nodeLists = new Map();
 	}
 	
@@ -35,8 +37,10 @@ class Engine<Event> {
 			allowModifyEntities.set(false);
 			system.update(dt);
 			allowModifyEntities.set(true);
+			delay.flushSystem();
 			events.flushSystem();
 		}
+		delay.flushUpdate();
 		events.flushUpdate();
 	}
 	
@@ -61,6 +65,41 @@ class Engine<Event> {
 		// buf.add([for(s in systems) s.toString()]);
 		// buf.add(nodeLists);
 		return buf.toString();
+	}
+}
+
+class Delay {
+	var postSystemUpdate:Array<Void->Void>;
+	var postEngineUpdate:Array<Void->Void>;
+	
+	public function new() {
+		postSystemUpdate = [];
+		postEngineUpdate = [];
+	}
+	
+	public inline function afterSystemUpdate(v:Void->Void) {
+		postSystemUpdate.push(v);
+	}
+	
+	public inline function afterEngineUpdate(v:Void->Void) {
+		postEngineUpdate.push(v);
+	}
+	
+	public function flushSystem() {
+		if(flush(postSystemUpdate))
+			postSystemUpdate = [];
+			// TODO: use this in haxe 4: postSystemUpdate.resize(0);
+	}
+	
+	public function flushUpdate() {
+		if(flush(postEngineUpdate))
+			postEngineUpdate = [];
+			// TODO: use this in haxe 4: postEngineUpdate.resize(0);
+	}
+	
+	function flush(calls:Array<Void->Void>) {
+		for(call in new ConstArrayIterator(calls)) call();
+		return calls.length > 0;
 	}
 }
 
