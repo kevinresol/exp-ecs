@@ -21,6 +21,9 @@ class EventHandlerSystem<Event, Data> extends System<Event> {
 		super.onRemoved(engine);
 		binding.dissolve();
 	}
+	
+	public static inline function simple(selector, handler)
+		return new SimpleEventHandlerSystem(selector, handler);
 }
 
 class SimpleEventHandlerSystem<Event, Data> extends EventHandlerSystem<Event, Data> {
