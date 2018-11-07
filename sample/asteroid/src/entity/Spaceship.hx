@@ -3,6 +3,7 @@ package entity;
 import component.*;
 import ecs.entity.*;
 import ecs.component.*;
+import ecs.state.*;
 
 abstract Spaceship(Entity) to Entity {
 	public function new(x, y) {
@@ -14,24 +15,29 @@ abstract Spaceship(Entity) to Entity {
 		var space = #if openfl openfl.ui.Keyboard.SPACE #elseif luxe luxe.Input.Key.space #end;
 		
 		var fsm = new EntityStateMachine(this);
-		var playing = new EntityState();
-		playing.add(Motion, new Motion(0, 0, 0, 15));
-		playing.add(MotionControls, new MotionControls(left, right, up, 100, 3));
-		playing.add(Display, new Display(new graphic.SpaceshipView()).asProvider('alive'));
-		playing.add(Gun, new Gun(8, 0, 0.3, 2));
-		playing.add(GunControls, new GunControls(space));
-		playing.add(Collision, new Collision(1, [0], 9));
-		fsm.add('playing', playing);
-		fsm.change('playing');
 		
-		var destroyed = new EntityState();
+		var state = new EntityState([
+			new Motion(0, 0, 0, 15),
+			new MotionControls(left, right, up, 100, 3),
+			new Display(new graphic.SpaceshipView()),
+			new Gun(8, 0, 0.3, 2),
+			new GunControls(space),
+			new Collision(1, [0], 9),
+		]);
+		fsm.add('playing', state, ['destroyed']);
+		
 		var view = new graphic.SpaceshipDeathView();
-		destroyed.add(Display, new Display(view).asProvider('dead'));
-		destroyed.add(Animation, new Animation(view));
-		destroyed.add(Death, new Death(2));
-		fsm.add('destroyed', destroyed);
+		var state = new EntityState([
+			new Display(view),
+			new Animation(view),
+			new Death(2),
+		]);
+		fsm.add('destroyed', state, ['playing']);
 		
-		this.add(new Position(x, y, 0));
+		fsm.transit('playing');
+		
 		this.add(new component.Spaceship(fsm));
+		this.add(new Position(x, y, 0));
+		
 	}
 }

@@ -14,7 +14,6 @@ class SpaceshipAsteroidCollisionHandlerSystem extends EventHandlerSystem<Event, 
 	}
 	
 	override function handle(entity:Entity) {
-		var spaceship = entity.get(component.Spaceship);
-		spaceship.fsm.change('destroyed');
+		entity.get(component.Spaceship).fsm.transit('destroyed');
 	}
 }

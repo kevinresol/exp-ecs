@@ -1,10 +1,11 @@
 package ecs;
 
 import ecs.entity.*;
+import ecs.event.*;
 import ecs.node.*;
 import ecs.node.NodeList;
 import ecs.system.*;
-import ecs.event.*;
+import ecs.state.*;
 import ecs.util.*;
 import tink.state.State;
 
@@ -15,6 +16,7 @@ class Engine<Event> {
 	public var entities(default, null):EntityCollection;
 	public var systems(default, null):SystemCollection<Event>;
 	public var events(default, null):EventEmitter<Event>;
+	public var states(default, null):EngineStateMachine<Event>;
 	
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
 	var allowModifyEntities:State<Bool>;
@@ -24,6 +26,7 @@ class Engine<Event> {
 		entities = new EntityCollection(allowModifyEntities);
 		systems = new SystemCollection(this);
 		events = new EventEmitter();
+		states = new EngineStateMachine(this);
 		nodeLists = new Map();
 	}
 	

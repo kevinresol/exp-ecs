@@ -4,6 +4,7 @@ import ecs.*;
 import ecs.entity.*;
 import ecs.component.*;
 import ecs.system.*;
+import ecs.state.*;
 import ecs.node.*;
 import component.*;
 import node.*;
@@ -79,22 +80,20 @@ class StateMachineTest {
 	public function fsm() {
 		var entity = new Entity();
 		var fsm = new EntityStateMachine(entity);
-		var forward = new EntityState();
 		var forwardVelocity = new Velocity(1, 0);
-		forward.add(Velocity, forwardVelocity.asProvider('forward'));
+		var forward = new EntityState([forwardVelocity]);
 		
-		var backward = new EntityState();
 		var backwardVelocity = new Velocity(-1, 0);
-		backward.add(Velocity, backwardVelocity.asProvider('backward'));
+		var backward = new EntityState([backwardVelocity]);
 		
-		fsm.add('forward', forward);
-		fsm.add('backward', backward);
+		fsm.add('forward', forward, ['backward']);
+		fsm.add('backward', backward, ['forward']);
 		asserts.assert(entity.get(Velocity) == null, 'entity.get(Velocity) == null');
 		
-		fsm.change('forward');
+		fsm.transit('forward');
 		asserts.assert(entity.get(Velocity) == forwardVelocity, 'entity.get(Velocity) == forwardVelocity');
 		
-		fsm.change('backward');
+		fsm.transit('backward');
 		asserts.assert(entity.get(Velocity) == backwardVelocity, 'entity.get(Velocity) == backwardVelocity');
 		
 		return asserts.done();
