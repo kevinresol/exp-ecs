@@ -4,7 +4,7 @@ import ecs.util.Collection;
 
 using tink.CoreApi;
 
-class EntityCollection extends Collection<Entity, Entity> {
+class EntityCollection extends Collection<Entity> {
 	public var added(default, null):Signal<Entity>;
 	public var removed(default, null):Signal<Entity>;
 	

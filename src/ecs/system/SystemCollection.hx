@@ -5,7 +5,7 @@ import ecs.util.Collection;
 import haxe.PosInfos;
 import tink.priority.*;
 
-class SystemCollection<Event> extends Collection<System<Event>, Item<System<Event>>> {
+class SystemCollection<Event> extends Collection<Item<System<Event>>> {
 	var queue:Queue<System<Event>>;
 	var engine:Engine<Event>;
 	

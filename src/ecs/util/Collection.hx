@@ -4,8 +4,8 @@ import tink.state.*;
 
 using tink.CoreApi;
 
-class Collection<Item, Instruction> {
-	var pending:Array<Pair<Instruction, Operation>>;
+class Collection<Item> {
+	var pending:Array<Pair<Item, Operation>>;
 	var locked:State<Bool>;
 	
 	public function new() {
@@ -13,32 +13,32 @@ class Collection<Item, Instruction> {
 		locked = new State(false);
 	}
 	
-	public function lock() {
+	public inline function lock() {
 		locked.set(true);
 	}
 	
-	public function unlock() {
+	public inline function unlock() {
 		locked.set(false);
 	}
 	
 	public function destroy() {}
 	
-	function schedule(instruction:Instruction, operation:Operation) {
+	function schedule(item:Item, operation:Operation) {
 		if(locked.value) {
 			if(pending.length == 0)
 				locked.observe().nextTime(function(v) return !v).handle(update);
-			pending.push(new Pair(instruction, operation));
+			pending.push(new Pair(item, operation));
 		} else {
-			operate(instruction, operation);
+			operate(item, operation);
 		}
 	}
 	
-	function update() {
+	function update(_) {
 		for(v in pending) operate(v.a, v.b);
 		pending = [];
 	}
 	
-	function operate(instruction:Instruction, operation:Operation) {}
+	function operate(item:Item, operation:Operation) {}
 	
 }
 
