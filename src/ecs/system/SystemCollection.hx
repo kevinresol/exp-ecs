@@ -1,48 +1,66 @@
 package ecs.system;
 
 import ecs.*;
+import ecs.util.Collection;
 import haxe.PosInfos;
 import tink.priority.*;
 
-class SystemCollection<Event> {
+class SystemCollection<Event> extends Collection<System<Event>, Item<System<Event>>> {
 	var queue:Queue<System<Event>>;
 	var engine:Engine<Event>;
 	
 	public function new(engine) {
+		super();
 		this.engine = engine;
 		queue = new Queue();
 	}
 	
-	public inline function add(system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
-		addBetween(null, null, system, id, pos);
+	public function add(system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
+		if(id == null) id = system;
+		var all = @:privateAccess queue.toArray();
+		var after = all[all.length - 1];
+		schedule({data: system, id: new ID(id), after: selector(after)}, Add);
 	}
 	
-	public inline function addBefore(before:SystemId, system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
-		addBetween(before, null, system, id, pos);
+	public function addBefore(before:SystemId, system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
+		if(id == null) id = system;
+		schedule({data: system, id: new ID(id), before: selector(before)}, Add);
 	}
 	
-	public inline function addAfter(after:SystemId, system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
-		addBetween(null, after, system, id, pos);
+	public function addAfter(after:SystemId, system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
+		if(id == null) id = system;
+		schedule({data: system, id: new ID(id), after: selector(after)}, Add);
 	}
 	
 	public function addBetween(before:SystemId, after:SystemId, system:System<Event>, ?id:SystemId, ?pos:PosInfos) {
 		if(id == null) id = system;
-		if(before == null && after == null) {
-			var all = @:privateAccess queue.toArray();
-			after = all[all.length - 1];
+		schedule({data: system, id: new ID(id), before: selector(before), after: selector(after)}, Add);
+	}
+	
+	public inline function remove(system:System<Event>) {
+		schedule({data: system}, Remove);
+	}
+		
+	override function operate(item:Item<System<Event>>, operation:Operation) {
+		var system = item.data;
+		if(operation.isAdd()) {
+			queue.add(item);
+			system.onAdded(engine);
+		} else {
+			if(queue.remove(system))
+				system.onRemoved(engine);
 		}
-		queue.between(selector(after), selector(before), system, id, pos);
-		system.onAdded(engine);
 	}
 	
-	public function remove(system:System<Event>) {
-		if(queue.remove(system))
-			system.onRemoved(engine);
-	}
 	
-	function selector(id:SystemId):Selector<System<Event>>
-		return id == null ? null : function(i:Item<System<Event>>) return i.id == new ID(id);
+	override function destroy() {
+		queue = null;
+		engine = null;
+	}
 	
 	public inline function iterator()
 		return queue.iterator();
+	
+	function selector(id:SystemId):Selector<System<Event>>
+		return id == null ? null : function(i:Item<System<Event>>) return i.id == new ID(id);
 }

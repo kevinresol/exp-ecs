@@ -20,11 +20,9 @@ class Engine<Event> {
 	public var delay(default, null):Delay;
 	
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
-	var allowModifyEntities:State<Bool>;
 	
 	public function new() {
-		allowModifyEntities = new State(true);
-		entities = new EntityCollection(allowModifyEntities);
+		entities = new EntityCollection();
 		systems = new SystemCollection(this);
 		events = new EventEmitter();
 		states = new EngineStateMachine(this);
@@ -33,13 +31,15 @@ class Engine<Event> {
 	}
 	
 	public function update(dt:Float) {
+		systems.lock();
 		for(system in systems) {
-			allowModifyEntities.set(false);
+			entities.lock();
 			system.update(dt);
-			allowModifyEntities.set(true);
+			entities.unlock();
 			delay.flushSystem();
 			events.flushSystem();
 		}
+		systems.unlock();
 		delay.flushUpdate();
 		events.flushUpdate();
 	}
@@ -56,6 +56,7 @@ class Engine<Event> {
 		entities.destroy();
 		entities = null;
 		
+		systems.destroy();
 		systems = null;
 	}
 	
@@ -101,74 +102,5 @@ class Delay {
 		for(call in new ConstArrayIterator(calls)) call();
 		return calls.length > 0;
 	}
-}
-
-class EntityCollection {
-	public var added(default, null):Signal<Entity>;
-	public var removed(default, null):Signal<Entity>;
-	
-	var allowModify:State<Bool>;
-	var array:Array<Entity>;
-	var addedTrigger:SignalTrigger<Entity>;
-	var removedTrigger:SignalTrigger<Entity>;
-	
-	var pending:Array<Pair<Entity, Bool>>;
-	
-	public function new(allowModify:State<Bool>) {
-		this.allowModify = allowModify;
-		
-		array = [];
-		pending = [];
-		added = addedTrigger = Signal.trigger();
-		removed = removedTrigger = Signal.trigger();
-	}
-	
-	public function add(entity:Entity) {
-		if(allowModify.value) {
-			_add(entity);
-		} else {
-			registerUpdate();
-			pending.push(new Pair(entity, true));
-		}
-	}
-	
-	public function remove(entity:Entity) {
-		if(allowModify.value) {
-			_remove(entity);
-		} else {
-			registerUpdate();
-			pending.push(new Pair(entity, false));
-		}
-	}
-	
-	inline function registerUpdate() {
-		if(pending.length == 0)
-			allowModify.observe().nextTime(function(v) return v).handle(update);
-	}
-	
-	function update() {
-		for(v in pending) if(v.b) _add(v.a) else _remove(v.a);
-		pending = [];
-	}
-	
-	inline function _remove(entity:Entity) {
-		if(array.remove(entity))
-			removedTrigger.trigger(entity);
-	}
-	
-	inline function _add(entity:Entity) {
-		remove(entity); // re-add to the end of the list
-		array.push(entity);
-		addedTrigger.trigger(entity);
-	}
-	
-	public function destroy() {
-		for(entity in array) entity.destroy();
-		array = null;
-		// TODO: destroy signals
-	}
-	
-	public inline function iterator()
-		return array.iterator();
 }
 
