@@ -17,16 +17,23 @@ class Engine<Event> {
 	public var systems(default, null):SystemCollection<Event>;
 	public var events(default, null):EventEmitter<Event>;
 	public var states(default, null):EngineStateMachine<Event>;
-	public var delay(default, null):Delay;
+	public var delay(default, null):Delay<Event>;
+	
+	public var systemUpdated(default, null):Signal<System<Event>>;
+	public var updated(default, null):Signal<Noise>;
 	
 	var nodeLists:Map<NodeType, NodeList<Dynamic>>;
+	var systemUpdatedTrigger:SignalTrigger<System<Event>>;
+	var updatedTrigger:SignalTrigger<Noise>;
 	
 	public function new() {
+		systemUpdated = systemUpdatedTrigger = Signal.trigger();
+		updated = updatedTrigger = Signal.trigger();
 		entities = new EntityCollection();
 		systems = new SystemCollection(this);
-		events = new EventEmitter();
+		events = new EventEmitter(this);
 		states = new EngineStateMachine(this);
-		delay = new Delay();
+		delay = new Delay(this);
 		nodeLists = new Map();
 	}
 	
@@ -36,12 +43,10 @@ class Engine<Event> {
 			entities.lock();
 			system.update(dt);
 			entities.unlock();
-			delay.flushSystem();
-			events.flushSystem();
+			systemUpdatedTrigger.trigger(system);
 		}
 		systems.unlock();
-		delay.flushUpdate();
-		events.flushUpdate();
+		updatedTrigger.trigger(Noise);
 	}
 	
 	public function getNodeList<T:NodeBase>(type:NodeType, factory:Engine<Event>->NodeList<T>):NodeList<T> {
@@ -69,13 +74,17 @@ class Engine<Event> {
 	}
 }
 
-class Delay {
+class Delay<Event> {
 	var postSystemUpdate:Array<Void->Void>;
 	var postEngineUpdate:Array<Void->Void>;
+	var engine:Engine<Event>;
 	
-	public function new() {
+	public function new(engine) {
+		this.engine = engine;
 		postSystemUpdate = [];
 		postEngineUpdate = [];
+		engine.systemUpdated.handle(function(_) flushSystem());
+		engine.updated.handle(function(_) flushUpdate());
 	}
 	
 	public inline function afterSystemUpdate(v:Void->Void) {

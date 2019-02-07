@@ -8,11 +8,15 @@ class EventEmitter<Event> {
 	var trigger:SignalTrigger<Event>;
 	var postSystemUpdate:Array<Event>;
 	var postEngineUpdate:Array<Event>;
+	var engine:Engine<Event>;
 	
-	function new() {
+	function new(engine) {
+		this.engine = engine;
 		trigger = Signal.trigger();
 		postSystemUpdate = [];
 		postEngineUpdate = [];
+		engine.systemUpdated.handle(function(_) flushSystem());
+		engine.updated.handle(function(_) flushUpdate());
 	}
 	
 	/**
