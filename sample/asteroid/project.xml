@@ -8,11 +8,12 @@
 	<source path="src" />
 	
 	<haxelib name="openfl" />
-	<haxelib name="ecs" />
+	<haxelib name="exp-ecs" />
 	
 	<!-- <assets path="assets" rename="assets" /> -->
 	
-	<haxeflag name="--times"/>
+	
 	<haxeflag name="-dce" value="full"/>
+	<haxeflag name="-D" value="analyzer-optimize"/>
 	
 </project>

@@ -32,10 +32,10 @@ A list of Nodes. The specialized `TrackingNodeList` will keep track of entities 
 ## Example
 
 ```haxe
-import ecs.*;
-import ecs.node.*;
-import ecs.entity.*;
-import ecs.system.*;
+import exp.ecs.*;
+import exp.ecs.node.*;
+import exp.ecs.entity.*;
+import exp.ecs.system.*;
 import component.*;
 import haxe.Timer;
 

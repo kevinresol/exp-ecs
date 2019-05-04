@@ -1,6 +1,6 @@
 package component;
 
-import ecs.component.*;
+import exp.ecs.component.*;
 
 class Animation extends Component {
 	public var anime:graphic.IAnimatable;

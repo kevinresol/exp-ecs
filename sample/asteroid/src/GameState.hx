@@ -10,7 +10,7 @@ class GameState {
 		reset();
 		
 	public function reset() {
-		lives = 3;
+		lives = 1;
 		level = 0;
 		points = 0;
 		over = false;

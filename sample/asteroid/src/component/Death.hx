@@ -1,6 +1,6 @@
 package component;
 
-import ecs.component.*;
+import exp.ecs.component.*;
 
 class Death extends Component {
 	public var countdown:Float;

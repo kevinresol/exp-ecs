@@ -1,6 +1,6 @@
 package component;
 
-import ecs.component.*;
+import exp.ecs.component.*;
 
 class Collision extends Component {
 	public var group:Int;

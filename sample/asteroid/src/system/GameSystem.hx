@@ -1,9 +1,9 @@
 package system;
 
 import component.*;
-import ecs.event.*;
-import ecs.system.*;
-import ecs.node.*;
+import exp.ecs.event.*;
+import exp.ecs.system.*;
+import exp.ecs.node.*;
 import util.*;
 
 using tink.CoreApi;

@@ -1,0 +1,5 @@
+-cp src
+-D exp-ecs
+-lib tink_macro
+-lib tink_priority
+-lib tink_state

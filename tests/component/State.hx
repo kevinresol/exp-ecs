@@ -1,7 +1,7 @@
 package component;
 
-import ecs.component.*;
-import ecs.entity.*;
+import exp.ecs.component.*;
+import exp.ecs.entity.*;
 
 class State extends Component {	
 	public var fsm:EntityStateMachine;

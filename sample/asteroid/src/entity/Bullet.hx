@@ -1,7 +1,7 @@
 package entity;
 
 import component.*;
-import ecs.entity.*;
+import exp.ecs.entity.*;
 
 abstract Bullet(Entity) to Entity {
 	public function new(gun:Gun, position:Position) {

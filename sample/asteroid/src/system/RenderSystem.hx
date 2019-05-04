@@ -1,9 +1,9 @@
 package system;
 
 import component.*;
-import ecs.Engine;
-import ecs.node.*;
-import ecs.system.*;
+import exp.ecs.Engine;
+import exp.ecs.node.*;
+import exp.ecs.system.*;
 
 using tink.CoreApi;
 

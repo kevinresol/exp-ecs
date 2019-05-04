@@ -1,11 +1,11 @@
 package ;
 
-import ecs.*;
-import ecs.entity.*;
-import ecs.component.*;
-import ecs.system.*;
-import ecs.state.*;
-import ecs.node.*;
+import exp.ecs.*;
+import exp.ecs.entity.*;
+import exp.ecs.component.*;
+import exp.ecs.system.*;
+import exp.ecs.state.*;
+import exp.ecs.node.*;
 import component.*;
 import node.*;
 import system.*;
@@ -68,6 +68,16 @@ class EngineTest {
 		asserts.assert(entities[1] == entity1, 'engine.entities[1] == entity1');
 		
 		engine.destroy();
+		return asserts.done();
+	}
+	
+	public function addSystem() {
+		
+		var engine = new Engine();
+		engine.states.add('foo', new EngineState([
+			{system: new MovementSystem(), before: MovementSystem}
+		]), []);
+		
 		return asserts.done();
 	}
 	
@@ -284,6 +294,8 @@ typedef OptionalNode = Node<{
 	position:Position,
 	?velocity:Velocity,
 }>;
+
+class MovementSystem<Event> extends System<Event> {}
 
 enum Events {
 	

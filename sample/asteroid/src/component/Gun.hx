@@ -1,6 +1,6 @@
 package component;
 
-import ecs.component.*;
+import exp.ecs.component.*;
 import util.*;
 
 class Gun extends Component {

@@ -1,6 +1,6 @@
 package component;
 
-import ecs.component.*;
+import exp.ecs.component.*;
 
 class Lifespan extends Component {
 	public var lifespan:Float;

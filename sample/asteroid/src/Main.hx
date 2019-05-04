@@ -1,11 +1,11 @@
 package;
 
-import ecs.Engine;
+import exp.ecs.Engine;
 import system.*;
 import entity.*;
-import ecs.entity.*;
-import ecs.state.*;
-import ecs.system.*;
+import exp.ecs.entity.*;
+import exp.ecs.state.*;
+import exp.ecs.system.*;
 import util.*;
 using tink.CoreApi;
 

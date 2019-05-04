@@ -1,10 +1,10 @@
 package system;
 
 import component.*;
-import ecs.system.*;
-import ecs.node.*;
-import ecs.event.*;
-import ecs.entity.*;
+import exp.ecs.system.*;
+import exp.ecs.node.*;
+import exp.ecs.event.*;
+import exp.ecs.entity.*;
 import util.*;
 using tink.CoreApi;
 

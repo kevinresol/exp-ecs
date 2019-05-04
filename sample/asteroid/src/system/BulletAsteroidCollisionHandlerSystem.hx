@@ -1,7 +1,7 @@
 package system;
 
-import ecs.entity.*;
-import ecs.system.*;
+import exp.ecs.entity.*;
+import exp.ecs.system.*;
 import Main;
 using tink.CoreApi;
 

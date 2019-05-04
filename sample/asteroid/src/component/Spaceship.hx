@@ -1,7 +1,7 @@
 package component;
 
-import ecs.component.*;
-import ecs.state.*;
+import exp.ecs.component.*;
+import exp.ecs.state.*;
 
 class Spaceship extends Component {
 	public var fsm:EntityStateMachine;

@@ -1,6 +1,6 @@
 package component;
 
-import ecs.component.*;
+import exp.ecs.component.*;
 
 class Display extends Component {
 	public var object:#if openfl openfl.display.DisplayObject #elseif luxe luxe.Visual #end;

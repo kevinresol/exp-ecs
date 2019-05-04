@@ -1,10 +1,10 @@
 package;
 
-import ecs.*;
-import ecs.node.*;
-import ecs.entity.*;
-import ecs.system.*;
-import ecs.event.*;
+import exp.ecs.*;
+import exp.ecs.node.*;
+import exp.ecs.entity.*;
+import exp.ecs.system.*;
+import exp.ecs.event.*;
 import component.*;
 import haxe.Timer;
 
