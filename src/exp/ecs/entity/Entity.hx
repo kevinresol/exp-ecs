@@ -5,14 +5,14 @@ using tink.CoreApi;
 
 class Entity {
 	
+	public var name:String;
 	public var id(default, null):Int;
 	public var componentAdded:Signal<Component>;
 	public var componentRemoved:Signal<Component>;
 	
 	var components:Map<ComponentType, Component>;
 	var componentAddedTrigger:SignalTrigger<Component>;
-	var componentRemovedTrigger:SignalTrigger<Component>;
-	var name:String;
+	var componentRemovedTrigger:SignalTrigger<Component>;	
 	
 	static var ids:Int = 0;
 	
