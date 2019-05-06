@@ -1,5 +1,6 @@
--cp src
+-cp /Users/kevin/Codes/exp-ecs/src
 -D exp-ecs
 -lib tink_macro
 -lib tink_priority
 -lib tink_state
+-lib exp-fsm

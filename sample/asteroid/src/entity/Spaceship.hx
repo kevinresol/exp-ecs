@@ -4,6 +4,7 @@ import component.*;
 import exp.ecs.entity.*;
 import exp.ecs.component.*;
 import exp.ecs.state.*;
+import exp.fsm.*;
 
 abstract Spaceship(Entity) to Entity {
 	public function new(x, y) {
@@ -14,27 +15,23 @@ abstract Spaceship(Entity) to Entity {
 		var up = #if openfl openfl.ui.Keyboard.UP #elseif luxe luxe.Input.Key.up #end;
 		var space = #if openfl openfl.ui.Keyboard.SPACE #elseif luxe luxe.Input.Key.space #end;
 		
-		var fsm = new EntityStateMachine(this);
-		
-		var state = new EntityState([
-			new Motion(0, 0, 0, 15),
-			new MotionControls(left, right, up, 100, 3),
-			new Display(new graphic.SpaceshipView()),
-			new Gun(8, 0, 0.3, 2),
-			new GunControls(space),
-			new Collision(1, [0], 9),
-		]);
-		fsm.add('playing', state, ['destroyed']);
-		
 		var view = new graphic.SpaceshipDeathView();
-		var state = new EntityState([
-			new Display(view),
-			new Animation(view),
-			new Death(2),
-		]);
-		fsm.add('destroyed', state, ['playing']);
 		
-		fsm.transit('playing');
+		var fsm = StateMachine.create([
+			new EntityState('playing', ['destroyed'], this, [
+				new Motion(0, 0, 0, 15),
+				new MotionControls(left, right, up, 100, 3),
+				new Display(new graphic.SpaceshipView()),
+				new Gun(8, 0, 0.3, 2),
+				new GunControls(space),
+				new Collision(1, [0], 9),
+			]),
+			new EntityState('destroyed', ['playing'], this, [
+				new Display(view),
+				new Animation(view),
+				new Death(2),
+			]),
+		]);
 		
 		this.add(new component.Spaceship(fsm));
 		this.add(new Position(x, y, 0));

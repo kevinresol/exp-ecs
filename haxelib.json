@@ -11,6 +11,7 @@
   "dependencies": {
     "tink_macro": "",
     "tink_priority": "",
-    "tink_state": ""
+    "tink_state": "",
+    "exp-fsm": ""
   }
 }

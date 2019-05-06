@@ -6,6 +6,7 @@ import entity.*;
 import exp.ecs.entity.*;
 import exp.ecs.state.*;
 import exp.ecs.system.*;
+import exp.fsm.*;
 import util.*;
 using tink.CoreApi;
 
@@ -73,27 +74,28 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		engine.systems.add(new LifespanSystem());
 		engine.systems.add(new AnimationSystem());
 		engine.systems.add(new DeathSystem());
+		
+		var fsm = StateMachine.create([
+			new EngineState('playing', ['gameover'], engine, [
+				{system: new MovementSystem(config), before: CollisionSystem},
+				{system: new RenderSystem(#if openfl this #end)},
+			]),
+			new EngineState('gameover', ['playing'], engine, []),
+		]);
+		
 		engine.systems.add(EventHandlerSystem.simple(
 			function(e) return e == GameOver ? Some(Noise) : None,
 			function(_) return {
-				engine.states.transit('gameover');
+				fsm.transit('gameover');
 				stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, function listener(e) {
 					if(e.keyCode == openfl.ui.Keyboard.SPACE) {
 						stage.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, listener);
 						state.reset();
-						engine.states.transit('playing');
+						fsm.transit('playing');
 					}
 				});
 			}
 		));
-		
-		engine.states.add('playing', new EngineState([
-			{system: new MovementSystem(config), before: CollisionSystem},
-			{system: new RenderSystem(#if openfl this #end)},
-		]), ['gameover']);
-		engine.states.add('gameover', new EngineState([]), ['playing']);
-		engine.states.transit('playing');
-		
 	}
 	
 }

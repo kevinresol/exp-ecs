@@ -7,6 +7,7 @@ import exp.ecs.node.NodeList;
 import exp.ecs.system.*;
 import exp.ecs.state.*;
 import exp.ecs.util.*;
+import exp.fsm.*;
 import tink.state.State;
 
 using tink.CoreApi;
@@ -16,7 +17,6 @@ class Engine<Event> {
 	public var entities(default, null):EntityCollection;
 	public var systems(default, null):SystemCollection<Event>;
 	public var events(default, null):EventEmitter<Event>;
-	public var states(default, null):EngineStateMachine<Event>;
 	public var delay(default, null):Delay<Event>;
 	
 	public var systemUpdated(default, null):Signal<System<Event>>;
@@ -32,7 +32,6 @@ class Engine<Event> {
 		entities = new EntityCollection();
 		systems = new SystemCollection(this);
 		events = new EventEmitter(this);
-		states = new EngineStateMachine(this);
 		delay = new Delay(this);
 		nodeLists = new Map();
 	}

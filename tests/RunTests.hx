@@ -6,6 +6,7 @@ import exp.ecs.component.*;
 import exp.ecs.system.*;
 import exp.ecs.state.*;
 import exp.ecs.node.*;
+import exp.fsm.*;
 import component.*;
 import node.*;
 import system.*;
@@ -74,10 +75,9 @@ class EngineTest {
 	public function addSystem() {
 		
 		var engine = new Engine();
-		engine.states.add('foo', new EngineState([
-			{system: new MovementSystem(), before: MovementSystem}
-		]), []);
-		
+		var fsm = StateMachine.create([
+			new EngineState('foo', [], engine, [{system: new MovementSystem(), before: MovementSystem}]),
+		]);
 		return asserts.done();
 	}
 	
@@ -89,22 +89,23 @@ class StateMachineTest {
 	
 	public function fsm() {
 		var entity = new Entity();
-		var fsm = new EntityStateMachine(entity);
+		
 		var forwardVelocity = new Velocity(1, 0);
-		var forward = new EntityState([forwardVelocity]);
-		
 		var backwardVelocity = new Velocity(-1, 0);
-		var backward = new EntityState([backwardVelocity]);
 		
-		fsm.add('forward', forward, ['backward']);
-		fsm.add('backward', backward, ['forward']);
-		asserts.assert(entity.get(Velocity) == null, 'entity.get(Velocity) == null');
+		var fsm = StateMachine.create([
+			new EntityState('forward', ['backward'], entity, [forwardVelocity]),
+			new EntityState('backward', ['forward'], entity, [backwardVelocity]),
+		]);
 		
-		fsm.transit('forward');
 		asserts.assert(entity.get(Velocity) == forwardVelocity, 'entity.get(Velocity) == forwardVelocity');
 		
 		fsm.transit('backward');
 		asserts.assert(entity.get(Velocity) == backwardVelocity, 'entity.get(Velocity) == backwardVelocity');
+		
+		fsm.transit('forward');
+		asserts.assert(entity.get(Velocity) == forwardVelocity, 'entity.get(Velocity) == forwardVelocity');
+		
 		
 		return asserts.done();
 	}
