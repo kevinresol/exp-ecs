@@ -1,4 +1,4 @@
--cp /Users/kevin/Codes/exp-ecs/src
+-cp src
 -D exp-ecs
 -lib tink_macro
 -lib tink_priority
