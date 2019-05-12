@@ -6,9 +6,7 @@ import exp.ecs.state.*;
 import exp.fsm.*;
 
 @:asserts
-class StateMachineTest {
-	public function new() {}
-	
+class StateMachineTest extends Base {
 	public function fsm() {
 		var entity = new Entity();
 		

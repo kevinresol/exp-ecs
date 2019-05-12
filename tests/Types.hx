@@ -3,7 +3,15 @@ package;
 import exp.ecs.component.*;
 import exp.ecs.system.*;
 import exp.ecs.node.*;
+import tink.state.State;
 
+class Observable extends Component {	
+	public var state:State<Int>;
+	
+	public function new(value) {
+		this.state = new State(value);
+	}
+}
 class Velocity extends Component {	
 	public var x:Float;
 	public var y:Float;
@@ -30,7 +38,12 @@ typedef OptionalNode = Node<{
 	?velocity:Velocity,
 }>;
 
-class MovementSystem<Event> extends System<Event> {}
+class MovementSystem<Event> extends System<Event> {
+	@:nodes var nodes:MovementNode;
+}
+class RenderSystem<Event> extends System<Event> {
+	@:nodes var nodes:Node<Position>;
+}
 
 enum Events {
 	

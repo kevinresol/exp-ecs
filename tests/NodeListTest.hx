@@ -7,9 +7,7 @@ import exp.ecs.entity.Entity;
 using StringTools;
 
 @:asserts
-class NodeListTest {
-	public function new() {}
-	
+class NodeListTest extends Base {
 	@:variant('Add entity to engine before creating the node list'(true))
 	@:variant('Add entity to engine after creating the node list'(false))
 	public function add(lateAdd) {

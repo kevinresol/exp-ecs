@@ -8,9 +8,7 @@ import exp.fsm.*;
 
 
 @:asserts
-class EngineTest {
-	public function new() {}
-	
+class EngineTest extends Base {
 	public function addEntity() {
 		var engine = new Engine();
 		var entity = new Entity();

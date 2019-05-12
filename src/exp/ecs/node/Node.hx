@@ -7,6 +7,7 @@ class Node<Rest> {}
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
+import haxe.macro.Type;
 import tink.macro.BuildCache;
 
 using tink.MacroApi;
@@ -20,13 +21,23 @@ class Node {
 			case TInst(_, [type = _.reduce() => TAnonymous(_)]):
 				buildAnon(type);
 			case TInst(_, params):
-				params.sort(function(t1, t2) return Reflect.compare(t1.getID(), t2.getID()));
-				buildRest(params);
+				var pos = Context.currentPos();
+				var anon = ComplexType.TAnonymous([for(type in params) {
+					name: {
+						var cls = type.getClass();
+						cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1); // auto named in the component's class name camel-cased
+					},
+					kind: FVar(type.toComplex(), null),
+					pos: pos,
+				}]);
+				buildAnon(anon.toType().sure());
+				// params.sort(function(t1, t2) return Reflect.compare(t1.getID(), t2.getID()));
+				// buildRest(params);
 			default: throw 'assert';
 		}
 	}
 	
-	static function buildAnon(type) {
+	static function buildAnon(type:Type) {
 		return BuildCache.getType('exp.ecs.node.Node', type, function(ctx:BuildContext) {
 			return switch ctx.type {
 				case TAnonymous(_.get() => {fields: f}):
@@ -44,24 +55,6 @@ class Node {
 				case _:
 					throw 'unreachable';
 			}
-		});
-	}
-	
-	static function buildRest(types) {	
-		return BuildCache.getTypeN('exp.ecs.node.Node', types, function(ctx:BuildContextN) {
-			var fields = [];
-			for(type in ctx.types) {
-				if(isComponent(type, ctx.pos)) {
-					var cls = type.getClass();
-					fields.push({
-						name: cls.name.substr(0, 1).toLowerCase() + cls.name.substr(1), // auto named in the component's class name camel-cased
-						type: type.toComplex(),
-						optional: false,
-					});
-				}
-			}
-			
-			return buildClass(ctx.name, fields, ctx.pos);
 		});
 	}
 	
