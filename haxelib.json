@@ -12,6 +12,6 @@
     "tink_macro": "",
     "tink_priority": "",
     "tink_state": "",
-    "exp-fsm": ""
+    "exp-fsm": "gh:kevinresol/exp-fsm"
   }
 }
