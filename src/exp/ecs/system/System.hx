@@ -61,8 +61,15 @@ class System {
 			}
 		}
 		
-		if(addedExprs.length > 0) builder.addMembers(macro class {override function setNodeLists(engine:exp.ecs.Engine<Event>) $b{addedExprs}});
-		if(removedExprs.length > 0) builder.addMembers(macro class {override function unsetNodeLists() $b{removedExprs}});
+		switch builder.target {
+			case {superClass: {params: [param]}}:
+				var event = param.toComplex();
+				if(addedExprs.length > 0) builder.addMembers(macro class {override function setNodeLists(engine:exp.ecs.Engine<$event>) $b{addedExprs}});
+				if(removedExprs.length > 0) builder.addMembers(macro class {override function unsetNodeLists() $b{removedExprs}});
+			case v:
+				throw 'assert $v';
+		}
+		
 		return builder.export();
 	}
 }

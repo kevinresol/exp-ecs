@@ -25,17 +25,9 @@ class RunTests {
 			new StateMachineTest(),
 			new NodeListTest(),
 			new NodeTest(),
+			new SystemTest(),
 			new EngineBenchmark(),
 			new NodeListBenchmark(),
 		])).handle(Runner.exit);
 	}
 }
-
-
-
-
-
-class SystemTest {
-	
-}
-
