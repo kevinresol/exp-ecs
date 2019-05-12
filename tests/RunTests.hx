@@ -24,6 +24,7 @@ class RunTests {
 			new EngineTest(),
 			new StateMachineTest(),
 			new NodeListTest(),
+			new NodeTest(),
 			new EngineBenchmark(),
 			new NodeListBenchmark(),
 		])).handle(Runner.exit);
