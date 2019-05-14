@@ -1,4 +1,4 @@
 -D exp-fsm=0.0.0
-# @install: lix --silent download "gh://github.com/kevinresol/exp-fsm#f73cc353db9a96c7636b96043c4a61debb6817ce" into exp-fsm/0.0.0/github/f73cc353db9a96c7636b96043c4a61debb6817ce
+# @install: lix --silent download "gh://github.com/kevinresol/exp-fsm#d1addb208ae239121e86ed9ef8305796877bd702" into exp-fsm/0.0.0/github/d1addb208ae239121e86ed9ef8305796877bd702
 -lib tink_core
--cp ${HAXE_LIBCACHE}/exp-fsm/0.0.0/github/f73cc353db9a96c7636b96043c4a61debb6817ce/src
+-cp ${HAXE_LIBCACHE}/exp-fsm/0.0.0/github/d1addb208ae239121e86ed9ef8305796877bd702/src

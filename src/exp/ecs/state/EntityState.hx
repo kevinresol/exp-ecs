@@ -4,7 +4,7 @@ import exp.fsm.State;
 import exp.ecs.component.*;
 import exp.ecs.entity.*;
 
-class EntityState<T> extends State<T> {
+class EntityState<T> extends BasicState<T> {
 	var entity:Entity;
 	var components:Array<Component>;
 	public function new(key, next, entity, components) {
