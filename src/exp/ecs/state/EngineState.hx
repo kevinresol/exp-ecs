@@ -1,6 +1,6 @@
 package exp.ecs.state;
 
-import exp.fsm.*;
+import exp.fsm.State;
 import exp.ecs.system.*;
 
 class EngineState<T, Event> extends State<T> {
