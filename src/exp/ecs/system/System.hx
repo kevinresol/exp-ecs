@@ -32,6 +32,7 @@ class System<Event> implements SystemBase<Event> {
 #else
 
 import haxe.macro.Expr;
+import haxe.macro.Type;
 import haxe.macro.Context;
 import tink.macro.BuildCache;
 
@@ -61,14 +62,18 @@ class System {
 			}
 		}
 		
-		switch builder.target {
-			case {superClass: {params: [param]}}:
-				var event = param.toComplex();
-				if(addedExprs.length > 0) builder.addMembers(macro class {override function setNodeLists(engine:exp.ecs.Engine<$event>) $b{addedExprs}});
-				if(removedExprs.length > 0) builder.addMembers(macro class {override function unsetNodeLists() $b{removedExprs}});
-			case v:
-				throw 'assert $v';
+		
+		function getEventType(type:Type) {
+			var ct = type.toComplex();
+			return (macro {
+				function get<A>(s:System<A>):A return null;
+				get((null:$ct));
+			}).typeof().sure();
 		}
+		
+		var event = getEventType(Context.getLocalType()).toComplex();
+		if(addedExprs.length > 0) builder.addMembers(macro class {override function setNodeLists(engine:exp.ecs.Engine<$event>) $b{addedExprs}});
+		if(removedExprs.length > 0) builder.addMembers(macro class {override function unsetNodeLists() $b{removedExprs}});
 		
 		return builder.export();
 	}
