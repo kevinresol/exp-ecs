@@ -66,7 +66,7 @@ class System {
 		function getEventType(type:Type) {
 			var ct = type.toComplex();
 			return (macro {
-				function get<A>(s:System<A>):A return null;
+				function get<A>(s:exp.ecs.system.System<A>):A return null;
 				get((null:$ct));
 			}).typeof().sure();
 		}
