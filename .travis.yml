@@ -9,8 +9,8 @@ os:
   # - osx
 
 env:
-  - HAXE_VERSION=3.4.7
   - HAXE_VERSION=latest
+  - HAXE_VERSION=nightly
   
 install:
   - npm i -g lix@15.3.13

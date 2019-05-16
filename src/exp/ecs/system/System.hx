@@ -51,7 +51,7 @@ class System {
 					switch field.kind {
 						case FVar(ct, e):
 							var ct = ct.toType().sure().toComplex();
-							field.kind = FVar(macro:exp.ecs.node.NodeList<$ct>, e);
+							field.kind = FieldType.FVar(macro:exp.ecs.node.NodeList<$ct>, e);
 							var parts = ct.toString().split('.');
 							addedExprs.push(macro $i{name} = engine.getNodeList($p{parts}, $p{parts.concat(['createNodeList'])}));
 							removedExprs.push(macro $i{name} = null);
