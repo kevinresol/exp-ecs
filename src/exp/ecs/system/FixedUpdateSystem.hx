@@ -10,7 +10,7 @@ class FixedUpdateSystem<Event> extends System<Event> {
 		this.delta = delta;
 	}
 	
-	override function update(dt:Float) {
+	final override function update(dt:Float) {
 		residue += dt;
 		while(residue > delta) {
 			fixedUpdate(delta);
