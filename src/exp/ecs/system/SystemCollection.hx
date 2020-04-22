@@ -37,21 +37,23 @@ class SystemCollection<Event> extends Collection<Item<System<Event>>> {
 		schedule({data: system, id: new ID(id), before: selector(before), after: selector(after)}, Add);
 	}
 	
-	public inline function remove(system:System<Event>) {
-		schedule({data: system}, Remove);
+	public inline function remove(system:System<Event>, destroy = false) {
+		schedule({data: system}, destroy ? RemoveAndDestroy : Remove);
 	}
 		
 	override function operate(item:Item<System<Event>>, operation:Operation) {
 		var system = item.data;
-		if(operation.isAdd()) {
-			queue.add(item);
-			system.onAdded(engine);
-		} else {
-			if(queue.remove(system))
-				system.onRemoved(engine);
+		switch operation {
+			case Add:
+				queue.add(item);
+				system.onAdded(engine);
+			case Remove | RemoveAndDestroy:
+				queue.add(item);
+				system.onAdded(engine);
+				if(operation == RemoveAndDestroy)
+					system.destroy();
 		}
 	}
-	
 	
 	override function destroy() {
 		queue = null;

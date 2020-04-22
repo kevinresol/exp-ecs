@@ -22,24 +22,30 @@ class EntityCollection extends Collection<Entity> {
 	public inline function add(entity:Entity)
 		schedule(entity, Add);
 	
-	public inline function remove(entity:Entity)
-		schedule(entity, Remove);
+	public inline function remove(entity:Entity, destroy = false)
+		schedule(entity, destroy ? RemoveAndDestroy : Remove);
 	
 	override function operate(entity:Entity, operation:Operation) {
-		if(operation.isAdd()) {
-			remove(entity); // re-add to the end of the list
-			array.push(entity);
-			addedTrigger.trigger(entity);
-		} else {
-			if(array.remove(entity))
-				removedTrigger.trigger(entity);
+		switch operation {
+			case Add:
+				remove(entity); // re-add to the end of the list
+				array.push(entity);
+				addedTrigger.trigger(entity);
+			case Remove | RemoveAndDestroy:
+				if(array.remove(entity))
+					removedTrigger.trigger(entity);
+				if(operation == RemoveAndDestroy)
+					entity.destroy();
 		}
 	}
 	
 	override function destroy() {
-		for(entity in array) entity.destroy();
+		// for(entity in array) entity.destroy(); // rethink: should we do this?
 		array = null;
-		// TODO: destroy signals
+		addedTrigger.clear();
+		removedTrigger.clear();
+		addedTrigger = null;
+		removedTrigger = null;
 	}
 	
 	public inline function iterator()

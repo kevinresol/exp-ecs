@@ -55,7 +55,10 @@ class Entity {
 	
 	public function destroy() {
 		components = null;
-		// TODO: destroy signals
+		componentAddedTrigger.clear();
+		componentRemovedTrigger.clear();
+		componentAddedTrigger = null;
+		componentRemovedTrigger = null;
 	}
 	
 	public function toString():String {

@@ -22,6 +22,8 @@ class System<Event> implements SystemBase<Event> {
 		unsetNodeLists();
 	}
 	
+	public function destroy() {}
+	
 	function setNodeLists(engine:Engine<Event>) {}
 	
 	function unsetNodeLists() {}

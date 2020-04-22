@@ -42,11 +42,8 @@ class Collection<Item> {
 	
 }
 
-@:enum
-abstract Operation(Bool) to Bool {
-	var Add = true;
-	var Remove = false;
-	
-	public inline function isAdd():Bool
-		return this;
+enum abstract Operation(Int) {
+	var Add;
+	var Remove;
+	var RemoveAndDestroy;
 }
