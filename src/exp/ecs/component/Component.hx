@@ -1,9 +1,9 @@
 package exp.ecs.component;
 
 class Component {
-	public var type(get, never):ComponentType;
+	public var componentType(get, never):ComponentType;
 	
-	inline function get_type():ComponentType
+	inline function get_componentType():ComponentType
 		return this;
 		
 	public inline function asProvider(?id:String)

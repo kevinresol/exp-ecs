@@ -99,8 +99,13 @@ class Node {
 				$b{destroyExprs}
 			}
 			
-			override function onComponentAdded(__component:exp.ecs.component.Component) $b{onAddedExprs};
-			override function onComponentRemoved(__component:exp.ecs.component.Component) $b{onRemovedExprs};
+			override function onComponentAdded(__component:exp.ecs.component.Component) {
+				var __type = __component.componentType;
+				$b{onAddedExprs};
+			}
+			override function onComponentRemoved(__component:exp.ecs.component.Component) {
+				$b{onRemovedExprs};
+			}
 		}
 		
 		for(field in fields) {
@@ -109,8 +114,8 @@ class Node {
 			var ctExpr = macro $p{ct.toString().split('.')}
 			
 			ctorExprs.push(macro this.$name = entity.get($p{ct.toString().split('.')}));
-			onAddedExprs.push(macro if(__component.type == $ctExpr) this.$name = cast __component);
-			onRemovedExprs.push(macro if(__component.type == $ctExpr) this.$name = null);
+			onAddedExprs.push(macro if(__type == $ctExpr) this.$name = cast __component);
+			onRemovedExprs.push(macro if(this.$name == __component) this.$name = null);
 			destroyExprs.push(macro this.$name = null);
 			
 			def.fields.push({
