@@ -3,4 +3,5 @@
 -dce full
 -lib tink_unittest
 
-# -D analyzer-optimize
+-D analyzer-optimize
+-D no-deprecation-warnings
