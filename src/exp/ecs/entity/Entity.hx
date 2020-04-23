@@ -53,6 +53,10 @@ class Entity {
 		return true;
 	}
 	
+	public inline function iterator():Iterator<Component> {
+		return components.iterator();
+	}
+	
 	public function destroy() {
 		components = null;
 		componentAddedTrigger.clear();
