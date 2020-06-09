@@ -7,7 +7,6 @@ import exp.ecs.system.e2d.TransformSystem;
 
 @:asserts
 class TransformTest extends Base {
-	@:include
 	public function test() {
 		var engine = new Engine();
 		engine.systems.add(new TransformSystem());
