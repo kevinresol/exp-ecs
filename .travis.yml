@@ -2,10 +2,10 @@ sudo: required
 dist: xenial
 
 language: node_js
-node_js: 8
+node_js: 10
 
 os:
-  - linux
+  # - linux
   - osx
 
 env:
@@ -13,15 +13,16 @@ env:
   - HAXE_VERSION=nightly
   
 install:
-  - npm i -g lix@15.3.13
+  - npm i -g lix
   - lix install haxe $HAXE_VERSION
   - lix download
 
 script:
+  - lix run travix interp
   - lix run travix js
   - lix run travix node
   - lix run travix lua
   - lix run travix php
   - lix run travix cpp
   - lix run travix python
-  - if [ "$HAXE_VERSION" == "latest" ]; then lix run travix hl; fi
+  - lix run travix jvm
