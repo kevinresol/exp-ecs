@@ -1,0 +1,6 @@
+tests.hxml
+
+-lib travix
+-lib exp-ecs
+-js bin/completion.js
+--no-output

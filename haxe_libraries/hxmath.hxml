@@ -1,0 +1,3 @@
+# @install: lix --silent download "gh://github.com/tbrosman/hxmath#24d1713dc32fbd9dffffc3a8d0d3c02add89f85f" into hxmath/0.16.0/github/24d1713dc32fbd9dffffc3a8d0d3c02add89f85f
+-cp ${HAXE_LIBCACHE}/hxmath/0.16.0/github/24d1713dc32fbd9dffffc3a8d0d3c02add89f85f/
+-D hxmath=0.16.0

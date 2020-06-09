@@ -4,12 +4,13 @@ import component.*;
 import exp.ecs.Engine;
 import exp.ecs.node.*;
 import exp.ecs.system.*;
+import exp.ecs.component.e2d.*;
 
 using tink.CoreApi;
 
 class RenderSystem<Event> extends System<Event> {
 	
-	@:nodes var nodes:Node<Position, Display>;
+	@:nodes var nodes:Node<Transform, Display>;
 	
 	var listeners:CallbackLink;
 	
@@ -38,7 +39,7 @@ class RenderSystem<Event> extends System<Event> {
 		listeners = null;
 	}
 	
-	function addToDisplay(node:Node<Position, Display>) {
+	function addToDisplay(node:Node<Transform, Display>) {
 		#if openfl
 		container.addChild(node.display.object);
 		#elseif luxe
@@ -46,7 +47,7 @@ class RenderSystem<Event> extends System<Event> {
 		#end
 	}
 	
-	function removeFromDisplay(node:Node<Position, Display>) {
+	function removeFromDisplay(node:Node<Transform, Display>) {
 		#if openfl
 		container.removeChild(node.display.object);
 		#elseif luxe
@@ -57,10 +58,14 @@ class RenderSystem<Event> extends System<Event> {
 	override function update(dt:Float) {
 		for(node in nodes) {
 			var display = node.display.object;
-			var position = node.position;
-			#if openfl display.x #elseif luxe display.pos.x #end = position.position.x;
-			#if openfl display.y #elseif luxe display.pos.y #end = position.position.y;
-			#if openfl display.rotation #elseif luxe display.rotation_z #end = position.rotation * 180 / Math.PI;
+			var transform = node.transform;
+			#if openfl
+			@:privateAccess display.transform.__setTransform(transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
+			#elseif luxe
+			display.pos.x = transform.transform.x;
+			display.pos.y = transform.transform.y;
+			display.rotation_z = transform.rotation * 180 / Math.PI;
+			#end
 		}
 	}
 }

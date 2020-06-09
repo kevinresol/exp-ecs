@@ -51,9 +51,11 @@ class EngineTest extends Base {
 		
 		var engine = new Engine();
 		var fsm = StateMachine.create([
-			new EngineState('foo', [], engine, [{system: new MovementSystem(), before: MovementSystem}]),
+			new EngineState<String, Event>('foo', [], engine, [{system: new MovementSystem(), before: MovementSystem}]),
 		]);
 		return asserts.done();
 	}
 	
 }
+
+enum Event {}

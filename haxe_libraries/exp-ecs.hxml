@@ -1,5 +1,6 @@
 -cp ${SCOPE_DIR}/src
 -D exp-ecs
+-lib hxmath
 -lib tink_macro
 -lib tink_priority
 -lib tink_state

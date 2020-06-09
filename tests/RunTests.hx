@@ -26,7 +26,7 @@ class RunTests {
 			new NodeListTest(),
 			new NodeTest(),
 			new SystemTest(),
-			new e2d.PositionTest(),
+			new e2d.TransformTest(),
 			new EngineBenchmark(),
 			new NodeListBenchmark(),
 		])).handle(Runner.exit);

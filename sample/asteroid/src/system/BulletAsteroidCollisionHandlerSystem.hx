@@ -2,6 +2,7 @@ package system;
 
 import exp.ecs.entity.*;
 import exp.ecs.system.*;
+import exp.ecs.component.e2d.*;
 import Main;
 using tink.CoreApi;
 
@@ -17,12 +18,12 @@ class BulletAsteroidCollisionHandlerSystem extends EventHandlerSystem<Event, Pai
 		var bullet = pair.a;
 		var asteroid = pair.b;
 		var radius = asteroid.get(component.Asteroid).radius;
-		var position = asteroid.get(component.Position).position;
+		var transform = asteroid.get(Transform);
 		
 		if(radius > 10) {
 			// break into 2 small asteroids
-			engine.entities.add(new entity.Asteroid(radius - 10, position.x + Math.random() * 10 - 5, position.y + Math.random() * 10 - 5));
-			engine.entities.add(new entity.Asteroid(radius - 10, position.x + Math.random() * 10 - 5, position.y + Math.random() * 10 - 5));
+			engine.entities.add(new entity.Asteroid(radius - 10, transform.tx + Math.random() * 10 - 5, transform.ty + Math.random() * 10 - 5));
+			engine.entities.add(new entity.Asteroid(radius - 10, transform.tx + Math.random() * 10 - 5, transform.ty + Math.random() * 10 - 5));
 		}
 		
 		engine.entities.remove(bullet);

@@ -3,6 +3,7 @@ package entity;
 import component.*;
 import exp.ecs.entity.*;
 import exp.ecs.component.*;
+import exp.ecs.component.e2d.*;
 import exp.ecs.state.*;
 import exp.fsm.*;
 
@@ -34,7 +35,7 @@ abstract Spaceship(Entity) to Entity {
 		]);
 		
 		this.add(new component.Spaceship(fsm));
-		this.add(new Position(x, y, 0));
+		this.add(new Transform(1, 0, 0, 1, x, y));
 		
 	}
 }

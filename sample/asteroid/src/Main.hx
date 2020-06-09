@@ -6,6 +6,7 @@ import exp.ecs.Engine;
 import exp.ecs.entity.*;
 import exp.ecs.state.*;
 import exp.ecs.system.*;
+import exp.ecs.system.e2d.*;
 import exp.fsm.*;
 import util.*;
 using tink.CoreApi;
@@ -67,7 +68,7 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		engine.systems.add(new GameSystem(config, state, function(_) return GameOver));
 		engine.systems.add(new GunControlSystem(input));
 		engine.systems.add(new MotionControlSystem(input));
-		// engine.systems.add(new MovementSystem(config));
+		engine.systems.add(new TransformSystem());
 		engine.systems.add(new CollisionSystem(Collision));
 		engine.systems.add(new SpaceshipAsteroidCollisionHandlerSystem());
 		engine.systems.add(new BulletAsteroidCollisionHandlerSystem());
@@ -77,7 +78,8 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 		
 		var fsm = StateMachine.create([
 			new EngineState('playing', ['gameover'], engine, [
-				{system: new MovementSystem(config), before: CollisionSystem},
+				{system: new MovementSystem(config), before: TransformSystem},
+				{system: new TransformSystem(), before: CollisionSystem},
 				{system: new RenderSystem(#if openfl this #end)},
 			]),
 			new EngineState('gameover', ['playing'], engine, []),

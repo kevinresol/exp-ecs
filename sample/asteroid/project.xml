@@ -15,5 +15,7 @@
 	
 	<haxeflag name="-dce" value="full"/>
 	<haxeflag name="-D" value="analyzer-optimize"/>
+	<haxeflag name="-D" value="no-deprecation-warnings"/>
+	<haxeflag name="-D" value="HXMATH_USE_OPENFL_STRUCTURES"/>
 	
 </project>
