@@ -80,7 +80,7 @@ class Main extends #if openfl openfl.display.Sprite #else luxe.Game #end {
 			new EngineState('playing', ['gameover'], engine, [
 				{system: new MovementSystem(config), before: TransformSystem},
 				{system: new TransformSystem(), before: CollisionSystem},
-				{system: new RenderSystem(#if openfl this #end)},
+				{system: new VisualSystem(#if openfl this #end)},
 			]),
 			new EngineState('gameover', ['playing'], engine, []),
 		]);

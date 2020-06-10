@@ -22,13 +22,13 @@ abstract Spaceship(Entity) to Entity {
 			new EntityState('playing', ['destroyed'], this, [
 				new Motion(0, 0, 0, 15),
 				new MotionControls(left, right, up, 100, 3),
-				new Display(new graphic.SpaceshipView()),
+				new Visual(new graphic.SpaceshipView()),
 				new Gun(8, 0, 0.3, 2),
 				new GunControls(space),
 				new Collision(1, [0], 9),
 			]),
 			new EntityState('destroyed', ['playing'], this, [
-				new Display(view),
+				new Visual(view),
 				new Animation(view),
 				new Death(2),
 			]),
