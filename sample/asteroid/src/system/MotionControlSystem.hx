@@ -23,11 +23,13 @@ class MotionControlSystem<Event> extends System<Event> {
 			var transform = node.transform;
 			var motion = node.motion;
 			
-			if(input.isDown(control.left)) transform.rotation -= control.rotationRate * dt;
-			if(input.isDown(control.right)) transform.rotation += control.rotationRate * dt;
+			var delta = 0.;
+			if(input.isDown(control.left)) delta -= control.rotationRate * dt;
+			if(input.isDown(control.right)) delta += control.rotationRate * dt;
+			if(delta != 0) transform.rotation += delta;
 			if(input.isDown(control.accelerate)) {
-				motion.velocity.x += Math.cos(transform.rotation) * control.accelerationRate * dt;
-				motion.velocity.y += Math.sin(transform.rotation) * control.accelerationRate * dt;
+				motion.velocity.x += transform.a * control.accelerationRate * dt;
+				motion.velocity.y += transform.b * control.accelerationRate * dt;
 			}
 		}
 	}
