@@ -1,0 +1,17 @@
+{
+  "name": "exp-ecs",
+  "license": "MIT",
+  "tags": [],
+  "classPath": "src",
+  "contributors": [
+    "kevinresol"
+  ],
+  "releasenote": "initial release",
+  "version": "0.0.0",
+  "dependencies": {
+    "tink_macro": "",
+    "tink_priority": "",
+    "tink_state": "",
+    "exp-fsm": "gh:kevinresol/exp-fsm"
+  }
+}
