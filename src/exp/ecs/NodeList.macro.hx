@@ -5,12 +5,12 @@ import haxe.macro.Expr;
 using tink.MacroApi;
 
 class NodeList {
-	public static macro function generate(e:Expr) {
-		return macro new exp.ecs.NodeList(${parseQuery(e)}, e -> ${
+	public static macro function generate(world:Expr, query:Expr) {
+		return macro new exp.ecs.NodeList($world, ${parseQuery(query)}, e -> ${
 			EObjectDecl([
-				for (name => entry in getComponents(e))
+				for (name => entry in getComponents(query))
 					{field: name, expr: macro e.get(${entry.expr})}
-			]).at(e.pos)
+			]).at(query.pos)
 		});
 	}
 

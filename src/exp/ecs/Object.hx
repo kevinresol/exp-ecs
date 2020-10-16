@@ -1,8 +1,11 @@
 package exp.ecs;
 
+import tink.state.Observable;
+import tink.state.ObservableMap;
+
 class Object<T:Object<T>> {
 	public final id:Int;
-	
+
 	final type:String;
 
 	/**
@@ -19,7 +22,7 @@ class Object<T:Object<T>> {
 
 	public final children:Array<T> = [];
 
-	final components:Map<Signature, Component> = [];
+	final components:ObservableMap<Signature, Component> = new ObservableMap([]);
 
 	function new(id, type) {
 		this.id = id;
@@ -67,6 +70,16 @@ class Object<T:Object<T>> {
 			case Must(Shared, sig): shares(sig);
 			case Must(Whatever, sig): has(sig);
 			case Must(Parent(mod), sig): parent != null && parent.fulfills(Must(mod, sig));
+		}
+	}
+
+	final cache = new Map();
+
+	public function observe(query:Query):Observable<Bool> {
+		// return Observable.auto(fulfills.bind(query));
+		final key = Std.string(query); @:nullSafety(Off) return switch cache[key] {
+			case null: cache[key] = Observable.auto(fulfills.bind(query));
+			case cached: cached;
 		}
 	}
 

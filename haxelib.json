@@ -7,6 +7,7 @@
 	"releasenote": "initial release",
 	"version": "0.0.0",
 	"dependencies": {
-		"tink_macro": ""
+		"tink_macro": "",
+		"tink_state": ""
 	}
 }
