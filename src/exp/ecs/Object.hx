@@ -61,25 +61,19 @@ class Object<T:Object<T>> {
 	}
 
 	public function fulfills(query:Query) {
+		trace(toString() + ': fulfills $query');
 		return switch query {
 			case And(q1, q2): fulfills(q1) && fulfills(q2);
 			case Or(q1, q2): fulfills(q1) || fulfills(q2);
-			case Not(mod, sig): !fulfills(Must(mod, sig));
-			case Optional(_): true;
-			case Must(Owned, sig): owns(sig);
-			case Must(Shared, sig): shares(sig);
-			case Must(Whatever, sig): has(sig);
-			case Must(Parent(mod), sig): parent != null && parent.fulfills(Must(mod, sig));
-		}
-	}
-
-	final cache = new Map();
-
-	public function observe(query:Query):Observable<Bool> {
-		// return Observable.auto(fulfills.bind(query));
-		final key = Std.string(query); @:nullSafety(Off) return switch cache[key] {
-			case null: cache[key] = Observable.auto(fulfills.bind(query));
-			case cached: cached;
+			case Component(Optional, _, _): true;
+			case Component(Not, Owned, sig): !owns(sig);
+			case Component(Not, Shared, sig): !shares(sig);
+			case Component(Not, Whatever, sig): !has(sig);
+			case Component(Not, Parent(mod), sig): parent == null || parent.fulfills(Component(Not, mod, sig));
+			case Component(Must, Owned, sig): owns(sig);
+			case Component(Must, Shared, sig): shares(sig);
+			case Component(Must, Whatever, sig): has(sig);
+			case Component(Must, Parent(mod), sig): parent != null && parent.fulfills(Component(Must, mod, sig));
 		}
 	}
 

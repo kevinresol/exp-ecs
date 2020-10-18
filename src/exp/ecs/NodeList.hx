@@ -12,7 +12,18 @@ class NodeList<T> {
 	public function new(world:World, query, fetchComponents) {
 		this.query = query;
 		this.fetchComponents = fetchComponents;
-		this.list = world.entities.observe(query).map(entities -> entities.map(e -> new Node(e, fetchComponents(e))));
+		this.list = {
+			final cache = new Map();
+			final entities = world.entities.query(query);
+			final nodes = Observable.auto(() -> {
+				for (entity in entities.value) {
+					if (!cache.exists(entity))
+						cache.set(entity, Observable.auto(() -> new Node(entity, fetchComponents(entity))));
+				}
+				cache;
+			}, (_, _) -> false);
+			Observable.auto(() -> [for (node in nodes.value) node.value]);
+		}
 	}
 
 	public inline function iterator() {

@@ -8,8 +8,8 @@ class RunTests {
 		final world = engine.worlds.create([PreUpdate, Update, PostUpdate]);
 		// final entity = world.entities.create();
 
-		world.entities.observe(Must(Owned, Velocity)).bind(list -> trace('q1:' + list.map(e -> e.toString())), tink.state.Scheduler.direct);
-		world.entities.observe(Must(Owned, foo.Bar)).bind(list -> trace('q2:' + list.map(e -> e.toString())), tink.state.Scheduler.direct);
+		// world.entities.query(Must(Owned, Velocity)).bind(list -> trace('q1:' + list.map(e -> e.toString())), tink.state.Scheduler.direct);
+		// world.entities.query(Must(Owned, foo.Bar)).bind(list -> trace('q2:' + list.map(e -> e.toString())), tink.state.Scheduler.direct);
 
 		final prefab = new Prefab();
 		prefab.add(new Position(1, 1));
@@ -52,10 +52,10 @@ enum abstract Phase(Int) to Int {
 }
 
 class TransformSystem extends System {
-	final nodes:NodeList<{position:Position}>;
+	final nodes:NodeList<{final position:Position;}>;
 
 	public function new(world:World) {
-		nodes = NodeList.generate(world, Position);
+		nodes = NodeList.generate(world, Parent(Parent(Shared(Position))));
 	}
 
 	override function update(dt:Float) {
