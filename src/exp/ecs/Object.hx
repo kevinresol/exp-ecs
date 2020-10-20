@@ -1,5 +1,8 @@
 package exp.ecs;
 
+import tink.state.ObservableArray;
+import tink.state.State;
+import haxe.ds.ReadOnlyArray;
 import tink.state.Observable;
 import tink.state.ObservableMap;
 
@@ -11,22 +14,45 @@ class Object<T:Object<T>> {
 	/**
 	 * Inheritance
 	 */
-	public var base:Null<T> = null;
+	public var base(get, set):Null<T>;
 
-	public final derived:Array<T> = [];
+	final _base:State<Null<T>> = new State(null);
+
+	public var derived(get, never):ObservableArrayView<T>;
+
+	final _derived:ObservableArray<T> = new ObservableArray();
 
 	/**
 	 * Hierarchy
 	 */
-	public var parent:Null<T> = null;
+	public var parent(get, set):Null<T>;
 
-	public final children:Array<T> = [];
+	final _parent:State<Null<T>> = new State(null);
+
+	public var children(get, never):ObservableArrayView<T>;
+
+	final _children:ObservableArray<T> = new ObservableArray();
+
+	/**
+	 * Linkage
+	 */
+	public var linked(get, never):ObservableMapView<String, Entity>;
+
+	final _linked:ObservableMap<String, Entity> = new ObservableMap([]);
 
 	final components:ObservableMap<Signature, Component> = new ObservableMap([]);
 
 	function new(id, type) {
 		this.id = id;
 		this.type = type;
+	}
+
+	public inline function link(key:String, entity:Entity) {
+		_linked.set(key, entity);
+	}
+
+	public inline function unlink(key:String) {
+		_linked.remove(key);
 	}
 
 	public function add(component:Component) {
@@ -43,17 +69,22 @@ class Object<T:Object<T>> {
 
 	public function get<T:Component>(signature:Class<T>):Null<T> {
 		return switch components.get((cast signature : Class<Component>)) {
-			case null: if (base != null) base.get(signature) else null;
-			case v: cast v;
+			case null:
+				switch base {
+					case null: null;
+					case base: base.get(signature);
+				}
+			case v:
+				cast v;
 		}
 	}
 
-	public function has(signature:Signature) {
-		return owns(signature) || (base != null && base.has(signature));
+	public inline function has(signature:Signature) {
+		return owns(signature) || baseHas(signature);
 	}
 
-	public function shares(signature:Signature) {
-		return !owns(signature) && base != null && base.has(signature);
+	public inline function shares(signature:Signature) {
+		return !owns(signature) && baseHas(signature);
 	}
 
 	public inline function owns(signature:Signature) {
@@ -61,7 +92,6 @@ class Object<T:Object<T>> {
 	}
 
 	public function fulfills(query:Query) {
-		trace(toString() + ': fulfills $query');
 		return switch query {
 			case And(q1, q2): fulfills(q1) && fulfills(q2);
 			case Or(q1, q2): fulfills(q1) || fulfills(q2);
@@ -69,12 +99,81 @@ class Object<T:Object<T>> {
 			case Component(Not, Owned, sig): !owns(sig);
 			case Component(Not, Shared, sig): !shares(sig);
 			case Component(Not, Whatever, sig): !has(sig);
-			case Component(Not, Parent(mod), sig): parent == null || parent.fulfills(Component(Not, mod, sig));
+			case Component(Not, Parent(mod), sig):
+				switch parent {
+					case null: true;
+					case parent: parent.fulfills(Component(Not, mod, sig));
+				}
+			case Component(Not, Linked(key, mod), sig):
+				switch linked[key] {
+					case null: true;
+					case linked: linked.fulfills(Component(Not, mod, sig));
+				}
 			case Component(Must, Owned, sig): owns(sig);
 			case Component(Must, Shared, sig): shares(sig);
 			case Component(Must, Whatever, sig): has(sig);
-			case Component(Must, Parent(mod), sig): parent != null && parent.fulfills(Component(Must, mod, sig));
+			case Component(Must, Parent(mod), sig):
+				switch parent {
+					case null: false;
+					case parent: parent.fulfills(Component(Must, mod, sig));
+				}
+			case Component(Must, Linked(key, mod), sig):
+				switch linked[key] {
+					case null: false;
+					case linked: linked.fulfills(Component(Must, mod, sig));
+				}
 		}
+	}
+
+	inline function baseHas(signature:Signature) {
+		return switch base {
+			case null: false;
+			case base: base.has(signature);
+		}
+	}
+
+	inline function get_base() {
+		return _base.value;
+	}
+
+	function set_base(v:T) {
+		final current = _base.value;
+		if (v != current) {
+			if (current != null)
+				(cast current.children : ObservableArray<T>).remove(cast this);
+			if (v != null)
+				(cast v.children : ObservableArray<T>).push(cast this);
+			_base.set(v);
+		}
+		return v;
+	}
+
+	inline function get_parent() {
+		return _parent.value;
+	}
+
+	function set_parent(v:T) {
+		final current = _parent.value;
+		if (v != current) {
+			if (current != null)
+				(cast current.children : ObservableArray<T>).remove(cast this);
+			if (v != null)
+				(cast v.children : ObservableArray<T>).push(cast this);
+			_parent.set(v);
+		}
+		return v;
+	}
+
+	inline function get_derived():ObservableArrayView<T> {
+		return _derived.view;
+	}
+
+	inline function get_children():ObservableArrayView<T> {
+		return _children.view;
+	}
+
+	inline function get_linked():ObservableMapView<String, Entity> {
+		return _linked.view;
 	}
 
 	public function toString():String {

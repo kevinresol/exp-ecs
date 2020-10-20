@@ -17,4 +17,5 @@ enum Modifier {
 	Shared;
 	Whatever;
 	Parent(mod:Modifier);
+	Linked(key:String, mod:Modifier);
 }

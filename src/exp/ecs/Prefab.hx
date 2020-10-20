@@ -10,16 +10,28 @@ class Prefab extends Object<Prefab> {
 
 	function spawn(world:World):Entity {
 		final entity = world.entities.create();
-		if (base != null)
-			entity.base = base.spawn(world);
+
+		switch base {
+			case null:
+			case base:
+				entity.base = base.spawn(world);
+		}
+
 		for (prefab in derived)
-			entity.derived.push(prefab.spawn(world));
-		if (parent != null)
-			entity.parent = parent.spawn(world);
+			prefab.spawn(world).base = entity;
+
+		switch parent {
+			case null:
+			case parent:
+				entity.parent = parent.spawn(world);
+		}
+
 		for (prefab in children)
-			entity.children.push(prefab.spawn(world));
+			prefab.spawn(world).parent = entity;
+
 		for (component in components)
 			entity.add(component.clone());
+
 		return entity;
 	}
 }

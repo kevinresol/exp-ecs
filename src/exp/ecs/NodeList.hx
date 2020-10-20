@@ -2,28 +2,37 @@ package exp.ecs;
 
 import tink.state.Observable;
 
+using Lambda;
+
 class NodeList<T> {
 	public var length(get, never):Int;
 
-	final query:Query;
-	final fetchComponents:Entity->T;
 	final list:Observable<Array<Node<T>>>;
 
-	public function new(world:World, query, fetchComponents) {
-		this.query = query;
-		this.fetchComponents = fetchComponents;
-		this.list = {
+	public function new(list) {
+		this.list = list;
+	}
+
+	public static inline function make<T>(world:World, query:Query, fetchComponents:Entity->T) {
+		return new NodeList({
 			final cache = new Map();
 			final entities = world.entities.query(query);
 			final nodes = Observable.auto(() -> {
-				for (entity in entities.value) {
-					if (!cache.exists(entity))
-						cache.set(entity, Observable.auto(() -> new Node(entity, fetchComponents(entity))));
+				final entities = entities.value;
+				for (entity in entities) {
+					if (!cache.exists(entity.id))
+						cache.set(entity.id, Observable.auto(() -> new Node(entity, fetchComponents(entity))));
 				}
+
+				var deleted = [for (id in cache.keys()) if (!entities.exists(e -> e.id == id)) id];
+
+				for (id in deleted)
+					cache.remove(id);
+
 				cache;
 			}, (_, _) -> false);
 			Observable.auto(() -> [for (node in nodes.value) node.value]);
-		}
+		});
 	}
 
 	public inline function iterator() {
@@ -34,4 +43,9 @@ class NodeList<T> {
 		return list.value.length;
 
 	public static macro function generate(e);
+}
+
+enum Hierarchy {
+	Parent;
+	Linked(key:String);
 }
