@@ -4,13 +4,15 @@ import tink.state.Observable;
 
 using Lambda;
 
-class NodeList<T> {
+@:forward
+abstract NodeList<T>(Observable<Array<Node<T>>>) {
+	public var value(get, never):Array<Node<T>>;
 	public var length(get, never):Int;
 
-	final list:Observable<Array<Node<T>>>;
+	var untracked(get, never):Array<Node<T>>;
 
-	public function new(list) {
-		this.list = list;
+	inline function new(list) {
+		this = list;
 	}
 
 	public static inline function make<T>(world:World, query:Query, fetchComponents:Entity->T) {
@@ -21,7 +23,8 @@ class NodeList<T> {
 				final entities = entities.value;
 				for (entity in entities) {
 					if (!cache.exists(entity.id))
-						cache.set(entity.id, Observable.auto(() -> new Node(entity, fetchComponents(entity))));
+						cache.set(entity.id,
+							Observable.auto(() -> new Node(entity, fetchComponents(entity)), null, id -> 'NodeList:${entity.toString()}:components#$id'));
 				}
 
 				var deleted = [for (id in cache.keys()) if (!entities.exists(e -> e.id == id)) id];
@@ -30,17 +33,31 @@ class NodeList<T> {
 					cache.remove(id);
 
 				cache;
-			}, (_, _) -> false);
-			Observable.auto(() -> [for (node in nodes.value) node.value]);
+			}, (_, _) -> false, id -> 'NodeList:cache#$id');
+			Observable.auto(() -> [for (node in nodes.value) node.value], null, id -> 'NodeList:root#$id');
 		});
 	}
 
-	public inline function iterator() {
-		return list.value.iterator();
+	@:arrayAccess
+	public inline function get(v:Int) {
+		return this.value[v];
 	}
 
-	inline function get_length()
-		return list.value.length;
+	public inline function iterator() {
+		return untracked.iterator();
+	}
+
+	inline function get_value() {
+		return untracked;
+	}
+
+	inline function get_length() {
+		return untracked.length;
+	}
+
+	inline function get_untracked() {
+		return Observable.untracked(() -> this.value);
+	}
 
 	public static macro function generate(e);
 }

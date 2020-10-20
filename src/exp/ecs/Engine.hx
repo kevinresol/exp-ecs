@@ -7,8 +7,7 @@ class Engine {
 	public final worlds:WorldCollection = new WorldCollection();
 
 	public function new() {}
-	
-	
+
 	public inline function update(dt:Float) {
 		worlds.update(dt);
 	}
@@ -31,8 +30,11 @@ class WorldCollection {
 	public function get(id:Int) {
 		return worlds.get(id);
 	}
-	
+
 	inline function update(dt:Float) {
-		for(world in worlds) world.update(dt);
+		tink.state.Scheduler.atomically(() -> {
+			for (world in worlds)
+				world.update(dt);
+		});
 	}
 }

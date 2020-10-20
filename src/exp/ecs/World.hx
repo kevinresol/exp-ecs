@@ -27,11 +27,13 @@ class World {
 class EntityCollection {
 	static var ids:Int = 0;
 
+	// public final singleton:Entity;
 	final world:World;
-	final map:ObservableMap<Int, Entity> = new ObservableMap([]);
+	final map:GranularMap<Int, Entity> = new GranularMap([],[]);
 
 	function new(world) {
 		this.world = world;
+		// this.singleton = new Entity(ids++); // it is not added to the entity map so it can't be queried, but only be explicitly referenced
 	}
 
 	public function create() {
@@ -60,25 +62,25 @@ class EntityCollection {
 	}
 
 	public function query(q:Query):Observable<Array<Entity>> {
-		var entityQueries = {
-			var cache = new Map<Int, Pair<Entity, Observable<Bool>>>();
+		final entityQueries = {
+			final cache = new Map<Int, Pair<Entity, Observable<Bool>>>();
 			Observable.auto(() -> {
 				for (id => entity in map)
 					if (!cache.exists(id))
-						cache.set(id, new Pair(entity, Observable.auto(() -> entity.fulfills(q))));
+						cache.set(id, new Pair(entity, Observable.auto(() -> entity.fulfills(q), null, id -> 'World:${entity.toString()}:fulfills#$id')));
 
-				var deleted = [for (id in cache.keys()) if (!map.exists(id)) id];
+				final deleted = [for (id in cache.keys()) if (!map.exists(id)) id];
 
 				for (id in deleted)
 					cache.remove(id);
 
 				cache;
 			},
-				(_, _) -> false // we're always returning the same map, so the comparator must always yield false
-			);
+				(_, _) -> false, // we're always returning the same map, so the comparator must always yield false
+				id -> 'World:cache#$id');
 		}
 
-		return Observable.auto(() -> [for (p in entityQueries.value) if (p.b) p.a]);
+		return Observable.auto(() -> [for (p in entityQueries.value) if (p.b) p.a], null, id -> 'World:root#$id');
 	}
 
 	// public function observe(q:Query):Observable<Array<Entity>> {

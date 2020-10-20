@@ -36,11 +36,11 @@ class Object<T:Object<T>> {
 	/**
 	 * Linkage
 	 */
-	public var linked(get, never):ObservableMapView<String, Entity>;
+	public var linked(get, never):GranularMap<String, Entity>;
 
-	final _linked:ObservableMap<String, Entity> = new ObservableMap([]);
+	final _linked:GranularMap<String, Entity> = new GranularMap([],[]);
 
-	final components:ObservableMap<Signature, Component> = new ObservableMap([]);
+	final components:GranularMap<Signature, Component> = new GranularMap([],[]);
 
 	function new(id, type) {
 		this.id = id;
@@ -58,7 +58,7 @@ class Object<T:Object<T>> {
 	public function add(component:Component) {
 		final signature = component.signature;
 		if (owns(signature))
-			throw 'Cannot add components of the same signature twice, even it is the same instance';
+			throw '${toString()}: Cannot add components of the same signature twice, even it is the same instance';
 		components.set(signature, component);
 	}
 
@@ -68,6 +68,7 @@ class Object<T:Object<T>> {
 	}
 
 	public function get<T:Component>(signature:Class<T>):Null<T> {
+		// trace('#$id: get ${((cast signature : Class<Component>) : Signature)}');
 		return switch components.get((cast signature : Class<Component>)) {
 			case null:
 				switch base {
@@ -105,7 +106,7 @@ class Object<T:Object<T>> {
 					case parent: parent.fulfills(Component(Not, mod, sig));
 				}
 			case Component(Not, Linked(key, mod), sig):
-				switch linked[key] {
+				switch linked.get(key) {
 					case null: true;
 					case linked: linked.fulfills(Component(Not, mod, sig));
 				}
@@ -118,7 +119,7 @@ class Object<T:Object<T>> {
 					case parent: parent.fulfills(Component(Must, mod, sig));
 				}
 			case Component(Must, Linked(key, mod), sig):
-				switch linked[key] {
+				switch linked.get(key) {
 					case null: false;
 					case linked: linked.fulfills(Component(Must, mod, sig));
 				}
@@ -172,14 +173,14 @@ class Object<T:Object<T>> {
 		return _children.view;
 	}
 
-	inline function get_linked():ObservableMapView<String, Entity> {
-		return _linked.view;
+	inline function get_linked():GranularMap<String, Entity> {
+		return _linked;
 	}
 
 	public function toString():String {
 		return switch get(exp.ecs.component.Name) {
 			case null: '$type#$id';
-			case {value: name}: '$type:$name';
+			case {value: name}: '$type:$name#$id';
 		}
 	}
 }

@@ -4,7 +4,7 @@ import haxe.macro.Expr;
 
 using tink.MacroApi;
 
-class NodeList {
+abstract NodeList(Dynamic) {
 	public static macro function generate(world:Expr, query:Expr) {
 		return macro exp.ecs.NodeList.make($world, ${parseQuery(query)}, e -> ${
 			EObjectDecl([
@@ -19,7 +19,7 @@ class NodeList {
 								for (v in ${getRuntimeHierarchy(entry.hierarchy)}) {
 									entity = switch v {
 										case Parent: entity.parent;
-										case Linked(key): entity.linked[key];
+										case Linked(key): entity.linked.get(key);
 									}
 									if (entity == null)
 										break;
@@ -31,7 +31,7 @@ class NodeList {
 							for (v in entry.hierarchy)
 								root = switch v {
 									case Parent: macro $root.parent;
-									case Linked(key): macro $root.linked[$key];
+									case Linked(key): macro $root.linked.get($key);
 								}
 							macro $root.get(${entry.component});
 						}
@@ -39,12 +39,17 @@ class NodeList {
 			]).at(query.pos)
 		});
 	}
-	
+
 	static function getRuntimeHierarchy(hierarchy:Array<Hierarchy>) {
-		var arr = [for(v in hierarchy) switch v {
-			case Parent: macro exp.ecs.NodeList.Hierarchy.Parent;
-			case Linked(key): macro exp.ecs.NodeList.Hierarchy.Linked($key);
-		}];
+		var arr = [
+			for (v in hierarchy)
+				switch v {
+					case Parent:
+						macro exp.ecs.NodeList.Hierarchy.Parent;
+					case Linked(key):
+						macro exp.ecs.NodeList.Hierarchy.Linked($key);
+				}
+		];
 		return macro $a{arr}
 	}
 
@@ -82,6 +87,8 @@ class NodeList {
 				case EBinop(OpBoolOr, e1, e2):
 					traverse(e1, hierarchy, key, optional);
 					traverse(e2, hierarchy, key, true);
+				case EMeta({name: ':field', params: [macro null]}, _):
+				// skip
 				case EMeta({name: ':field', params: [{expr: EConst(CIdent(key))}]}, e):
 					traverse(e, hierarchy, key, optional);
 				case EField(_, v) | EConst(CIdent(v)):
@@ -159,12 +166,3 @@ private enum Hierarchy {
 	Parent;
 	Linked(key:Expr);
 }
-
-// Parent(Comp);
-// parent.owns(Comp);
-
-// Linked('k1', Comp);
-// linked['k1'].owns(Comp);
-
-// Parent(Linked('k1', Comp));
-// parent.linked['k1'].owns(Comp);
