@@ -8,6 +8,7 @@ class RunTests {
 		Runner.run(TestBatch.make([
 			// @formatter:off
 			new NodeListTest(),
+			new EntityTest(),
 			// @formatter:on
 		])).handle(Runner.exit);
 	}

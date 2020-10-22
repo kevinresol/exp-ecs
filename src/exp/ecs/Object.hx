@@ -38,9 +38,9 @@ class Object<T:Object<T>> {
 	 */
 	public var linked(get, never):GranularMap<String, Entity>;
 
-	final _linked:GranularMap<String, Entity> = new GranularMap([],[]);
+	final _linked:GranularMap<String, Entity> = new GranularMap([], []);
 
-	final components:GranularMap<Signature, Component> = new GranularMap([],[]);
+	final components:GranularMap<Signature, Component> = new GranularMap([], []);
 
 	function new(id, type) {
 		this.id = id;
@@ -67,18 +67,7 @@ class Object<T:Object<T>> {
 			components.remove(signature);
 	}
 
-	public function get<T:Component>(signature:Class<T>):Null<T> {
-		// trace('#$id: get ${((cast signature : Class<Component>) : Signature)}');
-		return switch components.get((cast signature : Class<Component>)) {
-			case null:
-				switch base {
-					case null: null;
-					case base: base.get(signature);
-				}
-			case v:
-				cast v;
-		}
-	}
+	public macro function get(ethis, e);
 
 	public inline function has(signature:Signature) {
 		return owns(signature) || baseHas(signature);
@@ -123,6 +112,18 @@ class Object<T:Object<T>> {
 					case null: false;
 					case linked: linked.fulfills(Component(Must, mod, sig));
 				}
+		}
+	}
+
+	function getComponent(signature:Signature):Null<Component> {
+		return switch components.get(signature) {
+			case null:
+				switch base {
+					case null: null;
+					case base: base.getComponent(signature);
+				}
+			case v:
+				cast v;
 		}
 	}
 
