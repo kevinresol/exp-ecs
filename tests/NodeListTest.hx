@@ -9,7 +9,6 @@ class NodeListTest {
 	public function simple() {
 		final engine = new Engine();
 		final world = engine.worlds.create([0]);
-		final entity = world.entities.create();
 
 		final owned = NodeList.generate(world, Dummy);
 		final shared = NodeList.generate(world, Shared(Dummy));
@@ -17,6 +16,8 @@ class NodeListTest {
 		final notOwned = NodeList.generate(world, !Dummy);
 		final notShared = NodeList.generate(world, !Shared(Dummy));
 		final notWhatever = NodeList.generate(world, !Whatever(Dummy));
+
+		final entity = world.entities.create();
 
 		asserts.assert(owned.length == 0);
 		asserts.assert(shared.length == 0);
@@ -40,6 +41,30 @@ class NodeListTest {
 		asserts.assert(notOwned.length == 1);
 		asserts.assert(notShared.length == 1);
 		asserts.assert(notWhatever.length == 1);
+
+		final entity = world.entities.create();
+		asserts.assert(owned.length == 0);
+		asserts.assert(shared.length == 0);
+		asserts.assert(whatever.length == 0);
+		asserts.assert(notOwned.length == 2);
+		asserts.assert(notShared.length == 2);
+		asserts.assert(notWhatever.length == 2);
+
+		entity.add(new Dummy());
+		asserts.assert(owned.length == 1);
+		asserts.assert(shared.length == 0);
+		asserts.assert(whatever.length == 1);
+		asserts.assert(notOwned.length == 1);
+		asserts.assert(notShared.length == 2);
+		asserts.assert(notWhatever.length == 1);
+
+		entity.remove(Dummy);
+		asserts.assert(owned.length == 0);
+		asserts.assert(shared.length == 0);
+		asserts.assert(whatever.length == 0);
+		asserts.assert(notOwned.length == 2);
+		asserts.assert(notShared.length == 2);
+		asserts.assert(notWhatever.length == 2);
 
 		return asserts.done();
 	}

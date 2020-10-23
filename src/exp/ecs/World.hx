@@ -30,7 +30,7 @@ class EntityCollection {
 
 	// public final singleton:Entity;
 	final world:World;
-	final map:GranularMap<Int, Entity> = new GranularMap([], []);
+	final map:GranularMap<Int, Entity> = new GranularMap([]);
 
 	function new(world) {
 		this.world = world;

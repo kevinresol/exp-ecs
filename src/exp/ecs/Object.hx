@@ -38,9 +38,9 @@ class Object<T:Object<T>> {
 	 */
 	public var linked(get, never):GranularMap<String, Entity>;
 
-	final _linked:GranularMap<String, Entity> = new GranularMap([], []);
+	final _linked:GranularMap<String, Entity> = new GranularMap([]);
 
-	final components:GranularMap<Signature, Component> = new GranularMap([], []);
+	final components:GranularMap<Signature, Component> = new GranularMap([]);
 
 	function new(id, type) {
 		this.id = id;

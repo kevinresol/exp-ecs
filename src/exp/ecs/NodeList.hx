@@ -6,10 +6,7 @@ using Lambda;
 
 @:forward
 abstract NodeList<T>(Observable<Array<Node<T>>>) {
-	public var value(get, never):Array<Node<T>>;
 	public var length(get, never):Int;
-
-	var untracked(get, never):Array<Node<T>>;
 
 	inline function new(list) {
 		this = list;
@@ -44,19 +41,11 @@ abstract NodeList<T>(Observable<Array<Node<T>>>) {
 	}
 
 	public inline function iterator() {
-		return untracked.iterator();
-	}
-
-	inline function get_value() {
-		return untracked;
+		return this.value.iterator();
 	}
 
 	inline function get_length() {
-		return untracked.length;
-	}
-
-	inline function get_untracked() {
-		return Observable.untracked(() -> this.value);
+		return this.value.length;
 	}
 
 	public static macro function generate(e);
