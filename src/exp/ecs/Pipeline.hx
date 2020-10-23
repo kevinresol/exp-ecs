@@ -20,14 +20,13 @@ class Pipeline {
 						new FixedTimestepPhase(decl.id, delta);
 				}
 		];
-		this.phases.sort((v1, v2) -> v1.id - v2.id);
 	}
 
 	@:nullSafety(Off)
 	public function add(phase:Int, system:System):CallbackLink {
 		return switch phases.find(v -> v.id == phase) {
 			case null:
-				throw 'Unknown phase $phase';
+				throw 'Unrecognized phase $phase. Please register it in the constructor.';
 			case phase:
 				phase.systems.push(system);
 				[system.initialize(), ()->phase.systems.remove(system)];
