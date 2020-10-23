@@ -87,11 +87,14 @@ private class GranularMapKeyIterator<K, V> {
 		See `Iterator.hasNext`
 	**/
 	public inline function hasNext():Bool {
+		var result = false;
 		while (keys.hasNext()) {
-			if (@:privateAccess map.existenceMap[current = keys.next()])
-				return true;
+			if (@:privateAccess map.existenceMap[current = keys.next()]) {
+				result = true;
+				break;
+			}
 		}
-		return false;
+		return result;
 	}
 
 	/**
