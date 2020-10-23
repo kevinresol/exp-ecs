@@ -40,24 +40,24 @@ class Pipeline {
 }
 
 @:forward
-abstract PhaseDecl(PhaseDeclBase) from PhaseDeclBase to PhaseDeclBase {
+private abstract PhaseDecl(PhaseDeclBase) from PhaseDeclBase to PhaseDeclBase {
 	@:from
 	public static inline function fromInt(id:Int):PhaseDecl
 		return ({id: id, type: VariableTimestep} : PhaseDeclBase);
 }
 
 @:structInit
-class PhaseDeclBase {
+private class PhaseDeclBase {
 	public final id:Int;
 	public final type:PhaseType;
 }
 
-enum PhaseType {
+private enum PhaseType {
 	VariableTimestep;
 	FixedTimestep(delta:Float);
 }
 
-class Phase {
+private class Phase {
 	public final id:Int;
 	public final systems:Array<System> = [];
 
@@ -71,7 +71,7 @@ class Phase {
 	}
 }
 
-class FixedTimestepPhase extends Phase {
+private class FixedTimestepPhase extends Phase {
 	final delta:Float;
 	var residue:Float = 0;
 
