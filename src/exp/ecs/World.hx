@@ -11,6 +11,7 @@ class World {
 	public final id:Int;
 	public final entities:EntityCollection;
 	public final pipeline:Pipeline;
+	public var speed:Float = 1;
 
 	function new(id, phases) {
 		this.id = id;
@@ -19,7 +20,7 @@ class World {
 	}
 
 	inline function update(dt:Float) {
-		pipeline.update(dt);
+		pipeline.update(dt * speed);
 	}
 }
 
@@ -29,7 +30,7 @@ class EntityCollection {
 
 	// public final singleton:Entity;
 	final world:World;
-	final map:GranularMap<Int, Entity> = new GranularMap([],[]);
+	final map:GranularMap<Int, Entity> = new GranularMap([], []);
 
 	function new(world) {
 		this.world = world;
