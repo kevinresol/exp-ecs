@@ -1,5 +1,7 @@
 package exp.ecs;
 
+import tink.core.Callback.CallbackLink;
+
 using Lambda;
 
 @:allow(exp.ecs)
@@ -21,12 +23,14 @@ class Pipeline {
 		this.phases.sort((v1, v2) -> v1.id - v2.id);
 	}
 
-	public function add(phase:Int, system:System) {
-		switch phases.find(v -> v.id == phase) {
+	@:nullSafety(Off)
+	public function add(phase:Int, system:System):CallbackLink {
+		return switch phases.find(v -> v.id == phase) {
 			case null:
 				throw 'Unknown phase $phase';
 			case phase:
 				phase.systems.push(system);
+				[system.initialize(), ()->phase.systems.remove(system)];
 		}
 	}
 

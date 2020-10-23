@@ -4,12 +4,18 @@ package exp.ecs.system;
 class SimpleSystem<T> extends System {
 	final name:String;
 	final f:(nodes:Array<Node<T>>, dt:Float) -> Void;
+
+	var list:NodeList<T>;
 	var nodes:Array<Node<T>>;
 
-	public function new(name, nodes:NodeList<T>, f) {
+	public function new(name, list, f) {
 		this.name = name;
+		this.list = list;
 		this.f = f;
-		nodes.bind(v -> this.nodes = v, tink.state.Scheduler.direct);
+	}
+
+	override function initialize() {
+		return list.bind(v -> nodes = v, tink.state.Scheduler.direct);
 	}
 
 	override function update(dt:Float) {
