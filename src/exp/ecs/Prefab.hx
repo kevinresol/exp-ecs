@@ -8,7 +8,7 @@ class Prefab extends Object<Prefab> {
 		super(ids++, 'Prefab');
 	}
 
-	function spawn(world:World):Entity {
+	public function spawn(world:World):Entity {
 		final entity = world.entities.create();
 
 		switch base {
