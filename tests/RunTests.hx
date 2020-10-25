@@ -7,8 +7,9 @@ class RunTests {
 	static function main() {
 		Runner.run(TestBatch.make([
 			// @formatter:off
-			new NodeListTest(),
-			new EntityTest(),
+			// new NodeListTest(),
+			// new EntityTest(),
+			new ComponentTest(),
 			// @formatter:on
 		])).handle(Runner.exit);
 	}

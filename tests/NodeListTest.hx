@@ -26,7 +26,7 @@ class NodeListTest {
 		asserts.assert(notShared.length == 1);
 		asserts.assert(notWhatever.length == 1);
 
-		entity.add(new Dummy());
+		entity.add(Dummy);
 		asserts.assert(owned.length == 1);
 		asserts.assert(shared.length == 0);
 		asserts.assert(whatever.length == 1);
@@ -50,7 +50,7 @@ class NodeListTest {
 		asserts.assert(notShared.length == 2);
 		asserts.assert(notWhatever.length == 2);
 
-		entity.add(new Dummy());
+		entity.add(Dummy);
 		asserts.assert(owned.length == 1);
 		asserts.assert(shared.length == 0);
 		asserts.assert(whatever.length == 1);
@@ -91,7 +91,7 @@ class NodeListTest {
 		asserts.assert(notShared.length == 2);
 		asserts.assert(notWhatever.length == 2);
 
-		base.add(new Dummy());
+		base.add(Dummy);
 		asserts.assert(owned.length == 1);
 		asserts.assert(shared.length == 1);
 		asserts.assert(whatever.length == 2);
@@ -99,7 +99,7 @@ class NodeListTest {
 		asserts.assert(notShared.length == 1);
 		asserts.assert(notWhatever.length == 0);
 
-		entity.add(new Dummy());
+		entity.add(Dummy);
 		asserts.assert(owned.length == 2);
 		asserts.assert(shared.length == 0);
 		asserts.assert(whatever.length == 2);
@@ -130,13 +130,13 @@ class NodeListTest {
 
 		asserts.assert(linked.length == 0);
 
-		target.add(new Dummy());
+		target.add(Dummy);
 		asserts.assert(linked.length == 1);
 
 		target.remove(Dummy);
 		asserts.assert(linked.length == 0);
 
-		target.add(new Dummy());
+		target.add(Dummy);
 		asserts.assert(linked.length == 1);
 
 		entity.unlink('target');
@@ -162,13 +162,13 @@ class NodeListTest {
 
 		asserts.assert(list.length == 0);
 
-		parent.add(new Dummy());
+		parent.add(Dummy);
 		asserts.assert(list.length == 1);
 
 		parent.remove(Dummy);
 		asserts.assert(list.length == 0);
 
-		parent.add(new Dummy());
+		parent.add(Dummy);
 		asserts.assert(list.length == 1);
 
 		entity.unlink('target');

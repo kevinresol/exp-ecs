@@ -30,7 +30,7 @@ class Prefab extends Object<Prefab> {
 			prefab.spawn(world).parent = entity;
 
 		for (component in components)
-			entity.add(component.clone());
+			entity.addComponent(component.clone());
 
 		return entity;
 	}

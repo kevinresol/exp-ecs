@@ -30,10 +30,10 @@ class Component {
 		final initials = [
 			for (f in builder) {
 				switch f.kind {
-					case FVar(_) | FProp(_, 'null' | 'default', _, _) if (f.isPublic
+					case FVar(_, e) | FProp(_, 'null' | 'default', _, e) if (f.isPublic
 						&& !f.isStatic
 						&& !f.meta.exists(m -> m.name == ':noinit')):
-						f;
+						{field: f, optional: e != null};
 					case _:
 						continue;
 				}
@@ -41,12 +41,17 @@ class Component {
 		];
 
 		final ctor = builder.getConstructor({
-			args: [for (v in initials) {name: v.name, type: null}],
+			args: [for (init in initials) {name: init.field.name, opt: init.optional, type: null}],
 			expr: macro $b{
 				[
-					for (v in initials) {
-						final name = v.name;
-						macro this.$name = $i{name};
+					for (init in initials) {
+						final name = init.field.name;
+						final e = macro this.$name = $i{name};
+						if (init.optional)
+							(macro if ($i{name} != null)
+								$e);
+						else
+							e;
 					}
 				]
 			},

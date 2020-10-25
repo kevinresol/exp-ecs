@@ -55,19 +55,14 @@ class Object<T:Object<T>> {
 		_linked.remove(key);
 	}
 
-	public function add(component:Component) {
-		final signature = component.signature;
-		if (owns(signature))
-			throw '${toString()}: Cannot add components of the same signature twice, even it is the same instance';
-		components.set(signature, component);
-	}
+	public macro function get(ethis, e);
+
+	public macro function add(ethis, e);
 
 	public function remove(signature:Signature) {
 		if (owns(signature))
 			components.remove(signature);
 	}
-
-	public macro function get(ethis, e);
 
 	public inline function has(signature:Signature) {
 		return owns(signature) || baseHas(signature);
@@ -113,6 +108,13 @@ class Object<T:Object<T>> {
 					case linked: linked.fulfills(Component(Must, mod, sig));
 				}
 		}
+	}
+
+	function addComponent(component:Component) {
+		final signature = component.signature;
+		if (owns(signature))
+			throw '${toString()}: Cannot add components of the same signature twice, even it is the same instance';
+		components.set(signature, component);
 	}
 
 	function getComponent(signature:Signature):Null<Component> {

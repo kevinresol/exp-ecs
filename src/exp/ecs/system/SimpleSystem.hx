@@ -3,19 +3,18 @@ package exp.ecs.system;
 @:nullSafety(Off)
 class SimpleSystem<T> extends System {
 	final name:String;
-	final f:(nodes:Array<Node<T>>, dt:Float) -> Void;
+	final f:(nodes:NodeList<T>, dt:Float) -> Void;
+	final tracker:ObservableNodeList<T>;
+	var nodes:NodeList<T>;
 
-	var list:NodeList<T>;
-	var nodes:Array<Node<T>>;
-
-	public function new(name, list, f) {
+	public function new(name, tracker, f) {
 		this.name = name;
-		this.list = list;
+		this.tracker = tracker;
 		this.f = f;
 	}
 
 	override function initialize() {
-		return list.bind(v -> nodes = v, tink.state.Scheduler.direct);
+		return tracker.bind(v -> nodes = v, tink.state.Scheduler.direct);
 	}
 
 	override function update(dt:Float) {

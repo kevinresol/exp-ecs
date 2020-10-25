@@ -10,10 +10,9 @@ class EntityTest {
 		final engine = new Engine();
 		final world = engine.worlds.create([0]);
 		final entity = world.entities.create();
-		final foo = new Foo();
 
-		entity.add(foo);
-		asserts.assert(entity.get(Foo) == foo);
+		entity.add(Foo);
+		asserts.assert(entity.has(Foo));
 
 		return asserts.done();
 	}
