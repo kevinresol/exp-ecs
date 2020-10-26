@@ -7,7 +7,7 @@ class System {
 	function update(dt:Float) {}
 
 	@:nullSafety(Off)
-	function initialize():CallbackLink {
+	function initialize(world:World):CallbackLink {
 		return null;
 	}
 

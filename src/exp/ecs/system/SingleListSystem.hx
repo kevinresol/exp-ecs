@@ -9,7 +9,7 @@ class SingleListSystem<T> extends System {
 		this.tracker = tracker;
 	}
 
-	override function initialize() {
+	override function initialize(_) {
 		return tracker.bind(v -> nodes = v, tink.state.Scheduler.direct);
 	}
 }
