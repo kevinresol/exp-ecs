@@ -93,6 +93,10 @@ class EntityCollection {
 		return Observable.auto(() -> [for (p in entityQueries.value) if (p.b) p.a], null, id -> 'World:root#$id');
 	}
 
+	public inline function count() {
+		return Lambda.count(map);
+	}
+
 	// public function observe(q:Query):Observable<Array<Entity>> {
 	// 	return Observable.auto(() -> [for (entity in map) if (entity.observe(q)) entity]);
 	// }
