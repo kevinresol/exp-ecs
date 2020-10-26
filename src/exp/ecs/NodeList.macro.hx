@@ -11,29 +11,38 @@ abstract NodeList(Dynamic) {
 				for (name => entry in getComponents(query))
 					{
 						field: name,
-						expr: if (entry.hierarchy.length == 0) {
-							macro e.get(${entry.component});
-						} else if (entry.optional) {
-							macro {
-								var entity = e;
-								for (v in ${getRuntimeHierarchy(entry.hierarchy)}) {
-									entity = switch v {
-										case Parent: entity.parent;
-										case Linked(key): entity.linked.get(key);
+						expr: {
+							function fetch(e)
+								return switch entry.fetch {
+									case Component(expr):
+										macro $e.get(${expr});
+									case Entity:
+										macro $e;
+								}
+							if (entry.hierarchy.length == 0) {
+								fetch(macro e); // TODO: should probably disallow fetching entity here, as it is already accessible as `node.entity`
+							} else if (entry.optional) {
+								macro {
+									var entity = e;
+									for (v in ${getRuntimeHierarchy(entry.hierarchy)}) {
+										entity = switch v {
+											case Parent: entity.parent;
+											case Linked(key): entity.linked.get(key);
+										}
+										if (entity == null)
+											break;
 									}
-									if (entity == null)
-										break;
+									entity == null ? null : ${fetch(macro entity)};
 								}
-								entity == null ? null : entity.get(${entry.component});
+							} else {
+								var root = macro e;
+								for (v in entry.hierarchy)
+									root = switch v {
+										case Parent: macro $root.parent;
+										case Linked(key): macro $root.linked.get($key);
+									}
+								fetch(root);
 							}
-						} else {
-							var root = macro e;
-							for (v in entry.hierarchy)
-								root = switch v {
-									case Parent: macro $root.parent;
-									case Linked(key): macro $root.linked.get($key);
-								}
-							macro $root.get(${entry.component});
 						}
 					}
 			]).at(query.pos)
@@ -60,41 +69,50 @@ abstract NodeList(Dynamic) {
 			return v.charAt(0).toLowerCase() + v.substr(1);
 
 		// TODO: currently it lists all components that appeared, but should be smarter to know which are optional and which are excluded
-		(function traverse(e:Expr, hierarchy:Array<Hierarchy>, key:String = null, optional = false) {
-			function add(key:String) {
-				switch map[key] {
+		(function traverse(e:Expr, hierarchy:Array<Hierarchy>, componentKey:String = null, entityKey:String = null, optional = false) {
+			function add(cKey:String, eKey:String) {
+				switch map[cKey] {
 					case null:
-						map[key] = {component: e, hierarchy: hierarchy, optional: optional}
+						map[cKey] = {fetch: Fetch.Component(e), hierarchy: hierarchy, optional: optional}
 					case entry:
-						e.pos.error('Duplicate field "$key" in ${root.toString()}, use @:field(name) or construct a NodeList manually');
+						e.pos.error('Duplicate field "$cKey" in ${root.toString()}, use @:component(name) or construct a NodeList manually');
 				}
+				if (eKey != null)
+					switch map[eKey] {
+						case null:
+							map[eKey] = {fetch: Fetch.Entity, hierarchy: hierarchy, optional: optional}
+						case entry:
+							e.pos.error('Duplicate field "$eKey" in ${root.toString()}, use @:component(name) or construct a NodeList manually');
+					}
 			}
 
 			switch e.expr {
 				case ECall(macro Parent, [e]):
-					traverse(e, hierarchy.concat([Parent]), key, optional);
+					traverse(e, hierarchy.concat([Parent]), componentKey, entityKey, optional);
 				case ECall(macro Linked, [ekey, e]):
-					traverse(e, hierarchy.concat([Linked(ekey)]), key, optional);
+					traverse(e, hierarchy.concat([Linked(ekey)]), componentKey, entityKey, optional);
 				case EParenthesis(e) | ECall(_, [e]):
-					traverse(e, hierarchy, key, optional);
+					traverse(e, hierarchy, componentKey, entityKey, optional);
 				case EUnop(OpNot, false, e):
-					traverse(e, hierarchy, key, optional);
+					traverse(e, hierarchy, componentKey, entityKey, optional);
 				case EUnop(OpNegBits, false, e):
-					traverse(e, hierarchy, key, true);
+					traverse(e, hierarchy, componentKey, entityKey, true);
 				case EBinop(OpBoolAnd, e1, e2):
-					traverse(e1, hierarchy, key, optional);
-					traverse(e2, hierarchy, key, optional);
+					traverse(e1, hierarchy, componentKey, entityKey, optional);
+					traverse(e2, hierarchy, componentKey, entityKey, optional);
 				case EBinop(OpBoolOr, e1, e2):
-					traverse(e1, hierarchy, key, optional);
-					traverse(e2, hierarchy, key, true);
-				case EMeta({name: ':field', params: [macro null]}, _):
-				// skip
-				case EMeta({name: ':field', params: [{expr: EConst(CIdent(key))}]}, e):
-					traverse(e, hierarchy, key, optional);
+					traverse(e1, hierarchy, componentKey, entityKey, optional);
+					traverse(e2, hierarchy, componentKey, entityKey, true);
+				case EMeta({name: ':component', params: [macro null]}, _):
+				// traverse(e, hierarchy, key, entityKey, optional);
+				case EMeta({name: ':component', params: [{expr: EConst(CIdent(key))}]}, e):
+					traverse(e, hierarchy, key, entityKey, optional);
+				case EMeta({name: ':entity', params: [{expr: EConst(CIdent(key))}]}, e):
+					traverse(e, hierarchy, componentKey, key, optional);
 				case EField(_, v) | EConst(CIdent(v)):
-					if (key == null)
-						key = lowerFirst(v);
-					add(key);
+					if (componentKey == null)
+						componentKey = lowerFirst(v);
+					add(componentKey, entityKey);
 				case _:
 					e.pos.error('Unsupported expression: ${e.toString()}');
 			}
@@ -165,4 +183,9 @@ abstract NodeList(Dynamic) {
 private enum Hierarchy {
 	Parent;
 	Linked(key:Expr);
+}
+
+private enum Fetch {
+	Component(e:Expr);
+	Entity;
 }

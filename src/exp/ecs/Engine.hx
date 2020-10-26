@@ -4,12 +4,13 @@ import haxe.display.Display.Package;
 import exp.ecs.World;
 
 class Engine {
+
 	public final worlds:WorldCollection = new WorldCollection();
 
 	public function new() {}
 
 	public inline function update(dt:Float) {
-		worlds.update(dt);
+		tink.state.Scheduler.atomically(() -> worlds.update(dt));
 	}
 }
 
@@ -32,9 +33,7 @@ class WorldCollection {
 	}
 
 	inline function update(dt:Float) {
-		tink.state.Scheduler.atomically(() -> {
-			for (world in worlds)
-				world.update(dt);
-		});
+		for (world in worlds)
+			world.update(dt);
 	}
 }

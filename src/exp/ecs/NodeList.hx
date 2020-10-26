@@ -5,7 +5,7 @@ import tink.state.Observable;
 
 using Lambda;
 
-@:forward(length)
+@:forward(length, map)
 abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 	inline function new(list) {
 		this = list;
@@ -30,6 +30,10 @@ abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 			cache;
 		}, (_, _) -> false, id -> 'NodeList:cache#$id');
 		return Observable.auto(() -> new NodeList([for (node in nodes.value) node.value]), null, id -> 'NodeList:root#$id');
+	}
+
+	public inline function get(i) {
+		return this[i];
 	}
 
 	public inline function iterator() {

@@ -47,6 +47,15 @@ class EntityCollection {
 		return prefab.spawn(world);
 	}
 
+	public function remove(id:Int) {
+		switch map.get(id) {
+			case null:
+			case entity:
+				map.remove(id);
+				entity.setRemoved();
+		}
+	}
+
 	public inline function get(id:Int) {
 		return map.get(id);
 	}
