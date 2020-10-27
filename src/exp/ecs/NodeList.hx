@@ -21,7 +21,7 @@ abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 		this = list;
 	}
 
-	public static inline function make<T>(world:World, spec:NodeListSpec<T>):Observable<NodeList<T>> {
+	public static function make<T>(world:World, spec:NodeListSpec<T>):Observable<NodeList<T>> {
 		final query = spec.query;
 		final fetchComponents = spec.fetchComponents;
 		final cache:Map<Int, Observable<Node<T>>> = new Map();
