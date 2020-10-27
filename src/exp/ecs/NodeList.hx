@@ -5,22 +5,33 @@ import tink.state.Observable;
 
 using Lambda;
 
+class NodeListSpec<T> {
+	public final query:Query;
+	public final fetchComponents:Entity->T;
+
+	public function new(query, fetchComponents) {
+		this.query = query;
+		this.fetchComponents = fetchComponents;
+	}
+}
+
 @:forward(length, map)
 abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 	inline function new(list) {
 		this = list;
 	}
 
-	public static inline function make<T>(world:World, query:Query, fetchComponents:Entity->T):Observable<NodeList<T>> {
-		final cache = new Map();
+	public static inline function make<T>(world:World, spec:NodeListSpec<T>):Observable<NodeList<T>> {
+		final query = spec.query;
+		final fetchComponents = spec.fetchComponents;
+		final cache:Map<Int, Observable<Node<T>>> = new Map();
 		final entities = world.entities.query(query);
-		final nodes = Observable.auto(() -> {
+		var nodes = Observable.auto(() -> {
 			final entities = entities.value;
-			for (entity in entities) {
+			for (entity in entities)
 				if (!cache.exists(entity.id))
 					cache.set(entity.id,
 						Observable.auto(() -> new Node(entity, fetchComponents(entity)), null, id -> 'NodeList:${entity.toString()}:components#$id'));
-			}
 
 			var deleted = [for (id in cache.keys()) if (!entities.exists(e -> e.id == id)) id];
 
@@ -40,7 +51,9 @@ abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 		return new ConstArrayIterator(this);
 	}
 
-	public static macro function generate(e);
+	public static macro function generate(world, query);
+
+	public static macro function spec(query);
 }
 
 enum Hierarchy {

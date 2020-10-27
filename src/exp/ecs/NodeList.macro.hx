@@ -5,8 +5,8 @@ import haxe.macro.Expr;
 using tink.MacroApi;
 
 abstract NodeList(Dynamic) {
-	public static macro function generate(world:Expr, query:Expr) {
-		return macro exp.ecs.NodeList.make($world, ${parseQuery(query)}, e -> ${
+	public static macro function spec(query:Expr) {
+		return macro new exp.ecs.NodeList.NodeListSpec(${parseQuery(query)}, e -> ${
 			EObjectDecl([
 				for (name => entry in getComponents(query))
 					{
@@ -47,6 +47,10 @@ abstract NodeList(Dynamic) {
 					}
 			]).at(query.pos)
 		});
+	}
+
+	public static function generate(world:Expr, query:Expr) {
+		return macro @:pos(world.pos) exp.ecs.NodeList.make($world, exp.ecs.NodeList.spec($query));
 	}
 
 	static function getRuntimeHierarchy(hierarchy:Array<Hierarchy>) {

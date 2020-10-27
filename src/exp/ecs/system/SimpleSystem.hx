@@ -5,8 +5,8 @@ class SimpleSystem<T> extends SingleListSystem<T> {
 	final name:String;
 	final f:(nodes:NodeList<T>, dt:Float) -> Void;
 
-	public function new(name, tracker, f) {
-		super(tracker);
+	public function new(name, spec, f) {
+		super(spec);
 		this.name = name;
 		this.f = f;
 	}
