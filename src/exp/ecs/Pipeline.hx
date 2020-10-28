@@ -29,7 +29,7 @@ class Pipeline {
 				throw 'Unrecognized phase $phase. Please register it in the constructor.';
 			case phase:
 				phase.systems.push(system);
-				[system.initialize(world), ()->phase.systems.remove(system)];
+				system.initialize(world) & () -> phase.systems.remove(system);
 		}
 	}
 
