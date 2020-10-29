@@ -2,10 +2,10 @@ package exp.ecs;
 
 class Node<T> {
 	public final entity:Entity;
-	public final components:T;
+	public final data:T;
 
-	public function new(entity, components) {
+	public function new(entity, data) {
 		this.entity = entity;
-		this.components = components;
+		this.data = data;
 	}
 }

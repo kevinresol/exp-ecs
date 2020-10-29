@@ -164,7 +164,7 @@ class NodeListTest {
 
 		parent.add(Dummy);
 		asserts.assert(list.value.length == 1);
-		asserts.assert(list.value.get(0).components.parent2 == parent);
+		asserts.assert(list.value.get(0).data.parent2 == parent);
 
 		parent.remove(Dummy);
 		asserts.assert(list.value.length == 0);
