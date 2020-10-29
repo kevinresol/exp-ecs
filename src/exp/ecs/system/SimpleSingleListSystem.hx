@@ -1,17 +1,18 @@
 package exp.ecs.system;
 
 @:nullSafety(Off)
-class SimpleSystem<T> extends System {
+class SimpleSingleListSystem<T> extends SingleListSystem<T> {
 	final name:String;
-	final f:(dt:Float) -> Void;
+	final f:(nodes:NodeList<T>, dt:Float) -> Void;
 
-	public function new(name, f) {
+	public function new(name, spec, f) {
+		super(spec);
 		this.name = name;
 		this.f = f;
 	}
 
 	override function update(dt:Float) {
-		f(dt);
+		f(nodes, dt);
 	}
 
 	public function toString() {

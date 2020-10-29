@@ -21,7 +21,7 @@ class RemovalTest {
 		var unlink = false;
 		var added = null;
 		var length = null;
-		world.pipeline.add(0, System.simple('System1', ParentTag, (nodes, dt) -> {
+		world.pipeline.add(0, System.single('System1', ParentTag, (nodes, dt) -> {
 			if (add)
 				added = world.entities.create();
 			if (link)
@@ -30,7 +30,7 @@ class RemovalTest {
 				entity.unlink('target');
 		}));
 
-		world.pipeline.add(0, System.simple('System2', ParentTag && @:component(target) Linked('target', Dummy), (nodes, dt) -> length = nodes.length));
+		world.pipeline.add(0, System.single('System2', ParentTag && @:component(target) Linked('target', Dummy), (nodes, dt) -> length = nodes.length));
 
 		engine.update(1 / 60);
 		asserts.assert(length == 1);
