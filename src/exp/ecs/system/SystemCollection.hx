@@ -48,8 +48,8 @@ class SystemCollection<Event> extends Collection<Item<System<Event>>> {
 				queue.add(item);
 				system.onAdded(engine);
 			case Remove | RemoveAndDestroy:
-				queue.add(item);
-				system.onAdded(engine);
+				queue.remove(system);
+				system.onRemoved(engine);
 				if(operation == RemoveAndDestroy)
 					system.destroy();
 		}
