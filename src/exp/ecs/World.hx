@@ -30,7 +30,7 @@ class EntityCollection {
 
 	// public final singleton:Entity;
 	final world:World;
-	final map:GranularMap<Int, Entity> = new GranularMap([]);
+	final map:ObservableMap<Int, Entity> = new ObservableMap();
 
 	function new(world) {
 		this.world = world;
@@ -77,7 +77,7 @@ class EntityCollection {
 			Observable.auto(() -> {
 				for (id => entity in map)
 					if (!cache.exists(id))
-						cache.set(id, new Pair(entity, Observable.auto(() -> entity.fulfills(q), null, id -> 'World:${entity.toString()}:fulfills#$id')));
+						cache.set(id, new Pair(entity, Observable.auto(() -> entity.fulfills(q), null #if tink_state.debug , id -> 'World:${entity.toString()}:fulfills#$id' #end)));
 
 				final deleted = [for (id in cache.keys()) if (!map.exists(id)) id];
 
@@ -86,11 +86,11 @@ class EntityCollection {
 
 				cache;
 			},
-				(_, _) -> false, // we're always returning the same map, so the comparator must always yield false
-				id -> 'World:cache#$id');
+				(_, _) -> false // we're always returning the same map, so the comparator must always yield false
+				#if tink_state.debug , id -> 'World:cache#$id' #end);
 		}
 
-		return Observable.auto(() -> [for (p in entityQueries.value) if (p.b) p.a], null, id -> 'World:root#$id');
+		return Observable.auto(() -> [for (p in entityQueries.value) if (p.b) p.a], null #if tink_state.debug , id -> 'World:root#$id' #end);
 	}
 
 	public inline function count() {

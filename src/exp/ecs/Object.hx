@@ -36,11 +36,11 @@ class Object<T:Object<T>> {
 	/**
 	 * Linkage
 	 */
-	public var linked(get, never):GranularMap<String, Entity>;
+	public var linked(get, never):ObservableMap<String, Entity>;
 
-	final _linked:GranularMap<String, Entity> = new GranularMap([]);
+	final _linked:ObservableMap<String, Entity> = new ObservableMap();
 
-	final components:GranularMap<Signature, Component> = new GranularMap([]);
+	final components:ObservableMap<Signature, Component> = new ObservableMap();
 
 	function new(id, type) {
 		this.id = id;
@@ -110,13 +110,15 @@ class Object<T:Object<T>> {
 		}
 	}
 
+	@:native('add')
 	function addComponent(component:Component) {
 		final signature = component.signature;
 		if (owns(signature))
-			throw '${toString()}: Cannot add components of the same signature twice, even it is the same instance';
+			throw '${toString()}: Cannot add components of the same signature twice, even it is the same instance. ($signature)';
 		components.set(signature, component);
 	}
 
+	@:native('get')
 	function getComponent(signature:Signature):Null<Component> {
 		return switch components.get(signature) {
 			case null:
@@ -176,7 +178,7 @@ class Object<T:Object<T>> {
 		return _children.view;
 	}
 
-	inline function get_linked():GranularMap<String, Entity> {
+	inline function get_linked():ObservableMap<String, Entity> {
 		return _linked;
 	}
 

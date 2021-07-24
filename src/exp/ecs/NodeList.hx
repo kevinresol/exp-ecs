@@ -15,7 +15,7 @@ class NodeListSpec<T> {
 	}
 }
 
-@:forward(length, map)
+@:forward(length, copy, filter, indexOf, keyValueIterator, join, lastIndexOf, map, slice, contains, toString)
 abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 	inline function new(list) {
 		this = list;
@@ -31,7 +31,7 @@ abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 			for (entity in entities)
 				if (!cache.exists(entity.id))
 					cache.set(entity.id,
-						Observable.auto(() -> new Node(entity, fetchComponents(entity)), null, id -> 'NodeList:${entity.toString()}:components#$id'));
+						Observable.auto(() -> new Node(entity, fetchComponents(entity)), null #if tink_state.debug , id -> 'NodeList:${entity.toString()}:components#$id' #end ));
 
 			var deleted = [for (id in cache.keys()) if (!entities.exists(e -> e.id == id)) id];
 
@@ -39,10 +39,11 @@ abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 				cache.remove(id);
 
 			cache;
-		}, (_, _) -> false, id -> 'NodeList:cache#$id');
-		return Observable.auto(() -> new NodeList([for (node in nodes.value) node.value]), null, id -> 'NodeList:root#$id');
+		}, (_, _) -> false #if tink_state.debug , id -> 'NodeList:cache#$id' #end);
+		return Observable.auto(() -> new NodeList([for (node in nodes.value) node.value]), null #if tink_state.debug , id -> 'NodeList:root#$id' #end);
 	}
 
+	@:arrayAccess
 	public inline function get(i) {
 		return this[i];
 	}

@@ -5,3 +5,4 @@
 -lib tink_unittest
 
 -D analyzer-optimize
+-D tink_state.debug
