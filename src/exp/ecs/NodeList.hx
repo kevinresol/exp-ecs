@@ -26,14 +26,14 @@ abstract NodeList<T>(Array<Node<T>>) from Array<Node<T>> {
 		final fetchComponents = spec.fetchComponents;
 		final cache:Map<Int, Observable<Node<T>>> = new Map();
 		final entities = world.entities.query(query);
-		var nodes = Observable.auto(() -> {
+		final nodes = Observable.auto(() -> {
 			final entities = entities.value;
 			for (entity in entities)
 				if (!cache.exists(entity.id))
 					cache.set(entity.id,
 						Observable.auto(() -> new Node(entity, fetchComponents(entity)), null #if tink_state.debug , id -> 'NodeList:${entity.toString()}:components#$id' #end ));
 
-			var deleted = [for (id in cache.keys()) if (!entities.exists(e -> e.id == id)) id];
+			final deleted = [for (id in cache.keys()) if (!entities.exists(e -> e.id == id)) id];
 
 			for (id in deleted)
 				cache.remove(id);

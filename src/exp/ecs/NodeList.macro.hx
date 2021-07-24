@@ -1,6 +1,7 @@
 package exp.ecs;
 
 import haxe.macro.Expr;
+import haxe.macro.Context;
 
 using tink.MacroApi;
 
@@ -23,7 +24,7 @@ abstract NodeList(Dynamic) {
 								fetch(macro e); // TODO: should probably disallow fetching entity here, as it is already accessible as `node.entity`
 							} else if (entry.optional) {
 								macro {
-									var entity = e;
+									final entity = e;
 									for (v in ${getRuntimeHierarchy(entry.hierarchy)}) {
 										entity = switch v {
 											case Parent: entity.parent;
@@ -50,11 +51,12 @@ abstract NodeList(Dynamic) {
 	}
 
 	public static function generate(world:Expr, query:Expr) {
-		return macro @:pos(world.pos) exp.ecs.NodeList.make($world, exp.ecs.NodeList.spec($query));
+		final pos = Context.currentPos();
+		return macro @:pos(pos) exp.ecs.NodeList.make($world, exp.ecs.NodeList.spec($query));
 	}
 
 	static function getRuntimeHierarchy(hierarchy:Array<Hierarchy>) {
-		var arr = [
+		final arr = [
 			for (v in hierarchy)
 				switch v {
 					case Parent:
@@ -125,7 +127,7 @@ abstract NodeList(Dynamic) {
 		/*
 			// get T from a Class<T> expr
 			for (expr in map) {
-				var type = haxe.macro.Context.typeof(macro {
+				final type = haxe.macro.Context.typeof(macro {
 					function get<T>(c:Class<T>):T
 						throw 0;
 					get($expr);

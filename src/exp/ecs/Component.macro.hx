@@ -64,8 +64,8 @@ class Component {
 				name: 'clone',
 				access: [APublic],
 				kind: FFun({
-					var args = ctor.getArgList().map(arg -> macro $i{arg.name});
-					var tp = builder.target.name.asTypePath();
+					final args = ctor.getArgList().map(arg -> macro $i{arg.name});
+					final tp = builder.target.name.asTypePath();
 					(macro new $tp($a{args})).func();
 				}),
 				pos: Context.currentPos(),
