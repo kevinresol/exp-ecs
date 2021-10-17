@@ -24,7 +24,7 @@ abstract NodeList(Dynamic) {
 								fetch(macro e); // TODO: should probably disallow fetching entity here, as it is already accessible as `node.entity`
 							} else if (entry.optional) {
 								macro {
-									final entity = e;
+									var entity = e;
 									for (v in ${getRuntimeHierarchy(entry.hierarchy)}) {
 										entity = switch v {
 											case Parent: entity.parent;
