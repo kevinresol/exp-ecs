@@ -51,6 +51,7 @@ class EntityCollection {
 		switch map.get(id) {
 			case null:
 			case entity:
+				// TODO: remove children
 				map.remove(id);
 				entity.setRemoved();
 		}
