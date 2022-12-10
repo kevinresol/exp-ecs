@@ -38,9 +38,9 @@ class Object<T:Object<T>> {
 	 */
 	public var linked(get, never):ObservableMap<String, Entity>;
 
-	final _linked:ObservableMap<String, Entity> = new ObservableMap();
+	final _linked:ObservableMap<String, Entity> = new ObservableMap([]);
 
-	final components:ObservableMap<Signature, Component> = new ObservableMap();
+	final components:ObservableMap<Signature, Component> = new ObservableMap([]);
 
 	function new(id, type) {
 		this.id = id;
@@ -116,6 +116,7 @@ class Object<T:Object<T>> {
 		if (owns(signature))
 			throw '${toString()}: Cannot add components of the same signature twice, even it is the same instance. ($signature)';
 		components.set(signature, component);
+		return component;
 	}
 
 	@:native('get')

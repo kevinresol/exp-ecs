@@ -14,8 +14,9 @@ class Object {
 
 	public macro function add(ethis:Expr, e:Expr, args:Array<Expr>) {
 		final type = Context.typeof(macro exp.ecs.macro.Helper.get($e));
+		final ct = type.toComplex();
 		final tp = e.toString().asTypePath();
 		final pos = Context.currentPos();
-		return macro @:privateAccess $ethis.addComponent(@:pos(pos) new $tp($a{args}));
+		return macro(cast @:privateAccess $ethis.addComponent(@:pos(pos) new $tp($a{args})) : $ct);
 	}
 }
